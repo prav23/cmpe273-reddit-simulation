@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "node ./node_modules/mocha/bin/_mocha",
+    "client-install": "npm install --prefix client",
+    "start": "node app.js",
+    "server": "node app.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "PraveenAnguru",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "concurrently": "^4.0.1",
+    "cors": "^2.8.4",
+    "ejs": "^2.6.1",
+    "expres": "0.0.5",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "kafka-node": "^5.0.0",
+    "method-override": "^3.0.0",
+    "mocha": "^5.2.0",
+    "mongoose": "^5.3.4",
+    "mysql": "^2.16.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "react-moment": "^0.8.2",
+    "should": "^13.2.3",
+    "supertest": "^3.3.0",
+    "validator": "^10.7.1"
+  }
+}
