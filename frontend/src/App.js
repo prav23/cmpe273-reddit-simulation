@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
 import './App.css';
 import Main from './components/Main';
-import {BrowserRouter} from 'react-router-dom';
+import Communities from './components/communities/Communities';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+} from 'react-router-dom';
 
 //App Component
 class App extends Component {
   render() {
     return (
-      //Use Browser Router to route to different pages
       <BrowserRouter>
-        <div>
-          {/* App Component Has a Child Component called Main*/}
-          <Main/>
-        </div>
+          <div>
+            <Switch>
+              <Route path="/communities">
+                <Communities/>
+              </Route>
+              <Route path="/">
+                <Main/>
+              </Route>
+            </Switch>
+          </div>
       </BrowserRouter>
     );
   }
