@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500&family=Noto+Sans&display=swap');
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  /*font-family: sans-serif;*/
+  font: normal x-small verdana, arial, helvetica, sans-serif;
 }
