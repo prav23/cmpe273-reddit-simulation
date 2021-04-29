@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactPaginate from 'react-paginate';
+
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
 
@@ -14,6 +16,23 @@ class Communities extends React.Component {
 
   async componentDidMount() {
     // TODO: api call to set communities here
+  }
+
+  listOptions() {
+    const optionMenus = [];
+    // TODO: update communities per page
+    [2, 5, 10].forEach((option) => {
+      optionMenus.push(
+        <button
+          className="dropdown-item"
+          key={uuidv4()}
+          type="button"
+        >
+          {option}
+        </button>,
+      );
+    });
+    return optionMenus;
   }
 
   render() {
@@ -60,6 +79,23 @@ class Communities extends React.Component {
             <div className="card-body">
               <h1 className="h2">Your Communities</h1>
 
+              <div className="input-group-prepend" key={uuidv4()} style={{ paddingTop: '25px' }}>
+                <button
+                  className="btn btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  key={uuidv4()}
+                  style={{ width: '20rem' }}
+                >
+                  Number of Communities per Page
+                </button>
+                <div className="dropdown-menu" key={uuidv4()}>
+                  {this.listOptions()}
+                </div>
+              </div>
+
               <div className="table-responsive" style={{ paddingTop: '25px' }}>
                 <table className="table">
                   <thead className="thead-dark">
@@ -77,6 +113,26 @@ class Communities extends React.Component {
                   <tbody>
                   </tbody>
                 </table>
+
+                {/*TODO: add onPageChange handler*/}
+                <div style={{ paddingTop: '25px' }}>
+                  <ReactPaginate
+                    breakClassName="page-item"
+                    breakLinkClassName="page-link"
+                    containerClassName="pagination"
+                    pageClassName="page-item"
+                    pageLinkClassName="page-link"
+                    previousClassName="page-item"
+                    previousLinkClassName="page-link"
+                    nextClassName="page-item"
+                    nextLinkClassName="page-link"
+                    activeClassName="active"
+                    pageCount={communities.length}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={communities.length}
+                    onPageChange={this.handlePageClick}
+                  />
+                </div>
 
                 <CreateCommunity/>
               </div>
