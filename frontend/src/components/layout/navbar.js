@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+import { Button } from "react-bootstrap";
+
+import logo from "../../icons/reddit-logo.png";
+import "./navbar.css";
 
 class Navbar extends Component {
   onLogoutClick(e) {
@@ -16,37 +20,49 @@ class Navbar extends Component {
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
           <Link class="navbar-brand" to="/">
-            Reddit
+            <img alt="logo" src={logo} height="25px" />
           </Link>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav w-100 d-flex justify-content-end">
-                {
-                !isAuthenticated && <><li class="nav-item">
-                  <Link class="nav-link" to="/register">
-                    Register
-                  </Link>
-                </li>
-                <li class="nav-item">
-                  <Link class="nav-link" to="/login">
-                    Login
-                  </Link>
-                </li>
+              {!isAuthenticated && (
+                <>
+                  <li class="nav-item">
+                    <Link class="nav-link" to="/login">
+                      <Button className="login">Log In</Button>
+                    </Link>
+                  </li>
+                  <li class="nav-item">
+                    <Link class="nav-link" to="/register">
+                      <Button className="signup">Sign Up</Button>
+                    </Link>
+                  </li>
                 </>
-              }
-              {
-                isAuthenticated && <li class="nav-item">
+              )}
+              {isAuthenticated && (
+                <li class="nav-item">
                   <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    UserName
+                    <button
+                      class="btn btn-secondary dropdown-toggle"
+                      type="button"
+                      id="dropdownMenuButton1"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      UserName
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      <li><Link class="nav-link" to="/">
-                        Logout
-                      </Link></li>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="dropdownMenuButton1"
+                    >
+                      <li>
+                        <Link class="nav-link" to="/">
+                          Logout
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </li>
-              }
+              )}
             </ul>
           </div>
         </div>
