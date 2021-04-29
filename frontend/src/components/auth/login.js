@@ -5,6 +5,8 @@ import { loginUser } from "../../actions/authActions";
 import TextFieldGroup from "../common/TextFieldGroup";
 import { Link } from "react-router-dom";
 
+import "./login.css";
+
 class Login extends Component {
   constructor() {
     super();
@@ -51,15 +53,13 @@ class Login extends Component {
     const { errors } = this.state;
 
     return (
-      <div className="login">
+      <div>
         <div className="container">
           <br />
           <br />
           <div className="row">
             <div className="col-md-5 m-auto">
-              <p className="lead text-center">
-                Sign in to your Splitwise account
-              </p>
+              <p className="lead text-center">Sign in to your Reddit account</p>
               <br />
               <form onSubmit={this.onSubmit}>
                 <TextFieldGroup

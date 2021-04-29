@@ -60,7 +60,7 @@ class Register extends Component {
           <div className="row">
             <br />
             <div className="col-md-5 m-auto">
-              <p className="lead text-center">Create your Splitwise account</p>
+              <p className="lead text-center">Create your Reddit account</p>
               <br />
               <form noValidate onSubmit={this.onSubmit}>
                 <TextFieldGroup
