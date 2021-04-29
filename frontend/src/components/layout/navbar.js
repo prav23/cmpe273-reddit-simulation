@@ -42,7 +42,7 @@ class Navbar extends Component {
                 <li class="nav-item">
                   <div class="dropdown">
                     <button
-                      class="btn btn-secondary dropdown-toggle"
+                      class="userName btn btn-secondary dropdown-toggle"
                       type="button"
                       id="dropdownMenuButton1"
                       data-bs-toggle="dropdown"

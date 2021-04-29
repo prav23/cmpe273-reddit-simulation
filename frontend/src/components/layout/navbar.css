@@ -45,3 +45,22 @@
     border-radius: 25px;
     width: 100px;
 }
+
+.userName{
+    background: transparent;
+    border: transparent;
+    color: #6c757d;
+}
+
+.userName:hover{
+    background: transparent;
+    border: 0.5px solid #b3b7bb;
+    color: #6c757d;
+}
+
+.userName:focus{
+    background: transparent;
+    border: 0.5px solid #b3b7bb;
+    color: #6c757d;
+    box-shadow: 0 0 0 0.2px rgb(130 138 145 / 50%);
+}
