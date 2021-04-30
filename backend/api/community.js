@@ -8,7 +8,7 @@ const {
 
 const Member = require("../models/member");
 
-router.post('/community', async (req, res) => {
+const createCommunity = async (req, res) => {
   const error = newCommunityValidation(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -26,15 +26,15 @@ router.post('/community', async (req, res) => {
   });
   await newComm.save();
   return res.status(200).send({ name: newComm.name, description: newComm.description });
-});
+};
 
-router.get('/community', async (req, res) => {
+const getCommunities = async (req, res) => {
   if (!req.query.createdBy) {
     return res.status(400).send('Admin name is required');
   }
 
   const communities = await Community.find({ createdBy: req.query.createdBy }).exec();
   return res.status(200).send(communities);
-});
+};
 
-module.exports = router;
+module.exports = { createCommunity, getCommunities };
