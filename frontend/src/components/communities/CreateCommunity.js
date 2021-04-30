@@ -51,7 +51,7 @@ class CreateCommunity extends React.Component {
 
     try {
       // TODO: add jwt auth token
-      await axios.post(`${API_URL}/community/community`, fields);
+      await axios.post(`${API_URL}/community`, fields);
       updateCommunities(true);
     } catch(error) {
       if (error.response && error.response.status === 400) {

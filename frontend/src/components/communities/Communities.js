@@ -22,7 +22,7 @@ class Communities extends React.Component {
 
   async componentDidMount() {
     // TODO: update createdBy to logged in user
-    const response = await axios.get(`${API_URL}/community/community?createdBy=admin`);
+    const response = await axios.get(`${API_URL}/community?createdBy=admin`);
     const communities = testCommunities.concat(response.data);
 
     const sortedCommunities = communities.sort(function(a, b) {
@@ -40,7 +40,7 @@ class Communities extends React.Component {
     // TODO: api call to set communities here
     const { updateCommunity } = this.state;
     if (updateCommunity) {
-      const response = await axios.get(`${API_URL}/community/community?createdBy=admin`);
+      const response = await axios.get(`${API_URL}/community?createdBy=admin`);
       const communities = testCommunities.concat(response.data);
       this.setState({ updateCommunity: false, communities });
     }

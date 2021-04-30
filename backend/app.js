@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const keys = require("./utils/keys");
 const passport = require("passport");
 const mongoose = require("mongoose");
-const community = require('./api/community');
 const { mlab_db, frontendURI } = require("./utils/config");
 const cors = require("cors");
 
@@ -36,9 +35,6 @@ app.use(function (req, res, next) {
   // res.setHeader('Cache-Control', 'no-cache');
   next();
 });
-// TODO: add jwt once login is implemented
-// passport.authenticate('jwt', {session: false})
-app.use('/community', community);
 
 const options = {
   useNewUrlParser: true,
