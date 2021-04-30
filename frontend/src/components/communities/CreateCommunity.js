@@ -6,6 +6,7 @@ const { API_URL } = require('../../utils/Constants').default;
 
 class CreateCommunity extends React.Component {
   constructor(props) {
+    // TODO: get auth token from redux state
     super(props);
 
     this.state = {
@@ -39,15 +40,20 @@ class CreateCommunity extends React.Component {
 
   async handleSubmit() {
     const { fields } = this.state;
+    const { updateCommunities } = this.props;
+
     if (!fields.name) {
       this.setState({ error: 'Community name is required' });
       return;
     }
+    // TODO: grab logged in user from state
+    fields.createdBy = 'admin';
 
     try {
+      // TODO: add jwt auth token
       await axios.post(`${API_URL}/community/community`, fields);
+      updateCommunities(true);
     } catch(error) {
-      console.log(error.response);
       if (error.response && error.response.status === 400) {
         this.setState({ error: error.response.data });
         return;

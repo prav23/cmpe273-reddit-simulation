@@ -4,6 +4,7 @@ const newCommunityValidation = (body) => {
   const schema = Joi.object().keys({
     description: Joi.string(),
     name: Joi.string().required(),
+    createdBy: Joi.string().required(),
   });
 
   const { error } = schema.validate(body);
