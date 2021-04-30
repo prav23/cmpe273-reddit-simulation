@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const setAuthToken= token =>{
-    if(token){
+const setAuthToken = token =>{
+    if (token) {
     //If exists, apply to every request
-    axios.defaults.headers.common['Authorization']=token;  
+    axios.defaults.headers.common['Authorization'] = token;  
   } else{
     //Delete auth header
     delete axios.defaults.headers.common['Authorization'];

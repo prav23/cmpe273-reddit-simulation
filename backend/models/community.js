@@ -7,10 +7,7 @@ const Community = new Schema(
       type: Schema.Types.ObjectId,
     },
     name: { type: String, required: true },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "users",
-    },
+    createdBy: { type: String },
     description: { type: String },
     rules: [
       {

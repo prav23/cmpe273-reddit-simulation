@@ -6,6 +6,7 @@ import Sidebar from "./layout/sidebar";
 import Landing from "./layout/landing";
 import Register from "./auth/register";
 import Login from "./auth/login";
+import Communities from './communities/Communities';
 
 import Dashboard from "./dashboard/dashboard";
 
@@ -22,12 +23,11 @@ class Main extends Component {
                         <Sidebar />
                     </div>
                     <div className = "col">
-                    <Route exact path="/" component={Landing} />
-                    <Route path="/register" component={Register} />
-                    <Route path="/login" component={Login} />
-
-                    <Route path="/dashboard" component={Dashboard} />
-                    
+                        <Route exact path="/" component={Landing} />
+                        <Route path="/register" component={Register} />
+                        <Route path="/login" component={Login} />
+                        <Route path="/dashboard" component={Dashboard} />
+                        <Route path="/communities" component={Communities} />
                     </div>
                 </div>                
             </div>
