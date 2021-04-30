@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import Main from './components/Main';
-import Communities from './components/communities/Communities';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import {
@@ -17,9 +16,6 @@ class App extends Component {
       <BrowserRouter>
           <div>
             <Switch>
-              <Route path="/communities">
-                <Communities/>
-              </Route>
               <Route path="/">
                 <Main/>
               </Route>
