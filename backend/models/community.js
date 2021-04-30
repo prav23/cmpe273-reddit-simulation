@@ -31,7 +31,7 @@ const Community = new Schema(
   }
 );
 
-Group.index(
+Community.index(
   {
     name: 1,
   },

@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Community = require("../models/community");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const kafka = require("../kafka/client");
+// const kafka = require("../kafka/client");
 const {
   createValidation,
   createManyValidation,
@@ -98,7 +98,7 @@ exports.getAllNewInvitesForUser = (req, res) => {
       {
         $match: {
           userId: ObjectId(req.params.userId),
-          status: "new",
+          status: "invited",
         },
       },
       {
@@ -123,7 +123,7 @@ exports.getAllNewInvitesForUser = (req, res) => {
         $project: {
           userId: 1,
           communityId: 1,
-          "community_info.name": 1,
+          communityName: 1,
           "community_info.photo": 1,
           status: 1,
           createdAt: 1,
@@ -143,13 +143,31 @@ exports.getAllNewInvitesForUser = (req, res) => {
 };
 
 exports.getAllInvitesForUser = (req, res) => {
-  if (!req.params.userId) {
+  if (!req.params.id) {
     return res.status(400).send({
       message: "Id params missing",
     });
   }
 
-  Member.find({ userId: req.params.userId }, (err, data) => {
+  Member.find({ userId: req.params.id }, (err, data) => {
+    if (err) {
+      return res.status(400).send({
+        message: saveError.toString(),
+      });
+    }
+
+    return res.status(200).json(data);
+  });
+};
+
+exports.getAllInvitesForCommunity = (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).send({
+      message: "Id params missing",
+    });
+  }
+
+  Member.find({ communityId: req.params.id }, (err, data) => {
     if (err) {
       return res.status(400).send({
         message: saveError.toString(),
@@ -174,7 +192,7 @@ exports.updateInvite = (req, res) => {
     });
   }
 
-  let msg = {
+  /* let msg = {
     route: "update",
     params: req.params,
     body: req.body,
@@ -189,21 +207,21 @@ exports.updateInvite = (req, res) => {
     return res.status(results.status).send({
       message: "Invite updated successfully",
     });
-  });
+  }); */
 
-  /* Invite.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      (err, data) => {
-        if (err) {
-          return res.status(400).send({
-            message: saveError.toString(),
-          });
-        }
-  
-        return res.status(200).send({
-          message: "Invite update successfully",
+  Member.findByIdAndUpdate(
+    req.params.id,
+    { status: req.body.status },
+    (err, data) => {
+      if (err) {
+        return res.status(400).send({
+          message: saveError.toString(),
         });
       }
-    ); */
+
+      return res.status(200).send({
+        message: "Invite update successfully",
+      });
+    }
+  );
 };

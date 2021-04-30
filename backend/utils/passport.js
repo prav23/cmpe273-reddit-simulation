@@ -22,5 +22,3 @@ module.exports = (passport) => {
     })
   );
 };
-
-exports.checkAuth = passport.authenticate("jwt", { session: false });

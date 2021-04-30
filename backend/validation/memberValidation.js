@@ -5,6 +5,7 @@ const createValidation = (body) => {
     userId: Joi.string().required(),
     communityId: Joi.string().required(),
     communityName: Joi.string().required(),
+    status: Joi.string(),
   });
 
   const { error } = createSchema.validate(body);
