@@ -1,6 +1,9 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 
+const axios = require('axios').default;
+const { API_URL } = require('../../utils/Constants').default;
+
 class CreateCommunity extends React.Component {
   constructor(props) {
     super(props);
@@ -9,7 +12,9 @@ class CreateCommunity extends React.Component {
       show: false,
       fields: {
         name: '',
-      }
+        description: '',
+      },
+      error: ''
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -19,11 +24,11 @@ class CreateCommunity extends React.Component {
   }
 
   handleClose() {
-    this.setState({ show: false });
+    this.setState({ show: false, error: '' });
   }
 
   handleShow() {
-    this.setState({ show: true });
+    this.setState({ show: true, error: '' });
   }
 
   handleChange(field, event) {
@@ -33,11 +38,26 @@ class CreateCommunity extends React.Component {
   }
 
   async handleSubmit() {
+    const { fields } = this.state;
+    if (!fields.name) {
+      this.setState({ error: 'Community name is required' });
+      return;
+    }
+
+    try {
+      await axios.post(`${API_URL}/community/community`, fields);
+    } catch(error) {
+      console.log(error.response);
+      if (error.response && error.response.status === 400) {
+        this.setState({ error: error.response.data });
+        return;
+      }
+    }
     this.setState({ show: false });
   }
 
   render() {
-    const { show } = this.state;
+    const { show, error } = this.state;
     return (
       <>
         <div style={{ paddingTop: '25px' }}>
@@ -57,6 +77,16 @@ class CreateCommunity extends React.Component {
                   id="name"
                   placeholder="Enter Community Name"
                   onChange={this.handleChange.bind(this, 'name')}
+                  required
+                />
+                <span style={{ color: 'red' }}>{error}</span>
+              </div>
+              <div className="form-group">
+                <input
+                  className="form-control"
+                  id="description"
+                  placeholder="Enter Community Description"
+                  onChange={this.handleChange.bind(this, 'description')}
                   required
                 />
               </div>
