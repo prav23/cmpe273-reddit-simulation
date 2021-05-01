@@ -142,7 +142,6 @@ class Communities extends React.Component {
 
   static sortCommunities(communities, col, order) {
     return communities.sort(function(a, b) {
-      // TODO: add option to sort by num users and posts
       if (col === 'Date') {
         if (order === 'angle-up') {
           return new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1;
@@ -151,15 +150,15 @@ class Communities extends React.Component {
         }
       } else if (col === 'Posts') {
         if (order === 'angle-up') {
-          return a.numPosts > b.numPosts ? 1 : -1;
+          return Math.max(a.numPosts, 0) > Math.max(b.numPosts, 0) ? 1 : -1;
         } else {
-          return a.numPosts > b.numPosts ? -1 : 1;
+          return Math.max(a.numPosts, 0) > Math.max(b.numPosts, 0) ? -1 : 1;
         }
       } else if (col === 'Users') {
         if (order === 'angle-up') {
-          return a.numUsers > b.numUsers ? 1 : -1;
+          return Math.max(a.numUsers, 0) > Math.max(b.numUsers, 0) ? 1 : -1;
         } else {
-          return a.numUsers > b.numUsers ? -1 : 1;
+          return Math.max(a.numUsers, 0) > Math.max(b.numUsers, 0) ? -1 : 1;
         }
       }
     });
