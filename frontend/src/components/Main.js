@@ -7,6 +7,7 @@ import Landing from "./layout/landing";
 import Register from "./auth/register";
 import Login from "./auth/login";
 import Communities from './communities/Communities';
+import Community from './communities/Community';
 
 import Dashboard from "./dashboard/dashboard";
 import Message from "./message/messagePage";
@@ -29,6 +30,9 @@ class Main extends Component {
                         <Route path="/login" component={Login} />
                         <Route path="/dashboard" component={Dashboard} />
                         <Route path="/communities" component={Communities} />
+                        <Route path="/community/:communityName">
+                          <Community />
+                        </Route>
                         <Route path="/message" component={Message} />
 
                     </div>
