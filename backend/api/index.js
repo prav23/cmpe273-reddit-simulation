@@ -3,8 +3,24 @@ const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
 const community = require("./community");
-
+const posts = require("./post");
+const comment = require("./comment");
 const router = express.Router();
+
+// post route requests
+router.post("posts", posts.create);
+router.get("posts", posts.list);
+router.get("posts/:communityName", posts.listByCommunity);
+router.get("post/:post", posts.show);
+router.delete("post/:post", posts.deletePost);
+// TODO: upvote/downvote/unvote posts
+
+//comment route requests
+router.post("post/:post", comment.createRootComment);
+router.post("post/comment/:rootComment", comment.createSubComment);
+router.delete("post/:post/:comment", comment.destroy);
+router.get("comment/:post", comment.load);
+// TODO: upvote/downvote/unvote comment
 
 router.post("/login", user.login);
 router.post("/register", user.register);
