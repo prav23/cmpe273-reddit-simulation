@@ -56,7 +56,7 @@ class Communities extends React.Component {
   async getCommunities() {
     const { activitiesPerPage, sortOrder } = this.state;
     // TODO: update createdBy to logged in user
-    const response = await axios.get(`${API_URL}/community?createdBy=admin`);
+    const response = await axios.get(`${API_URL}/communities?createdBy=admin`);
     const communities = testCommunities.concat(response.data);
     const sortedCommunities = Communities.sortCommunities(communities, sortOrder);
 
@@ -141,8 +141,8 @@ class Communities extends React.Component {
   }
 
   static sortCommunities(communities, col, order) {
+    console.log(communities);
     return communities.sort(function(a, b) {
-      // TODO: add option to sort by num users and posts
       if (col === 'Date') {
         if (order === 'angle-up') {
           return new Date(a.createdAt).getTime() > new Date(b.createdAt).getTime() ? 1 : -1;
@@ -151,15 +151,15 @@ class Communities extends React.Component {
         }
       } else if (col === 'Posts') {
         if (order === 'angle-up') {
-          return a.numPosts > b.numPosts ? 1 : -1;
+          return Math.max(a.numPosts, 0) > Math.max(b.numPosts, 0) ? 1 : -1;
         } else {
-          return a.numPosts > b.numPosts ? -1 : 1;
+          return Math.max(a.numPosts, 0) > Math.max(b.numPosts, 0) ? -1 : 1;
         }
       } else if (col === 'Users') {
         if (order === 'angle-up') {
-          return a.numUsers > b.numUsers ? 1 : -1;
+          return Math.max(a.numUsers, 0) > Math.max(b.numUsers, 0) ? 1 : -1;
         } else {
-          return a.numUsers > b.numUsers ? -1 : 1;
+          return Math.max(a.numUsers, 0) > Math.max(b.numUsers, 0) ? -1 : 1;
         }
       }
     });
@@ -188,7 +188,11 @@ class Communities extends React.Component {
             style={{ width: '50px', height: '50px' }}
           />
         </td>
-        <td style={{ verticalAlign: 'middle' }}>{community.name}</td>
+        <td style={{ verticalAlign: 'middle' }}>
+          <a href={`/community/${community.name.replace('/', '_')}`} style={{ color: '#000' }}>
+            {community.name}
+          </a>
+        </td>
         <td style={{ textTransform: 'capitalize', verticalAlign: 'middle' }}>{community.description}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numPosts ? community.numPosts : 0}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numUsers ? community.numUsers : 0}</td>

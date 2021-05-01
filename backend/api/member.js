@@ -219,9 +219,32 @@ exports.updateInvite = (req, res) => {
         });
       }
 
-      return res.status(200).send({
-        message: "Invite update successfully",
-      });
+      Community.find({ _id: data.communityId })
+        .then((communities) => {
+          if (communities.length > 0) {
+            const community = communities[0];
+            if (req.body.status === 'joined') {
+              community.numUsers += 1;
+            } else if (req.body.status === 'rejected' && community.numUsers > 0) {
+              community.numUsers -= 1;
+            }
+
+            community.save().then(() => {
+              return res.status(200).send({
+                message: "Invite update successfully",
+              });
+            }).catch((error) => {
+              return res.status(500).send(error);
+            });
+          } else {
+            return res.status(400).send({
+              message: `Community ${req.body.communityName} does not exist`,
+            });
+          }
+
+        }).catch((error) => {
+          return res.status(500).send(error);
+        });
     }
   );
 };
