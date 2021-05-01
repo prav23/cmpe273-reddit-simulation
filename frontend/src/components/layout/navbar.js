@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
 import { Button } from "react-bootstrap";
-
+import { ChatIcon } from '@livechat/ui-kit';
+import IconButton from '@material-ui/core/IconButton';
 import logo from "../../icons/reddit-logo.png";
 import "./navbar.css";
 
@@ -39,29 +40,38 @@ class Navbar extends Component {
                 </>
               )}
               {isAuthenticated && (
-                <li class="nav-item">
-                  <div class="dropdown">
-                    <button
-                      class="userName btn btn-secondary dropdown-toggle"
-                      type="button"
-                      id="dropdownMenuButton1"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      UserName
-                    </button>
-                    <ul
-                      class="dropdown-menu"
-                      aria-labelledby="dropdownMenuButton1"
-                    >
-                      <li>
-                        <Link class="nav-link" to="/">
-                          Logout
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
+                <>
+                  <li class="nav-item">
+                    <Link to="/message">
+                      <IconButton>
+                        <ChatIcon color="#0854a5" />
+                      </IconButton>
+                    </Link>
+                  </li>
+                  <li class="nav-item">
+                    <div class="dropdown">
+                      <button
+                        class="userName btn btn-secondary dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        UserName
+                      </button>
+                      <ul
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButton1"
+                      >
+                        <li>
+                          <Link class="nav-link" to="/">
+                            Logout
+                          </Link>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </>
               )}
             </ul>
           </div>

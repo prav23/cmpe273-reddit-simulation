@@ -9,6 +9,7 @@ import Login from "./auth/login";
 import Communities from './communities/Communities';
 
 import Dashboard from "./dashboard/dashboard";
+import Message from "./message/messagePage";
 
 //Create a Main Component
 class Main extends Component {
@@ -28,6 +29,8 @@ class Main extends Component {
                         <Route path="/login" component={Login} />
                         <Route path="/dashboard" component={Dashboard} />
                         <Route path="/communities" component={Communities} />
+                        <Route path="/message" component={Message} />
+
                     </div>
                 </div>                
             </div>
