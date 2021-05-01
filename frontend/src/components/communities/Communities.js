@@ -141,6 +141,7 @@ class Communities extends React.Component {
   }
 
   static sortCommunities(communities, col, order) {
+    console.log(communities);
     return communities.sort(function(a, b) {
       if (col === 'Date') {
         if (order === 'angle-up') {

@@ -23,6 +23,8 @@ const createCommunity = async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     createdBy: req.body.createdBy,
+    numUsers: 0,
+    numPosts: 0,
   });
   await newComm.save();
   return res.status(200).send({ name: newComm.name, description: newComm.description });
