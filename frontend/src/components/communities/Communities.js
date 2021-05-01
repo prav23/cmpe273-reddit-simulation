@@ -56,7 +56,7 @@ class Communities extends React.Component {
   async getCommunities() {
     const { activitiesPerPage, sortOrder } = this.state;
     // TODO: update createdBy to logged in user
-    const response = await axios.get(`${API_URL}/community?createdBy=admin`);
+    const response = await axios.get(`${API_URL}/communities?createdBy=admin`);
     const communities = testCommunities.concat(response.data);
     const sortedCommunities = Communities.sortCommunities(communities, sortOrder);
 
@@ -188,7 +188,11 @@ class Communities extends React.Component {
             style={{ width: '50px', height: '50px' }}
           />
         </td>
-        <td style={{ verticalAlign: 'middle' }}>{community.name}</td>
+        <td style={{ verticalAlign: 'middle' }}>
+          <a href={`/community/${community.name.replace('/', '_')}`} style={{ color: '#000' }}>
+            {community.name}
+          </a>
+        </td>
         <td style={{ textTransform: 'capitalize', verticalAlign: 'middle' }}>{community.description}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numPosts ? community.numPosts : 0}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numUsers ? community.numUsers : 0}</td>

@@ -4,6 +4,7 @@ const router = express.Router();
 const Community = require("../models/community");
 const {
   newCommunityValidation,
+  newCommunityRuleValidation,
 } = require("../validation/communityValidation");
 
 const Member = require("../models/member");
@@ -39,4 +40,41 @@ const getCommunities = async (req, res) => {
   return res.status(200).send(communities);
 };
 
-module.exports = { createCommunity, getCommunities };
+const getCommunity = async (req, res) => {
+  if (!req.query.communityName) {
+    return res.status(400).send('Community name is required');
+  }
+
+  const community = await Community.find({ name: req.query.communityName }).exec();
+  if (community.length === 0) {
+    return res.status(400).send(`Community ${req.query.communityName} doesn't exist`);
+  }
+  return res.status(200).send(community[0]);
+};
+
+const addCommunityRule = async (req, res) => {
+  const error = newCommunityRuleValidation(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  const communities = await Community.find({ name: req.body.name }).exec();
+  if (communities.length === 0) {
+    return res.status(400).send(`Community ${req.body.communityName} doesn't exist`);
+  }
+
+  const community = communities[0];
+  if (!community.rules) {
+    community.rules = [];
+  }
+
+  community.rules.push({
+    title: req.body.title,
+    description: req.body.description,
+  });
+  await community.save();
+
+  return res.status(200).send(community);
+};
+
+module.exports = { createCommunity, getCommunities, getCommunity, addCommunityRule };

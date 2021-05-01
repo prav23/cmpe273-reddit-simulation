@@ -11,6 +11,18 @@ const newCommunityValidation = (body) => {
   return error;
 };
 
+const newCommunityRuleValidation = (body) => {
+  const schema = Joi.object().keys({
+    name: Joi.string().required(),
+    title: Joi.string().required(),
+    description: Joi.string(),
+  });
+
+  const { error } = schema.validate(body);
+  return error;
+};
+
 module.exports = {
   newCommunityValidation,
+  newCommunityRuleValidation,
 };
