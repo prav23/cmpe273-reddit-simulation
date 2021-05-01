@@ -4,7 +4,7 @@ const schema = mongoose.Schema;
 //Schema
 const Message = new schema({
   receivedBy: {type: String, required: true},
-  sentBy: {type: Number, required: true},
+  sentBy: {type: String, required: true},
   message: {type: String, required: true},
   createAt: {type: String, required: true}
 },

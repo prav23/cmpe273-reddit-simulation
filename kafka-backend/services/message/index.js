@@ -5,13 +5,13 @@ const { sendMessage } = require("./sendMessage");
 
 let handle_request = (msg, callback) => {
   switch (msg.route) {
-    case "users":
+    case "get_users":
       getAllUsers(msg, callback);
       break;
-    case "":
+    case "get_messagelist":
       getMessageList(msg, callback);
       break;
-    case "":
+    case "send_message":
       sendMessage(msg, callback);
       break;
   }
