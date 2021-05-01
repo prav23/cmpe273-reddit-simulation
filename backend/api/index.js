@@ -3,6 +3,7 @@ const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
 const community = require("./community");
+const message = require("./message");
 
 const router = express.Router();
 
@@ -64,5 +65,11 @@ router.put(
   "/community/rule",
   community.addCommunityRule,
 );
+
+//message
+router.get("/message", message.getUsers);
+router.get("/message/:email/:receivedBy", message.getMessage);
+router.post("/message", message.sendMessage);
+
 
 module.exports = router;
