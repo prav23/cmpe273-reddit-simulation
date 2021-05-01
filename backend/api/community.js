@@ -5,6 +5,7 @@ const Community = require("../models/community");
 const {
   newCommunityValidation,
   newCommunityRuleValidation,
+  updateCommunityValidation,
 } = require("../validation/communityValidation");
 
 const Member = require("../models/member");
@@ -77,4 +78,39 @@ const addCommunityRule = async (req, res) => {
   return res.status(200).send(community);
 };
 
-module.exports = { createCommunity, getCommunities, getCommunity, addCommunityRule };
+const updateCommunity = async (req, res) => {
+  const error = updateCommunityValidation(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  const communities = await Community.find({ name: req.body.name }).exec();
+  if (communities.length === 0) {
+    return res.status(400).send(`Community ${req.body.communityName} doesn't exist`);
+  }
+
+  const community = communities[0];
+  if (req.body.newName) {
+    const existingCommunities = await Community.find({ name: req.body.newName }).exec();
+    if (existingCommunities.length > 0) {
+      return res.status(400).send(`Community with name ${req.body.newName} already exists`);
+    } else {
+      community.name = req.body.newName;
+    }
+  }
+
+  if (req.body.description) {
+    community.description = req.body.description;
+  }
+
+  await community.save();
+  return res.status(200).send(community);
+};
+
+module.exports = {
+  createCommunity,
+  getCommunities,
+  getCommunity,
+  addCommunityRule,
+  updateCommunity,
+};

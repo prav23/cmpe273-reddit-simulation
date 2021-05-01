@@ -2,6 +2,7 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { withRouter } from 'react-router';
 import AddCommunityRule from './AddCommunityRule';
+import UpdateCommunity from './UpdateCommunity';
 
 const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
@@ -100,6 +101,7 @@ class Community extends React.Component {
             <p class="card-text">{`Num posts: ${community.numPosts}`}</p>
           </div>
         </div>
+        <UpdateCommunity updateCommunity={this.updateCommunity} community={this.state}/>
         {this.getRulesTable(community)}
         <AddCommunityRule updateCommunity={this.updateCommunity} community={this.state}/>
       </header>

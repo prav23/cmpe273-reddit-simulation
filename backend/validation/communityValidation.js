@@ -22,7 +22,19 @@ const newCommunityRuleValidation = (body) => {
   return error;
 };
 
+const updateCommunityValidation = (body) => {
+  const schema = Joi.object().keys({
+    name: Joi.string().required(),
+    newName: Joi.string().allow(null),
+    description: Joi.string().allow(null),
+  });
+
+  const { error } = schema.validate(body);
+  return error;
+};
+
 module.exports = {
   newCommunityValidation,
   newCommunityRuleValidation,
+  updateCommunityValidation,
 };

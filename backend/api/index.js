@@ -56,6 +56,11 @@ router.get(
 );
 // TODO: add jwt auth
 router.put(
+  "/community",
+  community.updateCommunity,
+);
+// TODO: add jwt auth
+router.put(
   "/community/rule",
   community.addCommunityRule,
 );
