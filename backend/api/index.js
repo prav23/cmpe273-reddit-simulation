@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
+const community = require("./community");
 
 const router = express.Router();
 
@@ -37,6 +38,16 @@ router.put(
   "/invites/:id",
   passport.authenticate("jwt", { session: false }),
   member.updateInvite
+);
+// TODO: add jwt auth
+router.post(
+  "/community",
+  community.createCommunity,
+);
+// TODO: add jwt auth
+router.get(
+  "/community",
+  community.getCommunities,
 );
 
 module.exports = router;
