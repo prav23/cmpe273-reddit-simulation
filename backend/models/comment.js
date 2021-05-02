@@ -11,6 +11,10 @@ const Comment = new Schema(
       type: String,
       required: true,
     },
+    postId: {
+      type: String,
+      required: true,
+    },
     postTitle: {
         type: String,
         required: true,

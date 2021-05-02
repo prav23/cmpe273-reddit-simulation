@@ -4,10 +4,11 @@ const createRootComment = async (req, res) => {
     try {
         // TODO: Input Validation
         //const validateCreateComment = require("../validation/comment");
-        const { author, postTitle, votes, body } = req.body;
+        const { author, postId, postTitle, votes, body } = req.body;
         const comment = await Comment.create({
             author,
             postTitle,
+            postId,
             votes,
             body,
         });
@@ -58,7 +59,7 @@ const voteComment = async(req, res) => {
                 parentComment.votes.push({ user, vote});
             }
             await parentComment.update({ score, votes });
-            return res.status(201).json(post);
+            return res.status(201).json(parentComment);
         }
         else{
             throw new Error("Post doesnt exist");
@@ -70,12 +71,12 @@ const voteComment = async(req, res) => {
 
 const load = async(req, res) => {
     try{
-        const comment_id = req.params.comment_id;
-        const comment = await Comment.find({ _id : comment_id });
-        if(!comment){
+        const postId = req.params.postId;
+        const comments = await Comment.find({ postId});
+        if(!comments){
             return res.status(400).json({ message : 'invalid comment id'});
         }
-        return res.status(200).json(post);
+        return res.status(200).json(comments);
     }catch(error){
         return res.status(400).json(error.message);
     }

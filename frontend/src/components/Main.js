@@ -9,6 +9,8 @@ import Login from "./auth/login";
 import Communities from './communities/Communities';
 
 import Dashboard from "./dashboard/dashboard";
+import Posts from "./posts/posts";
+import Comments from "./comments/comments";
 import Message from "./message/messagePage";
 
 //Create a Main Component
@@ -20,14 +22,13 @@ class Main extends Component {
                     <Navbar />
                 </div>
                 <div className = "row">
-                    <div className = "col-2">
-                        <Sidebar />
-                    </div>
                     <div className = "col">
                         <Route exact path="/" component={Landing} />
                         <Route path="/register" component={Register} />
                         <Route path="/login" component={Login} />
                         <Route path="/dashboard" component={Dashboard} />
+                        <Route path="/posts" component={Posts} />
+                        <Route path="/comments/:postId" component={Comments} />
                         <Route path="/communities" component={Communities} />
                         <Route path="/message" component={Message} />
 

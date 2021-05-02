@@ -13,13 +13,13 @@ router.get("/posts", posts.list);
 router.get("/posts/:communityName", posts.listByCommunity);
 router.get("/post/:post_id", posts.load);
 router.delete("/post/:post_id", posts.deletePost);
-router.put("/posts/vote", posts.votePost)
+router.put("/posts/vote", posts.votePost);
 
 //comment route requests
 router.post("/comments", comment.createRootComment);
 router.post("/comments/subcomment", comment.createSubComment);
 router.delete("/comment/:comment_id", comment.deleteComment);
-router.get("/comment/:comment_id", comment.load);
+router.get("/comments/:postId", comment.load);
 router.put("/comment/vote", comment.voteComment);
 
 router.post("/login", user.login);
