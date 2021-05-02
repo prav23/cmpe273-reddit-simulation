@@ -1,3 +1,4 @@
+const { connections } = require("mongoose");
 const Post = require("../models/post");
 
 const create = async (req, res) => {
@@ -25,25 +26,31 @@ const votePost = async(req, res) => {
     try{
         const { post_id, user, vote } = req.body;
         const post = await Post.findOne({ _id: post_id});
+        let updateScore;
+        let updatedVotes;
         if(post !== null){
             const existingVote = post.votes.find(item => item.user.equals(user));
             if(existingVote){
                 // reset score
-                post.score = post.score - existingVote.vote;
+                updateScore = post.score - existingVote.vote;
                 if(vote === 0){
                     // remove vote
-                    post.votes.pull(existingVote);
+                    updatedVotes = post.votes.pull(existingVote);
                 }else{
                     // change vote
-                    post.score = post.score + vote;
+                    updateScore = post.score + vote;
+                    updatedVotes = post.votes.pull(existingVote);
                     existingVote.vote = vote;
+                    updatedVotes = post.votes.push(existingVote);
                 }
+                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": updatedVotes }});
             } else if(vote !== 0){
                 // new vote
-                post.score += vote;
-                post.votes.push({ user, vote});
+                updateScore = post.score + vote;
+                updatedVotes = post.votes.push({ user, vote});
+                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": updatedVotes }});
             }
-            await post.update({ score, votes });
+            
             return res.status(201).json(post);
         }
         else{
