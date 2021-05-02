@@ -40,9 +40,9 @@ class Comments extends Component {
             <div className="col">
               <div className="card">
                 <div className="card-body">
+                <p className="card-text"> /r/{selectedPost.communityName} &nbsp; Posted by u/{selectedPost.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(selectedPost.createdAt))}</span></p>
                   <h5 className="card-title">{selectedPost.title}</h5>
                   <p className="card-text">{selectedPost.text} </p>
-                  <p className="card-text"><a href={`/comments/${selectedPost._id}`}> Comments</a> &nbsp;&nbsp;&nbsp;&nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(selectedPost.createdAt))}</span></p>
                 </div>
               </div>
             </div>
@@ -64,8 +64,8 @@ class Comments extends Component {
             <div className="col">
               <div className="card">
                 <div className="card-body">
+                <p className="card-text"> {comment.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(comment.createdAt))}</span></p>
                   <h5 className="card-title">{comment.body}</h5>
-                  <p className="card-text">{comment.author} </p>
                 </div>
               </div>
             </div>

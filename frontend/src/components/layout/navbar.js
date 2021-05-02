@@ -14,13 +14,13 @@ class Navbar extends Component {
     this.props.logoutUser();
   }
   render() {
-    const { isAuthenticated } = this.props.auth;
+    const { isAuthenticated, user } = this.props.auth;
     // const { profile } = this.props.dashboard;
     // const isProfile = profile != null ? true : false;
     return (
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-          <Link class="navbar-brand" to="/">
+          <Link class="navbar-brand" to="/dashboard">
             <img alt="logo" src={logo} height="25px" />
           </Link>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -42,6 +42,11 @@ class Navbar extends Component {
               {isAuthenticated && (
                 <>
                   <li class="nav-item">
+                    <Link to="/communities">
+                      Communities
+                    </Link>
+                  </li>
+                  <li class="nav-item">
                     <Link to="/message">
                       <IconButton>
                         <ChatIcon color="#0854a5" />
@@ -57,7 +62,7 @@ class Navbar extends Component {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                       >
-                        UserName
+                        { user.name }
                       </button>
                       <ul
                         class="dropdown-menu"

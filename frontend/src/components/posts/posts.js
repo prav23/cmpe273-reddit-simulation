@@ -33,9 +33,10 @@ class Posts extends Component {
             <div className="col">
               <div className="card">
                 <div className="card-body">
+                  <p className="card-text"> /r/{post.communityName} &nbsp; Posted by u/{post.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(post.createdAt))}</span></p>
                   <h5 className="card-title">{post.title}</h5>
                   <p className="card-text">{post.text} </p>
-                  <p className="card-text"><Link to={`/comments/${post._id}`}> Comments</Link> &nbsp;&nbsp;&nbsp;&nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(post.createdAt))}</span></p>
+                  <p className="card-text"><Link to={`/comments/${post._id}`}> Comments</Link></p>
                 </div>
               </div>
             </div>
