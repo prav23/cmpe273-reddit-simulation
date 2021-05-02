@@ -11,16 +11,16 @@ const router = express.Router();
 router.post("posts", posts.create);
 router.get("posts", posts.list);
 router.get("posts/:communityName", posts.listByCommunity);
-router.get("post/:post", posts.show);
-router.delete("post/:post", posts.deletePost);
-// TODO: upvote/downvote/unvote posts
+router.get("post/:post_id", posts.load);
+router.delete("post/:post_id", posts.deletePost);
+router.put("posts/vote", posts.votePost)
 
 //comment route requests
-router.post("post/:post", comment.createRootComment);
-router.post("post/comment/:rootComment", comment.createSubComment);
-router.delete("post/:post/:comment", comment.destroy);
-router.get("comment/:post", comment.load);
-// TODO: upvote/downvote/unvote comment
+router.post("comments", comment.createRootComment);
+router.post("comments/subcomment", comment.createSubComment);
+router.delete("comment/:comment_id", comment.deleteComment);
+router.get("comment/:comment_id", comment.load);
+router.put("comment/vote", comment.voteComment);
 
 router.post("/login", user.login);
 router.post("/register", user.register);

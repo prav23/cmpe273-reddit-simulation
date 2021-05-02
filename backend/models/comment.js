@@ -23,6 +23,10 @@ const Comment = new Schema(
         type: String,
         default: "",
     },
+    score: {
+      type: Number,
+      default: 0,
+    },
     votes: [
         {user: String, vote: Number}
     ],

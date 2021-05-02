@@ -35,6 +35,10 @@ const Post = new Schema(
     },
     image: {
         tyep: String,
+    },
+    score: {
+        type: Number,
+        default: 0,
     }
   }
 );
