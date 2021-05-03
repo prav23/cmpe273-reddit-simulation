@@ -22,4 +22,4 @@ CMPE 273 Project Group 4
 ## Kafka Backend
 *	Go to kafka-backend folder
 *	npm install
-*	node server.js
+*	node server.js.
