@@ -46,4 +46,5 @@ module.exports = {
   newCommunityValidation,
   newCommunityRuleValidation,
   updateCommunityValidation,
+  addPostValidation,
 };
