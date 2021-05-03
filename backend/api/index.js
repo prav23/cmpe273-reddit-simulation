@@ -51,7 +51,7 @@ router.get(
 router.get(
   "/users/:id/invites",
   passport.authenticate("jwt", { session: false }),
-  member.getAllInvitesForUser
+  member.getAllNewInvitesForUser
 );
 router.put(
   "/invites/:id",
@@ -61,48 +61,47 @@ router.put(
 router.post(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.createCommunity,
+  community.createCommunity
 );
 router.get(
   "/communities",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunities,
+  community.getCommunities
 );
 router.get(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunity,
+  community.getCommunity
 );
 router.put(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.updateCommunity,
+  community.updateCommunity
 );
 router.put(
   "/community/rule",
   passport.authenticate("jwt", { session: false }),
-  community.addCommunityRule,
+  community.addCommunityRule
 );
 router.get(
   "/community/members",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunityMembers,
+  community.getCommunityMembers
 );
 router.put(
   "/community/members/approve",
   passport.authenticate("jwt", { session: false }),
-  community.approveMembers,
+  community.approveMembers
 );
 router.put(
   "/community/posts",
   passport.authenticate("jwt", { session: false }),
-  community.updatePostCount,
+  community.updatePostCount
 );
 
 //message
 router.get("/message", message.getUsers);
 router.get("/message/:email/:receivedBy", message.getMessage);
 router.post("/message", message.sendMessage);
-
 
 module.exports = router;

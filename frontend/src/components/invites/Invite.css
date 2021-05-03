@@ -1,0 +1,76 @@
+.invite{}
+
+.invite  h1 {    
+    padding-bottom: 6px;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 26px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: #1c1c1c;
+    text-align: center;
+}
+
+.invite .communityImg{
+    height: 40px !important;
+}
+
+.invite .communityName {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #1c1c1c;
+}
+
+.invite .acceptInvite {
+    border: 1px solid #0079D3;
+    background: #0079D3;
+    color: #f9fbfd;
+    border-radius: 25px;
+    width: 100px;
+    margin-right: 5px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+}
+
+.invite .acceptInvite:focus {
+    border: 1px solid #0079D3 ;
+    background: #2288d4;
+    color: #f9fbfd;
+    border-radius: 25px;
+    width: 100px;
+}
+
+.invite .acceptInvite:hover {
+    border: 1px solid #0079D3;
+    background: #2288d4;
+    color: #f9fbfd;
+    border-radius: 25px;
+    width: 100px;
+}
+
+.invite .rejectInvite {
+    border: 1px solid #0079D3;
+    background: #f9fbfd;
+    color: #0079D3;
+    border-radius: 25px;
+    width: 100px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+}
+
+.invite .rejectInvite:hover {
+    border: 1px solid #0079D3 ;
+    background:#d3e1ef ;
+    color: #0079D3  ;
+    border-radius: 25px ;
+    width: 100px;
+}
+
+.invite .rejectInvite:focus {
+    border: 1px solid #0079D3 ;
+    background: #d3e1ef;
+    color: #0079D3 ;
+    border-radius: 25px ;
+    width: 100px;
+}
