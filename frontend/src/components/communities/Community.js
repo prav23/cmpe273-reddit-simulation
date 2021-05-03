@@ -6,6 +6,7 @@ import { withRouter } from 'react-router';
 import AddCommunityRule from './AddCommunityRule';
 import AddCommunityMember from './AddCommunityMember';
 import UpdateCommunity from './UpdateCommunity';
+import setAuthToken from '../../utils/setAuthToken';
 
 const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
@@ -15,6 +16,7 @@ class Community extends React.Component {
   constructor(props) {
     super(props);
     const { match, auth } = this.props;
+    setAuthToken(auth.user.token);
 
     this.state = {
       communityId: match.params.communityId,

@@ -1,5 +1,14 @@
 const Joi = require("joi");
 
+const addPostValidation = (body) => {
+  const schema = Joi.object().keys({
+    communityName: Joi.string(),
+  });
+
+  const { error } = schema.validate(body);
+  return error;
+};
+
 const newCommunityValidation = (body) => {
   const schema = Joi.object().keys({
     description: Joi.string(),
