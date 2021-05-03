@@ -22,7 +22,7 @@ router.get(
 
 router.post(
   "/invites",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   member.create
 );
 router.get(
@@ -64,6 +64,11 @@ router.put(
 router.put(
   "/community/rule",
   community.addCommunityRule,
+);
+// TODO: add jwt auth
+router.get(
+  "/community/members",
+  community.getCommunityMembers,
 );
 
 //message

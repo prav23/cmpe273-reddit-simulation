@@ -107,10 +107,31 @@ const updateCommunity = async (req, res) => {
   return res.status(200).send(community);
 };
 
+const getCommunityMembers = async (req, res) => {
+  if (!req.query.communityName && !req.query.createdby) {
+    return res.status(400).send('Community name and admin are required');
+  }
+
+  const communities = await Community.find({ name: req.query.communityName });
+  if (!communities || communities.length === 0) {
+    return res.status(400).send(`Community ${req.query.communityName} does not exist`);
+  }
+
+  const community = communities[0];
+  if (community.createdBy !== req.query.createdBy) {
+    return res.status(403).send(`User ${req.query.createdBy} is not community ${req.query.communityName} admin`);
+  }
+
+  const status = req.query.status ? req.query.status : 'invited';
+  const members = await Member.find({ communityId: community._id, status: status });
+  return res.status(200).send(members);
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
   getCommunity,
   addCommunityRule,
   updateCommunity,
+  getCommunityMembers,
 };
