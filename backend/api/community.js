@@ -140,13 +140,13 @@ const getCommunityMembers = async (req, res) => {
 
 // approve community members that have requested to join
 const approveMembers = async (req, res) => {
-  if (!req.body.communityName || !req.body.members) {
-    return res.status(400).send('Community name and invites are required');
+  if (!req.body.communityId || !req.body.members) {
+    return res.status(400).send('communityId and members are required');
   }
 
-  const communities = await Community.find({ name: req.query.communityName });
+  const communities = await Community.find({ _id: req.body.communityId });
   if (!communities || communities.length === 0) {
-    return res.status(400).send(`Community ${req.query.communityName} does not exist`);
+    return res.status(400).send(`Community ${req.body.communityId} does not exist`);
   }
 
   // increased num users in the community
@@ -156,14 +156,14 @@ const approveMembers = async (req, res) => {
 
   await Member.update(
     // find correct members
-    { _id: { $in: request.body.members } },
+    { _id: { $in: req.body.members } },
     // update status to joined
     { status: 'joined' },
     // update multiple documents
     { multi: true }
   );
 
-  return res.status(200).send('Approved community members');
+  return res.status(200).send(`Approved ${req.body.members.length} community members`);
 }
 
 module.exports = {

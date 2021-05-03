@@ -18,6 +18,7 @@ class AddCommunityMember extends React.Component {
       membersToApprove: [],
       communityId: community.communityId,
       createdBy: auth.user.user_id,
+      error: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -50,25 +51,35 @@ class AddCommunityMember extends React.Component {
   }
 
   async handleSubmit() {
-    const { membersToApprove } = this.state;
-    if (membersToApprove.length > 0) {
-      
-    }
+    const { membersToApprove, communityId } = this.state;
+    const { updateCommunity } = this.props;
 
-    this.setState({ show: false });
+    if (membersToApprove.length > 0) {
+      try {
+        await axios.put(`${API_URL}/community/members/approve`, {
+          communityId,
+          members: membersToApprove,
+        });
+        const members = await this.getMembers();
+        updateCommunity(true);
+        this.setState({
+          show: false,
+          error: '',
+          members,
+        });
+      } catch(error) {
+        this.setState({ show: true, error: error.response.data });
+      }
+    }
   }
 
   async getMembers() {
     const { communityId, createdBy } = this.state;
     try {
-      // TODO: replace created by with logged in user from redux state
-      const response = await axios.get(`${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}`);
+      const response = await axios.get(`${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}&status=invited`);
       return response.data;
     } catch(error) {
-      if (error.response) {
-        console.log(error.response);
-      }
-      return testMembers;
+      this.setState({ show: true, error: error.response.data });
     }
   }
 
@@ -120,6 +131,7 @@ class AddCommunityMember extends React.Component {
           <Modal show={show} onHide={this.handleClose}>
             <Modal.Header>
               <Modal.Title>{`${members.length} users to approve`}</Modal.Title>
+              <span style={{ color: 'red' }}>{error}</span>
             </Modal.Header>
 
             {this.getMemberList()}
