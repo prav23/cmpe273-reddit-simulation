@@ -3,8 +3,11 @@ const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
 const community = require("./community");
+
 const posts = require("./post");
 const comment = require("./comment");
+const message = require("./message");
+
 const router = express.Router();
 
 // post route requests
@@ -62,8 +65,29 @@ router.post(
 );
 // TODO: add jwt auth
 router.get(
-  "/community",
+  "/communities",
   community.getCommunities,
 );
+// TODO: add jwt auth
+router.get(
+  "/community",
+  community.getCommunity,
+);
+// TODO: add jwt auth
+router.put(
+  "/community",
+  community.updateCommunity,
+);
+// TODO: add jwt auth
+router.put(
+  "/community/rule",
+  community.addCommunityRule,
+);
+
+//message
+router.get("/message", message.getUsers);
+router.get("/message/:email/:receivedBy", message.getMessage);
+router.post("/message", message.sendMessage);
+
 
 module.exports = router;

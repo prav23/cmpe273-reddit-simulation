@@ -51,26 +51,17 @@ class Message extends Component {
         //auto suggest
         emaillist : [],
         emailsuggestions : [],
-        emailtext : "",
-        redirectVar: ""
+        emailtext : ""
     }
-    //Bind the handlers to this class
-    // this.sendMessage = this.sendMessage.bind(this); 
-    // this.submitSearch = this.submitSearch.bind(this);
-    this.messageChangeHandler = this.messageChangeHandler.bind(this);
-    //auto complete
-    this.emailSuggestionSelected = this.emailSuggestionSelected.bind(this);
-    this.emailTextChange = this.emailTextChange.bind(this);
-    this.renderEmailSuggestions = this.renderEmailSuggestions.bind(this);
   }
   componentDidMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
-    axios.get(`${API_URL}/users`)
+    axios.get(`${API_URL}/message`)
     .then(response => { 
-      let emaillist = response.data.data;
+      let emaillist = Array.from(response.data);
       console.log(emaillist);
       let emailarray = [];
-      emaillist.allUsers.map((listing) => {
+      emaillist.map((listing) => {
         emailarray.push(listing.email);
         this.setState({emaillist : emailarray})
       })
@@ -78,7 +69,26 @@ class Message extends Component {
     .catch(error => { console.log(error) });  
   }
   messageChangeHandler = (event) => {
-    this.setState({message : event.target.message})
+    this.setState({message : event.target.value})
+  }
+  submitSearch = () => {
+    axios.get(`${API_URL}/message/${localStorage.getItem("email")}/${this.state.receivedBy}`)
+      .then(response => { 
+        this.setState({messagelist : response.data})
+      })
+      .catch(error => { console.log(error) });  
+  }
+  sendMessage = () => {
+    const data = {
+      receivedBy : this.state.receivedBy,
+      sentBy : localStorage.getItem("email"),
+      message : this.state.message
+    }
+    console.log(data);
+    axios.post(`${API_URL}/message`, data)
+      .then(response => { 
+      })
+      .catch(error => { console.log(error) });  
   }
   emailTextChange = (event) => {
     this.setState({receivedBy: event.target.value});
@@ -161,13 +171,13 @@ class Message extends Component {
                                       <AccordionDetails>
                                           <Grid container spacing={3}>
                                               <Grid item xs={3}>
-                                                  <Typography className={classes.text}>Username: </Typography>
+                                                  <Typography className={classes.text}>Username: {listing.receivedBy}</Typography>
                                               </Grid>
                                               <Grid item xs={9}>
-                                                  <Typography className={classes.text}>Date: </Typography>
+                                                  <Typography className={classes.text}>Date: {listing.createAt}</Typography>
                                               </Grid>
                                               <Grid item xs={8}>
-                                                  <Typography className={classes.text}>message: </Typography>
+                                                  <Typography className={classes.text}>message: {listing.message}</Typography>
                                               </Grid>
                                           </Grid>
                                       </AccordionDetails>
