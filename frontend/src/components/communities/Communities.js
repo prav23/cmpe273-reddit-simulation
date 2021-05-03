@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { MDBIcon} from 'mdbreact';
+import { Button } from 'react-bootstrap';
 
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
@@ -192,18 +193,6 @@ class Communities extends React.Component {
       );
     }
 
-    const linkToUsers = (community) => {
-      if (community.numUsers && community.numUsers > 0) {
-        return (
-          <Link to={`/users/${community._id}`} style={{ color: '#000' }}>
-            {community.numUsers ? community.numUsers : 0}
-          </Link>
-        );
-      } else {
-        return (<Link to={`/communities`} style={{ color: '#000' }}> 0 </Link>);
-      }
-    }
-
     const communityRows = communities[currentPage].map((community) => (
       <tr key={uuidv4()}>
         <td>
@@ -219,9 +208,7 @@ class Communities extends React.Component {
         </td>
         <td style={{ textTransform: 'capitalize', verticalAlign: 'middle' }}>{community.description}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numPosts ? community.numPosts : 0}</td>
-        <td style={{ verticalAlign: 'middle' }}>
-          {linkToUsers(community)}
-        </td>
+        <td style={{ verticalAlign: 'middle' }}>{community.numUsers ? community.numUsers : 0}</td>
         <td style={{ verticalAlign: 'middle' }}>
           {
             `${new Date(community.createdAt).toLocaleDateString()}
@@ -236,7 +223,8 @@ class Communities extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <div className="card-body">
-              <h1 className="h2">Your Communities</h1>
+              <h1 className="h2" style={{ 'paddingBottom': '25px' }}>Your Communities</h1>
+              <Button variant="dark" href={`/users/community`} style={{ width: '15rem' }}> Manage users </Button>
 
               <div className="input-group-prepend" key={uuidv4()} style={{ paddingTop: '25px' }}>
                 <button

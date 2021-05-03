@@ -32,7 +32,7 @@ class Main extends Component {
                         <Route path="/posts" component={Posts} />
                         <Route path="/comments/:postId" component={Comments} />
 
-                        <Route path="/users/:communityId" component={CommunityUsers} />
+                        <Route path="/users/community" component={CommunityUsers} />
                         <Route path="/community/:communityId" component={Community} />
                         <Route path="/communities" component={Communities} />
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
 import ManageMembership from './ManageMembership';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
@@ -13,16 +12,11 @@ const defaultAvatars = require('./testImages');
 class CommunityUsers extends React.Component {
   constructor(props) {
     super(props);
-    const { match, auth } = this.props;
+    const { auth } = this.props;
     setAuthToken(auth.user.token);
 
     this.state = {
       createdBy: auth.user.user_id,
-      communityId: match.params.communityId,
-      community: {
-        name: 'Not found',
-        numUsers: 0,
-      },
       members: [],
     };
   }
@@ -30,24 +24,17 @@ class CommunityUsers extends React.Component {
   async componentDidMount() {
     this.setState({
       members: await this.getMembers(),
-      community: await this.getCommunity(),
     });
   }
 
   async getMembers() {
     const { communityId, createdBy } = this.state;
-    const response = await axios.get(`${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}&status=joined`);
-    return response.data;
-  }
-
-  async getCommunity() {
-    const { communityId, createdBy } = this.state;
-    const response = await axios.get(`${API_URL}/community?communityId=${communityId}&createdBy=${createdBy}`);
+    const response = await axios.get(`${API_URL}/community/members?createdBy=${createdBy}&status=joined`);
     return response.data;
   }
 
   render() {
-    const { members, community } = this.state;
+    const { members } = this.state;
 
     const rows = members.map((member) => (
       <tr key={uuidv4()}>
@@ -68,7 +55,7 @@ class CommunityUsers extends React.Component {
 
     return (
       <>
-      <h2 className="h2" style={{ margin: '25px' }}>{`${community.numUsers} active users in ${community.name}`}</h2>
+      <h2 className="h2" style={{ margin: '25px' }}>{`${members.length} active users`}</h2>
       <div className="table-responsive" style={{ paddingTop: '25px' }}>
         <table className="table">
           <thead className="thead-dark">
@@ -94,4 +81,4 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps)(withRouter(CommunityUsers));
+export default connect(mapStateToProps)(CommunityUsers);
