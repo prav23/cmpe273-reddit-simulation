@@ -1,22 +1,22 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { logoutUser } from "../../actions/authActions";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getPosts } from '../../actions/postActions';
 import ago from 's-ago';
 import { Link } from 'react-router-dom';
 
-class Landing extends Component {
+class Posts extends Component {
   componentDidMount() {
-    // if (this.props.auth.isAuthenticated) {
-    //   this.props.history.push("/dashboard");
-    // }
-    this.props.logoutUser();
+    const { isAuthenticated } = this.props.auth;
+    if(isAuthenticated){
+      //this.props.getPosts();
+    }
     this.props.getPosts();
   }
 
   render() {
-    const { postsDetails } = this.props.posts;
+    const { isAuthenticated } = this.props.auth;
+    const { postsDetails, postsloading } = this.props.posts;
 
     return (
       <div className="posts">
@@ -48,8 +48,7 @@ class Landing extends Component {
   }
 }
 
-
-Landing.propTypes = {
+Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   posts: PropTypes.object.isRequired,
@@ -60,4 +59,4 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps , { logoutUser, getPosts })(Landing);
+export default connect(mapStateToProps, { getPosts})(Posts);
