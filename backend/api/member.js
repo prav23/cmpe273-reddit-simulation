@@ -10,6 +10,8 @@ const {
   updateValidation,
 } = require("../validation/memberValidation");
 
+const defaultAvatars = require('../utils/defaultImages');
+
 exports.create = (req, res) => {
   const error = createValidation(req.body);
   if (error) {
@@ -18,18 +20,29 @@ exports.create = (req, res) => {
     });
   }
 
-  const newMember = new Member({ ...req.body });
-  newMember.save((saveError, data) => {
-    if (saveError) {
-      return res.status(400).send({
-        message: saveError.toString(),
-      });
+  User.find({ _id: req.body.userId }).then((users) => {
+    if (!users || users.length === 0) {
+      return res.status(400).send(`User with id ${req.body.userId} does not exist`);
     }
+    const user = users[0];
+    req.body.userName = user.name;
+    req.body.photo = user.profilePicture ? user.profilePicture : defaultAvatars.userAvatar;
 
-    return res.status(200).send({
-      data,
-      message: "Invite created successfully",
+    const newMember = new Member({ ...req.body });
+    newMember.save((saveError, data) => {
+      if (saveError) {
+        return res.status(400).send({
+          message: saveError.toString(),
+        });
+      }
+
+      return res.status(200).send({
+        data,
+        message: "Invite created successfully",
+      });
     });
+  }).catch((error) => {
+    return res.status(500).send(error);
   });
 };
 

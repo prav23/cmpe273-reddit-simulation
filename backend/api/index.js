@@ -83,6 +83,16 @@ router.put(
   "/community/rule",
   community.addCommunityRule,
 );
+// TODO: add jwt auth
+router.get(
+  "/community/members",
+  community.getCommunityMembers,
+);
+// TODO: add jwt auth
+router.put(
+  "/community/members/approve",
+  community.approveMembers,
+);
 
 //message
 router.get("/message", message.getUsers);
