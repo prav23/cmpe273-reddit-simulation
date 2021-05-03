@@ -96,7 +96,7 @@ router.put(
 router.put(
   "/community/posts",
   passport.authenticate("jwt", { session: false }),
-  community.addPost,
+  community.updatePostCount,
 );
 
 //message

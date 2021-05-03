@@ -167,7 +167,8 @@ const approveMembers = async (req, res) => {
   return res.status(200).send(`Approved ${req.body.members.length} community members`);
 }
 
-const addPost = async (req, res) => {
+// update num posts in community
+const updatePostCount = async (req, res) => {
   const error = addPostValidation(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -178,9 +179,9 @@ const addPost = async (req, res) => {
     return res.status(400).send(`Community ${req.body.communityName} does not exist`);
   }
 
-  // increased num users in the community
+  // increased num posts in the community
   const community = communities[0];
-  community.numPosts += 1;
+  community.numPosts += req.body.numPosts;
   await community.save();
 
   return res.status(200).send(community);
@@ -194,5 +195,5 @@ module.exports = {
   updateCommunity,
   getCommunityMembers,
   approveMembers,
-  addPost,
+  updatePostCount,
 };

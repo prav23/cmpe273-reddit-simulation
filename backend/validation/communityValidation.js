@@ -2,7 +2,8 @@ const Joi = require("joi");
 
 const addPostValidation = (body) => {
   const schema = Joi.object().keys({
-    communityName: Joi.string(),
+    communityName: Joi.string().required(),
+    numPosts: Joi.number().integer().required(),
   });
 
   const { error } = schema.validate(body);
