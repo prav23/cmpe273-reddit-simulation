@@ -15,7 +15,7 @@ class AddCommunityRule extends React.Component {
       fields: {
         title: '',
         description: '',
-        name: community.communityName,
+        communityId: community.communityId,
       },
       error: ''
     };

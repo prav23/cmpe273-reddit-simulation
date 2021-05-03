@@ -13,7 +13,7 @@ const newCommunityValidation = (body) => {
 
 const newCommunityRuleValidation = (body) => {
   const schema = Joi.object().keys({
-    name: Joi.string().required(),
+    communityId: Joi.string().required(),
     title: Joi.string().required(),
     description: Joi.string(),
   });

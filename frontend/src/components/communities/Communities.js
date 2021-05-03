@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { MDBIcon} from 'mdbreact';
 
@@ -13,6 +16,8 @@ const defaultAvatars = require('./testImages');
 class Communities extends React.Component {
   constructor(props) {
     super(props);
+    const { user, isAuthenticated } = this.props.auth;
+
     this.state = {
       communities: [],
       updateCommunity: false,
@@ -24,6 +29,8 @@ class Communities extends React.Component {
         'Users': 'angle-up',
       },
       defaultAvatar: defaultAvatars.communityAvatar,
+      createdBy: user.user_id,
+      isAuthenticated,
     }
 
     this.updateCommunities = this.updateCommunities.bind(this);
@@ -32,8 +39,14 @@ class Communities extends React.Component {
   }
 
   async componentDidMount() {
+    // const { isAuthenticated } = this.state;
     const { pagedCommunities, sortedCommunities } = await this.getCommunities();
-    this.setState({ communities: pagedCommunities, allCommunities: sortedCommunities });
+
+    if (this.props.auth.isAuthenticated) {
+      this.setState({ communities: pagedCommunities, allCommunities: sortedCommunities });
+    } else {
+      alert('Youre not logged in');
+    }
   }
 
   async componentDidUpdate() {
@@ -55,10 +68,9 @@ class Communities extends React.Component {
   }
 
   async getCommunities() {
-    const { activitiesPerPage, sortOrder } = this.state;
-    // TODO: update createdBy to logged in user
-    const response = await axios.get(`${API_URL}/communities?createdBy=admin`);
-    const communities = testCommunities.concat(response.data);
+    const { activitiesPerPage, sortOrder, createdBy } = this.state;
+    const response = await axios.get(`${API_URL}/communities?createdBy=${createdBy}`);
+    const communities = response.data;
     const sortedCommunities = Communities.sortCommunities(communities, sortOrder);
 
     let page = 0;
@@ -171,7 +183,7 @@ class Communities extends React.Component {
       return (
         <header>
           <div className="container-fluid" style={{ paddingTop: '25px', paddingLeft: '25px' }}>
-            <h1 className="h2">Join a community...</h1>
+            <h1 className="h2">Create a community...</h1>
           </div>
           <CreateCommunity updateCommunities={this.updateCommunities}/>
         </header>
@@ -189,9 +201,7 @@ class Communities extends React.Component {
           />
         </td>
         <td style={{ verticalAlign: 'middle' }}>
-          <a href={`/community/${community._id}`} style={{ color: '#000' }}>
-            {community.name}
-          </a>
+         <Link to={`/community/${community._id}`} style={{ color: '#000' }}> {community.name} </Link>
         </td>
         <td style={{ textTransform: 'capitalize', verticalAlign: 'middle' }}>{community.description}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numPosts ? community.numPosts : 0}</td>
@@ -297,4 +307,12 @@ class Communities extends React.Component {
   }
 }
 
-export default Communities;
+Communities.propTypes = {
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(Communities);

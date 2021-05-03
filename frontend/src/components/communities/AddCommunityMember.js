@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Modal } from 'react-bootstrap';
 
@@ -10,11 +12,12 @@ class AddCommunityMember extends React.Component {
   constructor(props) {
     super(props);
 
-    const { community } = this.props;
+    const { community, auth } = this.props;
     this.state = {
       members: [],
       membersToApprove: [],
-      communityName: community.communityName,
+      communityId: community.communityId,
+      createdBy: auth.user.user_id,
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -56,10 +59,10 @@ class AddCommunityMember extends React.Component {
   }
 
   async getMembers() {
-    const { communityName } = this.state;
+    const { communityId, createdBy } = this.state;
     try {
       // TODO: replace created by with logged in user from redux state
-      const response = await axios.get(`${API_URL}/community/members?communityName=${communityName}&createdBy=admin`);
+      const response = await axios.get(`${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}`);
       return response.data;
     } catch(error) {
       if (error.response) {
@@ -137,4 +140,12 @@ class AddCommunityMember extends React.Component {
   }
 }
 
-export default AddCommunityMember;
+AddCommunityMember.propTypes = {
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(AddCommunityMember);

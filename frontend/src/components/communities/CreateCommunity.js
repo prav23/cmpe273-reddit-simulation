@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 
 const axios = require('axios').default;
@@ -6,16 +8,17 @@ const { API_URL } = require('../../utils/Constants').default;
 
 class CreateCommunity extends React.Component {
   constructor(props) {
-    // TODO: get auth token from redux state
     super(props);
+    const { user } = this.props.auth;
 
     this.state = {
       show: false,
       fields: {
         name: '',
         description: '',
+        createdBy: user.user_id,
       },
-      error: ''
+      error: '',
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -41,13 +44,12 @@ class CreateCommunity extends React.Component {
   async handleSubmit() {
     const { fields } = this.state;
     const { updateCommunities } = this.props;
+    console.log(fields);
 
     if (!fields.name) {
       this.setState({ error: 'Community name is required' });
       return;
     }
-    // TODO: grab logged in user from state
-    fields.createdBy = 'admin';
 
     try {
       // TODO: add jwt auth token
@@ -114,4 +116,12 @@ class CreateCommunity extends React.Component {
   }
 }
 
-export default CreateCommunity;
+CreateCommunity.propTypes = {
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(CreateCommunity);

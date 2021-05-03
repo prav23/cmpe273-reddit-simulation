@@ -36,7 +36,7 @@ const createCommunity = async (req, res) => {
 // get communities created by a user
 const getCommunities = async (req, res) => {
   if (!req.query.createdBy) {
-    return res.status(400).send('Admin name is required');
+    return res.status(400).send('Admin is required');
   }
 
   const communities = await Community.find({ createdBy: req.query.createdBy }).exec();
@@ -45,14 +45,19 @@ const getCommunities = async (req, res) => {
 
 // get community by name
 const getCommunity = async (req, res) => {
-  if (!req.query.communityId) {
-    return res.status(400).send('communityId is required');
+  if (!req.query.communityId || !req.query.createdBy) {
+    return res.status(400).send('communityId and createdBy are required');
   }
 
-  const community = await Community.find({ _id: req.query.communityId }).exec();
+  const community = await Community.find({
+    _id: req.query.communityId,
+    createdBy: req.query.createdBy,
+  }).exec();
+
   if (community.length === 0) {
     return res.status(400).send(`Community ${req.query.communityId} doesn't exist`);
   }
+
   return res.status(200).send(community[0]);
 };
 
@@ -63,9 +68,9 @@ const addCommunityRule = async (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  const communities = await Community.find({ name: req.body.name }).exec();
+  const communities = await Community.find({ _id: req.body.communityId }).exec();
   if (communities.length === 0) {
-    return res.status(400).send(`Community ${req.body.communityName} doesn't exist`);
+    return res.status(400).send(`Community ${req.body.communityId} doesn't exist`);
   }
 
   const community = communities[0];
@@ -114,18 +119,18 @@ const updateCommunity = async (req, res) => {
 
 // get community members (optionally specify status)
 const getCommunityMembers = async (req, res) => {
-  if (!req.query.communityName && !req.query.createdby) {
-    return res.status(400).send('Community name and admin are required');
+  if (!req.query.communityId && !req.query.createdby) {
+    return res.status(400).send('communityId and createdby are required');
   }
 
-  const communities = await Community.find({ name: req.query.communityName });
+  const communities = await Community.find({ _id: req.query.communityId });
   if (!communities || communities.length === 0) {
-    return res.status(400).send(`Community ${req.query.communityName} does not exist`);
+    return res.status(400).send(`Community ${req.query.communityId} does not exist`);
   }
 
   const community = communities[0];
   if (community.createdBy !== req.query.createdBy) {
-    return res.status(403).send(`User ${req.query.createdBy} is not community ${req.query.communityName} admin`);
+    return res.status(403).send(`User ${req.query.createdBy} is not community ${req.query.communityId} admin`);
   }
 
   const status = req.query.status ? req.query.status : 'invited';

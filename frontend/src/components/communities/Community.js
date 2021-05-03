@@ -1,5 +1,7 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import AddCommunityRule from './AddCommunityRule';
 import AddCommunityMember from './AddCommunityMember';
@@ -12,14 +14,15 @@ const defaultAvatars = require('./testImages');
 class Community extends React.Component {
   constructor(props) {
     super(props);
+    const { match, auth } = this.props;
 
-    const { match } = this.props;
     this.state = {
       communityId: match.params.communityId,
       communityName: '',
       community: {},
       updateCommunity: false,
       defaultAvatar: defaultAvatars.communityAvatar,
+      createdBy: auth.user.user_id,
     };
 
     this.updateCommunity = this.updateCommunity.bind(this);
@@ -44,9 +47,9 @@ class Community extends React.Component {
   }
 
   async getCommunity() {
-    const { communityId } = this.state;
+    const { communityId, createdBy } = this.state;
     try {
-      const response = await axios.get(`${API_URL}/community?communityId=${communityId}`);
+      const response = await axios.get(`${API_URL}/community?communityId=${communityId}&createdBy=${createdBy}`);
       return response.data;
     } catch(error) {
       return {
@@ -124,10 +127,18 @@ class Community extends React.Component {
         <UpdateCommunity updateCommunity={this.updateCommunity} community={this.state}/>
         {this.getRulesTable(community)}
         <AddCommunityRule updateCommunity={this.updateCommunity} community={this.state}/>
-        <AddCommunityMember community={this.state} />
+        <AddCommunityMember updateCommunity={this.updateCommunity} community={this.state} />
       </header>
     );
   }
 }
 
-export default withRouter(Community);
+Community.propTypes = {
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(withRouter(Community));
