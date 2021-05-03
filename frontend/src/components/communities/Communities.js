@@ -7,10 +7,10 @@ import { MDBIcon} from 'mdbreact';
 
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
+import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 
 const testCommunities = require('./testCommunities');
-const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
 const defaultAvatars = require('./testImages');
 
@@ -192,6 +192,18 @@ class Communities extends React.Component {
       );
     }
 
+    const linkToUsers = (community) => {
+      if (community.numUsers && community.numUsers > 0) {
+        return (
+          <Link to={`/users/${community._id}`} style={{ color: '#000' }}>
+            {community.numUsers ? community.numUsers : 0}
+          </Link>
+        );
+      } else {
+        return (<Link to={`/communities`} style={{ color: '#000' }}> 0 </Link>);
+      }
+    }
+
     const communityRows = communities[currentPage].map((community) => (
       <tr key={uuidv4()}>
         <td>
@@ -207,7 +219,9 @@ class Communities extends React.Component {
         </td>
         <td style={{ textTransform: 'capitalize', verticalAlign: 'middle' }}>{community.description}</td>
         <td style={{ verticalAlign: 'middle' }}>{community.numPosts ? community.numPosts : 0}</td>
-        <td style={{ verticalAlign: 'middle' }}>{community.numUsers ? community.numUsers : 0}</td>
+        <td style={{ verticalAlign: 'middle' }}>
+          {linkToUsers(community)}
+        </td>
         <td style={{ verticalAlign: 'middle' }}>
           {
             `${new Date(community.createdAt).toLocaleDateString()}

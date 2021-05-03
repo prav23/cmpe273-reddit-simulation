@@ -98,6 +98,11 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   community.updatePostCount,
 );
+router.get(
+  "/user/communities",
+  passport.authenticate("jwt", { session: false }),
+  community.getCommunitiesForUser,
+);
 
 //message
 router.get("/message", message.getUsers);

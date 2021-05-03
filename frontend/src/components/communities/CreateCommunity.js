@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
 import setAuthToken from '../../utils/setAuthToken';
+import axios from 'axios';
 
-const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
 
 class CreateCommunity extends React.Component {

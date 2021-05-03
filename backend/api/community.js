@@ -187,6 +187,33 @@ const updatePostCount = async (req, res) => {
   return res.status(200).send(community);
 }
 
+const getCommunitiesForUser = async(req, res) => {
+  if (!req.query.userId || !req.query.createdBy) {
+    return res.status(400).send('userId and createdBy are required');
+  }
+
+  // find all communities created by admin
+  const communities = await Community.find({ createdBy: req.query.createdBy });
+  if (communities.length > 0) {
+    const communityIds = communities.map((community) => {
+      return community._id;
+    });
+
+    // find all memberships for user in communities created by admin
+    const members = await Member.find({
+      userId: req.query.userId,
+      communityId: { $in: communityIds },
+      status: 'joined',
+    });
+    const memberIds = members.map((member) => member.communityName);
+    const userCommunities = communities.filter((community) => memberIds.includes(community.name));
+
+    return res.status(200).send({ communities: userCommunities });
+  }
+
+  return res.status(200).send({ communities: [] })
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -196,4 +223,5 @@ module.exports = {
   getCommunityMembers,
   approveMembers,
   updatePostCount,
+  getCommunitiesForUser,
 };
