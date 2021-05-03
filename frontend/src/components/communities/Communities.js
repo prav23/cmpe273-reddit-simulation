@@ -7,6 +7,7 @@ import { MDBIcon} from 'mdbreact';
 
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
+import setAuthToken from '../../utils/setAuthToken';
 
 const testCommunities = require('./testCommunities');
 const axios = require('axios').default;
@@ -17,6 +18,7 @@ class Communities extends React.Component {
   constructor(props) {
     super(props);
     const { user, isAuthenticated } = this.props.auth;
+    setAuthToken(user.token);
 
     this.state = {
       communities: [],

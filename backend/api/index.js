@@ -58,40 +58,45 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   member.updateInvite
 );
-// TODO: add jwt auth
 router.post(
   "/community",
+  passport.authenticate("jwt", { session: false }),
   community.createCommunity,
 );
-// TODO: add jwt auth
 router.get(
   "/communities",
+  passport.authenticate("jwt", { session: false }),
   community.getCommunities,
 );
-// TODO: add jwt auth
 router.get(
   "/community",
+  passport.authenticate("jwt", { session: false }),
   community.getCommunity,
 );
-// TODO: add jwt auth
 router.put(
   "/community",
+  passport.authenticate("jwt", { session: false }),
   community.updateCommunity,
 );
-// TODO: add jwt auth
 router.put(
   "/community/rule",
+  passport.authenticate("jwt", { session: false }),
   community.addCommunityRule,
 );
-// TODO: add jwt auth
 router.get(
   "/community/members",
+  passport.authenticate("jwt", { session: false }),
   community.getCommunityMembers,
 );
-// TODO: add jwt auth
 router.put(
   "/community/members/approve",
+  passport.authenticate("jwt", { session: false }),
   community.approveMembers,
+);
+router.put(
+  "/community/posts",
+  passport.authenticate("jwt", { session: false }),
+  community.updatePostCount,
 );
 
 //message

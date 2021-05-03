@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
+import setAuthToken from '../../utils/setAuthToken';
 
 const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
@@ -10,6 +11,7 @@ class CreateCommunity extends React.Component {
   constructor(props) {
     super(props);
     const { user } = this.props.auth;
+    setAuthToken(user.token);
 
     this.state = {
       show: false,
@@ -28,11 +30,11 @@ class CreateCommunity extends React.Component {
   }
 
   handleClose() {
-    this.setState({ show: false, error: '' });
+    this.setState({ show: false, error: '', fields: {} });
   }
 
   handleShow() {
-    this.setState({ show: true, error: '' });
+    this.setState({ show: true, error: '', fields: {} });
   }
 
   handleChange(field, event) {
@@ -47,7 +49,7 @@ class CreateCommunity extends React.Component {
     console.log(fields);
 
     if (!fields.name) {
-      this.setState({ error: 'Community name is required' });
+      this.setState({ error: 'Community name is required', fields: {} });
       return;
     }
 
@@ -57,11 +59,11 @@ class CreateCommunity extends React.Component {
       updateCommunities(true);
     } catch(error) {
       if (error.response && error.response.status === 400) {
-        this.setState({ error: error.response.data });
+        this.setState({ error: error.response.data, fields: {} });
         return;
       }
     }
-    this.setState({ show: false });
+    this.setState({ show: false, fields: {} });
   }
 
   render() {

@@ -6,6 +6,7 @@ const {
   newCommunityValidation,
   newCommunityRuleValidation,
   updateCommunityValidation,
+  addPostValidation,
 } = require("../validation/communityValidation");
 
 const Member = require("../models/member");
@@ -166,6 +167,26 @@ const approveMembers = async (req, res) => {
   return res.status(200).send(`Approved ${req.body.members.length} community members`);
 }
 
+// update num posts in community
+const updatePostCount = async (req, res) => {
+  const error = addPostValidation(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  const communities = await Community.find({ name: req.body.communityName });
+  if (!communities || communities.length === 0) {
+    return res.status(400).send(`Community ${req.body.communityName} does not exist`);
+  }
+
+  // increased num posts in the community
+  const community = communities[0];
+  community.numPosts += req.body.numPosts;
+  await community.save();
+
+  return res.status(200).send(community);
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -174,4 +195,5 @@ module.exports = {
   updateCommunity,
   getCommunityMembers,
   approveMembers,
+  updatePostCount,
 };

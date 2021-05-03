@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import { Button, Modal } from 'react-bootstrap';
+import setAuthToken from '../../utils/setAuthToken';
 
 const testMembers = require('./testMembers');
 const axios = require('axios').default;
@@ -13,6 +14,8 @@ class AddCommunityMember extends React.Component {
     super(props);
 
     const { community, auth } = this.props;
+    setAuthToken(auth.user.token);
+
     this.state = {
       members: [],
       membersToApprove: [],
@@ -54,7 +57,7 @@ class AddCommunityMember extends React.Component {
     const { membersToApprove, communityId } = this.state;
     const { updateCommunity } = this.props;
 
-    if (membersToApprove.length > 0) {
+    if (membersToApprove && membersToApprove.length > 0) {
       try {
         await axios.put(`${API_URL}/community/members/approve`, {
           communityId,
@@ -115,7 +118,7 @@ class AddCommunityMember extends React.Component {
 
   render() {
     const { show, error, members } = this.state;
-    if (members.length === 0) {
+    if (!members || members.length === 0) {
       return (
         <h5 className="card-title" style={{ 'paddingTop': '25px' }}>No invitations to approve</h5>
       );
