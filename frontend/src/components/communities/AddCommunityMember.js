@@ -13,6 +13,7 @@ class AddCommunityMember extends React.Component {
     const { community } = this.props;
     this.state = {
       members: [],
+      membersToApprove: [],
       communityName: community.communityName,
     };
 
@@ -20,6 +21,8 @@ class AddCommunityMember extends React.Component {
     this.handleShow = this.handleShow.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    this.addMember = this.addMember.bind(this);
   }
 
   async componentDidMount() {
@@ -44,6 +47,11 @@ class AddCommunityMember extends React.Component {
   }
 
   async handleSubmit() {
+    const { membersToApprove } = this.state;
+    if (membersToApprove.length > 0) {
+      
+    }
+
     this.setState({ show: false });
   }
 
@@ -61,15 +69,20 @@ class AddCommunityMember extends React.Component {
     }
   }
 
+  addMember(inviteId) {
+    const { membersToApprove } = this.state;
+    membersToApprove.push(inviteId);
+  }
+
   getMemberList() {
     const { members } = this.state;
     const membersList = [];
 
     members.forEach((member) => {
       membersList.push(
-        <div class="form-check" style={{ margin: '15px' }} key={uuidv4()}>
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-          <label class="form-check-label" for="flexCheckDefault" style={{ verticalAlign: 'middle' }}>
+        <div className="form-check" style={{ margin: '15px' }} key={uuidv4()}>
+          <input className="form-check-input" type="checkbox" id="flexCheckDefault" onClick={() => this.addMember(member._id)} />
+          <label className="form-check-label" for="flexCheckDefault" style={{ verticalAlign: 'middle' }}>
             <span style={{'margin': '5px', verticalAlign: 'middle' }}>
               <img
                 src={member.photo}
@@ -90,7 +103,7 @@ class AddCommunityMember extends React.Component {
     const { show, error, members } = this.state;
     if (members.length === 0) {
       return (
-        <h5 class="card-title" style={{ 'paddingTop': '25px' }}>No invitations to approve</h5>
+        <h5 className="card-title" style={{ 'paddingTop': '25px' }}>No invitations to approve</h5>
       );
     }
 

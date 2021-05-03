@@ -30,7 +30,7 @@ class Main extends Component {
                         <Route path="/login" component={Login} />
                         <Route path="/dashboard" component={Dashboard} />
                         <Route path="/communities" component={Communities} />
-                        <Route path="/community/:communityName">
+                        <Route path="/community/:communityId">
                           <Community />
                         </Route>
                         <Route path="/message" component={Message} />

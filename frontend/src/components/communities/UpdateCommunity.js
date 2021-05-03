@@ -15,7 +15,7 @@ class UpdateCommunity extends React.Component {
       fields: {
         newName: null,
         description: null,
-        name: community.communityName,
+        communityId: community.communityId,
       },
       error: ''
     };

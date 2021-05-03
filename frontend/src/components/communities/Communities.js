@@ -189,7 +189,7 @@ class Communities extends React.Component {
           />
         </td>
         <td style={{ verticalAlign: 'middle' }}>
-          <a href={`/community/${community.name.replace('/', '_')}`} style={{ color: '#000' }}>
+          <a href={`/community/${community._id}`} style={{ color: '#000' }}>
             {community.name}
           </a>
         </td>

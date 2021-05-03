@@ -15,7 +15,8 @@ class Community extends React.Component {
 
     const { match } = this.props;
     this.state = {
-      communityName: match.params.communityName.replace('_', '/'),
+      communityId: match.params.communityId,
+      communityName: '',
       community: {},
       updateCommunity: false,
       defaultAvatar: defaultAvatars.communityAvatar,
@@ -25,29 +26,31 @@ class Community extends React.Component {
   }
 
   async componentDidMount() {
-    const { communityName } = this.state;
-    this.setState({ community: await this.getCommunity() });
+    const community = await this.getCommunity();
+    this.setState({ community, communityName: community.name });
   }
 
   async componentDidUpdate() {
-    const { updateCommunity, communityName } = this.state;
+    const { updateCommunity } = this.state;
+    const community = await this.getCommunity();
 
     if (updateCommunity) {
       this.setState({
-        community: await this.getCommunity(),
+        community,
+        communityName: community.name,
         updateCommunity: false,
       });
     }
   }
 
   async getCommunity() {
-    const { communityName } = this.state;
+    const { communityId } = this.state;
     try {
-      const response = await axios.get(`${API_URL}/community?communityName=${communityName}`);
+      const response = await axios.get(`${API_URL}/community?communityId=${communityId}`);
       return response.data;
     } catch(error) {
       return {
-        name: communityName,
+        name: 'Community not found',
         description: '',
         numUsers: 0,
         numPosts: 0,
@@ -100,8 +103,8 @@ class Community extends React.Component {
 
     return (
       <header style={{'margin': '25px' }}>
-        <div class="card border-dark mb-3" style={{'width': '100%' }}>
-          <div class="card-header">
+        <div className="card border-dark mb-3" style={{'width': '100%' }}>
+          <div className="card-header">
             <span style={{'margin': '5px' }}>
               <img
                 src={community.photo ? community.photo : defaultAvatar}
@@ -112,10 +115,10 @@ class Community extends React.Component {
             </span>
             {community.name}
           </div>
-          <div class="card-body text-dark">
-            <h5 class="card-title">{community.description}</h5>
-            <p class="card-text">{`Num users: ${community.numUsers}`}</p>
-            <p class="card-text">{`Num posts: ${community.numPosts}`}</p>
+          <div className="card-body text-dark">
+            <h5 className="card-title">{community.description}</h5>
+            <p className="card-text">{`Num users: ${community.numUsers}`}</p>
+            <p className="card-text">{`Num posts: ${community.numPosts}`}</p>
           </div>
         </div>
         <UpdateCommunity updateCommunity={this.updateCommunity} community={this.state}/>

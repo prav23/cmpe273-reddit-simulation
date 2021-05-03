@@ -10,6 +10,8 @@ const {
   updateValidation,
 } = require("../validation/memberValidation");
 
+const defaultAvatars = require('../utils/defaultImages');
+
 exports.create = (req, res) => {
   const error = createValidation(req.body);
   if (error) {
@@ -24,6 +26,7 @@ exports.create = (req, res) => {
     }
     const user = users[0];
     req.body.userName = user.name;
+    req.body.photo = user.profilePicture ? user.profilePicture : defaultAvatars.userAvatar;
 
     const newMember = new Member({ ...req.body });
     newMember.save((saveError, data) => {

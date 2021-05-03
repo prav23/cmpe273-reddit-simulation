@@ -24,7 +24,7 @@ const newCommunityRuleValidation = (body) => {
 
 const updateCommunityValidation = (body) => {
   const schema = Joi.object().keys({
-    name: Joi.string().required(),
+    communityId: Joi.string().required(),
     newName: Joi.string().allow(null),
     description: Joi.string().allow(null),
   });
