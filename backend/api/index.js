@@ -40,7 +40,7 @@ router.get(
 
 router.post(
   "/invites",
-  //passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   member.create
 );
 router.get(
