@@ -8,7 +8,7 @@ import Register from "./auth/register";
 import Login from "./auth/login";
 import Communities from './communities/Communities';
 import Community from './communities/Community';
-
+import CreatePost from './posts/createpost';
 import Dashboard from "./dashboard/dashboard";
 import Posts from "./posts/posts";
 import Comments from "./comments/comments";
@@ -30,6 +30,7 @@ class Main extends Component {
                         <Route path="/dashboard" component={Dashboard} />
                         <Route path="/posts" component={Posts} />
                         <Route path="/comments/:postId" component={Comments} />
+                        <Route path="/createpost/:communityName" component={CreatePost} />
                         <Route path="/communities" component={Communities} />
                         <Route path="/community/:communityId" component={Community} />
                         <Route path="/message" component={Message} />

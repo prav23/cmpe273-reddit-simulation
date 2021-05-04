@@ -17,10 +17,12 @@ class Posts extends Component {
   render() {
     const { isAuthenticated } = this.props.auth;
     const { postsDetails, postsloading } = this.props.posts;
-
+    const sortedpostsDetails = postsDetails.sort(function(a,b){
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
     return (
       <div className="posts">
-        {postsDetails.map(post => {
+        {sortedpostsDetails.map(post => {
           return (
           <div className="row mt-4">
             <div className="col-1">
@@ -36,6 +38,8 @@ class Posts extends Component {
                   <p className="card-text"> /r/{post.communityName} &nbsp; Posted by u/{post.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(post.createdAt))}</span></p>
                   <h5 className="card-title">{post.title}</h5>
                   <p className="card-text">{post.text} </p>
+                  {post.image !== "" && <img style = {{width:"400px",height:"400px"}} src={post.image} class="img-thumbnail" alt="..."/>}
+                  {post.url !== "" && <iframe id={post._id} src= {post.url} width="400" height="400"></iframe>}
                   <p className="card-text"><Link to={`/comments/${post._id}`}> Comments</Link></p>
                 </div>
               </div>
