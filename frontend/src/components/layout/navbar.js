@@ -1,28 +1,59 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions/authActions";
+import { searchRedirect } from "../../actions/searchCommunitiesActions";
 import { Button } from "react-bootstrap";
 import { ChatIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
 import logo from "../../icons/reddit-logo.png";
 import "./navbar.css";
 
 class Navbar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: '',
+    };
+  }
+
+  handleSearchChange = (e) => {
+    this.setState({
+      searchText: e.target.value,
+    });
+  }
+
+  handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const { searchText } = this.state;
+
+    this.props.searchRedirect();
+  }
+
   onLogoutClick(e) {
     e.preventDefault();
     this.props.logoutUser();
   }
+
   render() {
     const { isAuthenticated, user } = this.props.auth;
+    const { redirectToSearchPage } = this.props.searchCommunities;
+    const { searchText } = this.state;
     // const { profile } = this.props.dashboard;
     // const isProfile = profile != null ? true : false;
     return (
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        { redirectToSearchPage ? <Redirect to={`/findcommunities?q=${searchText}`} /> : null }
         <div class="container-fluid">
           <Link class="navbar-brand" to="/dashboard">
             <img alt="logo" src={logo} height="25px" />
           </Link>
+          <form onSubmit={this.handleSearchSubmit} className="searchBar">
+            <SearchIcon color="disabled" />
+            <input type='text' placeholder='Search for communities' onChange={this.handleSearchChange} />
+          </form>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav w-100 d-flex justify-content-end">
               {!isAuthenticated && (
@@ -89,6 +120,7 @@ class Navbar extends Component {
 const mapStateToProps = (state) => ({
   auth: state.auth,
   dashboard: state.dashboard,
+  searchCommunities: state.searchCommunities,
 });
 
-export default connect(mapStateToProps, { logoutUser })(Navbar);
+export default connect(mapStateToProps, { logoutUser, searchRedirect })(Navbar);

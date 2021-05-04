@@ -64,3 +64,17 @@
     color: #6c757d;
     box-shadow: 0 0 0 0.2px rgb(130 138 145 / 50%);
 }
+
+.searchBar {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0; 
+    width: 350px;
+    height: 40px;
+}
+
+.searchBar > input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}

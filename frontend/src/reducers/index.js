@@ -4,6 +4,7 @@ import authReducer from './authReducer';
 import dashboardReducer from './dashboardReducer';
 import postsReducer from './postsReducer';
 import commentsReducer from './commentsReducer';
+import searchCommunitiesReducer from './searchCommunitiesReducer'
 import { USER_LOGOUT } from '../actions/types';
 
 const appReducer = combineReducers({
@@ -12,6 +13,7 @@ const appReducer = combineReducers({
     dashboard: dashboardReducer,
     posts: postsReducer,
     comments: commentsReducer,
+    searchCommunities: searchCommunitiesReducer,
 })
   
 const rootReducer = (state, action) => {

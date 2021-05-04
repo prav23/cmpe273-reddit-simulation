@@ -13,6 +13,7 @@ import Dashboard from "./dashboard/dashboard";
 import Posts from "./posts/posts";
 import Comments from "./comments/comments";
 import Message from "./message/messagePage";
+import SearchCommunities from './communities/SearchCommunities';
 
 //Create a Main Component
 class Main extends Component {
@@ -33,6 +34,7 @@ class Main extends Component {
                         <Route path="/communities" component={Communities} />
                         <Route path="/community/:communityId" component={Community} />
                         <Route path="/message" component={Message} />
+                        <Route path="/findcommunities" component={SearchCommunities} />
 
                     </div>
                 </div>                
