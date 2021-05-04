@@ -3,7 +3,8 @@ import axios from "axios";
 import {
   GET_POSTS,
   POSTS_LOADING,
-  CLEAR_POSTS
+  CLEAR_POSTS,
+  GET_ERRORS
 } from "./types";
 
 // Get Dashboard Details
@@ -39,3 +40,21 @@ export const clearPosts = () => {
   };
 };
 
+// Create Posts
+export const createPost = (postData, history) => dispatch => {
+  axios
+    .post("http://localhost:3001/api/posts", postData)
+    .then(res => {
+      const updatePostData = {
+        communityName : postData.communityName,
+      }
+      axios.put("http://localhost:3001/api/community/posts", updatePostData)
+      .then(res => history.push("/dashboard"));
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};

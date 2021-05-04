@@ -181,7 +181,7 @@ const updatePostCount = async (req, res) => {
 
   // increased num posts in the community
   const community = communities[0];
-  community.numPosts += req.body.numPosts;
+  community.numPosts += 1;
   await community.save();
 
   return res.status(200).send(community);
