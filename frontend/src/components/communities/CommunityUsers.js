@@ -18,7 +18,10 @@ class CommunityUsers extends React.Component {
     this.state = {
       createdBy: auth.user.user_id,
       members: [],
+      updateUsers: false,
     };
+
+    this.updateUsers = this.updateUsers.bind(this);
   }
 
   async componentDidMount() {
@@ -27,8 +30,23 @@ class CommunityUsers extends React.Component {
     });
   }
 
+  async componentDidUpdate() {
+    const { updateUsers } = this.state;
+
+    if (updateUsers) {
+      this.setState({
+        members: await this.getMembers(),
+        updateUsers: false,
+      });
+    }
+  }
+
+  updateUsers(updateUsers) {
+    this.setState({ updateUsers });
+  }
+
   async getMembers() {
-    const { communityId, createdBy } = this.state;
+    const { createdBy } = this.state;
     const response = await axios.get(`${API_URL}/community/members?createdBy=${createdBy}&status=joined`);
     return response.data;
   }
@@ -48,7 +66,7 @@ class CommunityUsers extends React.Component {
         </td>
         <td style={{ verticalAlign: 'middle' }}>{member.userName}</td>
         <td style={{ verticalAlign: 'middle' }}>
-          <ManageMembership member={member} />
+          <ManageMembership member={member} updateUsers={this.updateUsers} />
         </td>
       </tr>
     ));

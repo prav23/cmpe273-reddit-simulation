@@ -17,6 +17,7 @@ class ManageMembership extends React.Component {
       createdBy: auth.user.user_id,
       member,
       communities: [],
+      communitiesToRemove: [],
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -49,7 +50,20 @@ class ManageMembership extends React.Component {
   }
 
   async handleSubmit() {
-    this.setState({ show: false });
+    const { communitiesToRemove, member } = this.state;
+    const { updateUsers } = this.props;
+
+    const deleteData = { userId: member.userId, communityIds: communitiesToRemove };
+    const deleteParams = new URLSearchParams(deleteData).toString();
+
+    const response = await axios.delete(`${API_URL}/user/communities?${deleteParams}`);
+    updateUsers(true);
+    this.setState({ show: false, communitiesToRemove: [] });
+  }
+
+  addCommunity(communityId) {
+    const { communitiesToRemove } = this.state;
+    communitiesToRemove.push(communityId);
   }
 
   getCommunityList() {
@@ -59,7 +73,7 @@ class ManageMembership extends React.Component {
     communities.forEach((community) => {
       communityList.push(
         <div className="form-check" style={{ margin: '15px' }} key={community._id}>
-          <input className="form-check-input" type="checkbox" id="flexCheckDefault" />
+          <input className="form-check-input" type="checkbox" id="flexCheckDefault" onClick={() => this.addCommunity(community._id)} />
           <label className="form-check-label" for="flexCheckDefault" style={{ verticalAlign: 'middle' }}>
             <span style={{'margin': '5px', verticalAlign: 'middle' }}>
               <img

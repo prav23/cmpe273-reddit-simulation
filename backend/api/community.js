@@ -10,6 +10,8 @@ const {
 } = require("../validation/communityValidation");
 
 const Member = require("../models/member");
+const Post = require("../models/post");
+const Comment = require("../models/comment");
 
 // create a new community
 const createCommunity = async (req, res) => {
@@ -205,7 +207,7 @@ const updatePostCount = async (req, res) => {
 
   // increased num posts in the community
   const community = communities[0];
-  community.numPosts += req.body.numPosts;
+  community.numPosts += 1;
   await community.save();
 
   return res.status(200).send(community);
@@ -229,13 +231,60 @@ const getCommunitiesForUser = async(req, res) => {
       communityId: { $in: communityIds },
       status: 'joined',
     });
-    const memberIds = members.map((member) => member.communityName);
-    const userCommunities = communities.filter((community) => memberIds.includes(community.name));
+
+    const memberIds = members.map((member) => member.communityId);
+    const userCommunities = await Community.find({
+      _id: { $in: memberIds },
+    });
 
     return res.status(200).send({ communities: userCommunities });
   }
 
   return res.status(200).send({ communities: [] })
+}
+
+// delete all of a user's posts, comments, and memberships from a community
+const leaveCommunity = async(req, res) => {
+  if (!req.query.userId && !req.query.communityIds) {
+    return res.status.send('userId and communityIds are required');
+  }
+
+  // find user
+  const users = await User.find({ _id: req.query.userId });
+  if (!users || users.length === 0) {
+    return res.status(400).send(`User ${req.query.userId} does not exist`);
+  }
+
+  // find communities
+  const communities = await Community.find({ _id: { $in: req.query.communityIds.split(',') } });
+  if (!communities || communities.length === 0) {
+    return res.status(400).send(`No communities ${req.query.communityIds} found`);
+  }
+
+  const user = users[0];
+  const communityNames = communities.map((community) => community.name);
+
+  // find posts
+  const posts = await Post.find({
+    author: req.query.userId,
+    communityName: { $in: communityNames },
+  });
+  const postIds = posts.map((post) => post._id);
+
+  // delete comments and posts
+  await Comment.deleteMany({ postId: { $in: postIds } });
+  await Post.deleteMany({
+    author: req.query.userId,
+    communityName: { $in: communityNames },
+  });
+
+  // delete memberships
+  await Member.deleteMany({
+    userId: req.query.userId,
+    communityId: { $in: req.query.communityIds.split(',') },
+  });
+
+  return res.status(200).send(`removed ${req.query.userId} from communities ${req.query.communityIds}`);
 }
 
 module.exports = {
@@ -248,4 +297,5 @@ module.exports = {
   approveMembers,
   updatePostCount,
   getCommunitiesForUser,
+  leaveCommunity,
 };
