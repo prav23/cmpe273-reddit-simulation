@@ -6,7 +6,7 @@ import {
   
   const initialState = {
     dashboardDetails: null,
-    dashboardLoading: false,
+    postsLoading: false,
   };
   
   export default function dashRed(state = initialState, action) {
