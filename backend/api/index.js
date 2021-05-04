@@ -38,65 +38,73 @@ router.get(
   user.findAllUsers
 );
 
+// Create invite
 router.post(
   "/invites",
   passport.authenticate("jwt", { session: false }),
   member.create
 );
+
+// Get invites sent out by community admin
 router.get(
   "/communities/:id/invites",
   passport.authenticate("jwt", { session: false }),
   member.getAllInvitesForCommunity
 );
+
+// Get invites received by user
 router.get(
   "/users/:id/invites",
   passport.authenticate("jwt", { session: false }),
-  member.getAllInvitesForUser
+  member.getAllNewInvitesForUser
 );
+
+// Update invite status to joined, rejected
 router.put(
   "/invites/:id",
   passport.authenticate("jwt", { session: false }),
   member.updateInvite
 );
+
 router.post(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.createCommunity,
+  community.createCommunity
 );
 router.get(
   "/communities",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunities,
+  community.getCommunities
 );
 router.get(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunity,
+  community.getCommunity
 );
 router.put(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.updateCommunity,
+  community.updateCommunity
 );
 router.put(
   "/community/rule",
   passport.authenticate("jwt", { session: false }),
-  community.addCommunityRule,
+  community.addCommunityRule
 );
 router.get(
   "/community/members",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunityMembers,
+  community.getCommunityMembers
 );
 router.put(
   "/community/members/approve",
   passport.authenticate("jwt", { session: false }),
-  community.approveMembers,
+  community.approveMembers
 );
 router.put(
   "/community/posts",
   passport.authenticate("jwt", { session: false }),
-  community.updatePostCount,
+  community.updatePostCount
 );
 router.get(
   "/user/communities",
@@ -113,6 +121,5 @@ router.delete(
 router.get("/message", message.getUsers);
 router.get("/message/:email/:receivedBy", message.getMessage);
 router.post("/message", message.sendMessage);
-
 
 module.exports = router;
