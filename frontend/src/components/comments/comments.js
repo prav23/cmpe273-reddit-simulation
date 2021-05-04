@@ -6,6 +6,17 @@ import ago from 's-ago';
 import axios from "axios";
 class Comments extends Component {
 
+  constructor(props){
+    super(props);
+    this.state = {
+      pageSize: 2,
+      pageNumber: 0,
+      activatedExpense: null,
+      newRootCommentText: '',
+      newSubCommentText: ''
+    }
+  }
+
   componentDidMount() {
     const { isAuthenticated } = this.props.auth;
     if(isAuthenticated){
@@ -13,6 +24,43 @@ class Comments extends Component {
     }
     const postId = this.props.match.params.postId;
     this.props.getComments(postId);
+  }
+
+  // componentWillUpdate(nextProps, nextState){
+  //   if(this.state.activatedComment !== nextState.activatedComment){
+  //     axios.get(`http://localhost:3001/api/subcomments/${nextState.activatedComment}`).then(response => {
+  //       this.setState({subComments: response.data.data.subComments});
+  //     })
+  //   }
+  // }
+
+  submitNewRootComment(postTitle, postID){
+    axios.post('http://localhost:3001/api/expensecomments', {
+      postTitle,
+      postID,
+      body: this.state.newRootCommentText
+    }).then(response => {
+      this.setState({newRootCommentText: ''})
+      // const oldExpenseId = this.state.activatedExpense;
+      // this.setState({activatedExpense: null}, () =>{
+      //   this.setState({activatedExpense: oldExpenseId});
+      // })
+    })
+  }
+
+  submitNewSubComment(parentCommentId, postTitle, postID){
+    axios.post('http://localhost:3001/api/expensecomments', {
+      parentCommentId,
+      postTitle,
+      postID,
+      body: this.state.newSubCommentText
+    }).then(response => {
+      this.setState({newSubCommentText: ''})
+      // const oldExpenseId = this.state.activatedExpense;
+      // this.setState({activatedExpense: null}, () =>{
+      //   this.setState({activatedExpense: oldExpenseId});
+      // })
+    })
   }
 
   render() {
@@ -47,6 +95,15 @@ class Comments extends Component {
               </div>
             </div>
           </div>
+          <div className="row mt-4">
+            <div className="col-1"> </div>
+            <div className="col">
+              <div>
+                <input type="text" class="form-control my-2" onChange={(event) => this.setState({newRootCommentText: event.target.value})} placeholder="Enter comment" value={this.state.newRootCommentText}></input>
+                <button type="button" onClick={() => this.submitNewRootComment(selectedPost.title, selectedPost._id)} class="btn btn-primary">Post Comment</button>
+              </div>
+            </div>
+          </div>
         {commentsDetails.map(comment => {
           return (
           <div className="row mt-2">
@@ -66,6 +123,15 @@ class Comments extends Component {
                 <div className="card-body">
                 <p className="card-text"> {comment.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(comment.createdAt))}</span></p>
                   <h5 className="card-title">{comment.body}</h5>
+                </div>
+              </div>
+            </div>
+            <div className="row mt-2">
+              <div className="col-2"></div>
+              <div className="col">
+                <div>
+                  <input type="text" class="form-control my-2" onChange={(event) => this.setState({newSubCommentText: event.target.value})} placeholder="Enter comment" value={this.state.newSubCommentText}></input>
+                  <button type="button" onClick={() => this.submitNewSubComment(comment._id, selectedPost.title, selectedPost._id)} class="btn btn-primary">Post Reply</button>
                 </div>
               </div>
             </div>

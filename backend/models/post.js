@@ -24,17 +24,19 @@ const Post = new Schema(
     ],
     postType: {
         type: String,
-        default: 'link',
-        required: true
-    },
+        default: 'text'
+        },
     url: {
         type: String,
+        default: ""
     },
     text: {
         type: String,
+        default: ""
     },
     image: {
-        tyep: String,
+        type: String,
+        default: ""
     },
     score: {
         type: Number,
