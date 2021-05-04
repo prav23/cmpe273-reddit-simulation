@@ -73,11 +73,17 @@
     box-shadow: 0 0 0 0.2px rgb(130 138 145 / 50%) ;
 }
 
-/* .redditNavbar .tabs {
+.redditNavbar .tabs {
     padding: 15px;    
     line-height: 25px;
-} */
+}
 
+.redditNavbar .tabs > a {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    color: #1c1c1c;
+    font-size: 16px;
+}
 
 .userName:focus{
     background: transparent;
@@ -100,9 +106,4 @@
     outline: none;
 }
 
-.redditNavbar .tabs > a {
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 500;
-    color: #1c1c1c;
-    font-size: 16px;
-}
+
