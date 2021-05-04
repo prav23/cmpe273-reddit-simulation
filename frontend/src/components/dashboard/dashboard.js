@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { getPosts } from '../../actions/postActions';
-import ago from 's-ago';
-import { Link } from 'react-router-dom';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { getPosts } from "../../actions/postActions";
+import ago from "s-ago";
+import { Link } from "react-router-dom";
 
 class Dashboard extends Component {
   componentDidMount() {
     const { isAuthenticated } = this.props.auth;
-    if(isAuthenticated){
+    if (isAuthenticated) {
       //this.props.getDashboardDetails(user.user_id);
       // TODO: filter posts related to user
       this.props.getPosts();
@@ -22,6 +22,7 @@ class Dashboard extends Component {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
     return (
+
       isAuthenticated && <div className="posts">
       {sortedpostsDetails.map(post => {
         return (
@@ -43,12 +44,10 @@ class Dashboard extends Component {
                 {post.url !== "" && <iframe id={post._id} src= {post.url} width="400" height="400"></iframe>}
                 <p className="card-text"><Link to={`/comments/${post._id}`}> Comments</Link></p>
               </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       )
-      })}
-    </div>
     );
   }
 }
@@ -59,7 +58,7 @@ Dashboard.propTypes = {
   posts: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   posts: state.posts,
   auth: state.auth,
 });
