@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { MDBIcon} from 'mdbreact';
+import { Button } from 'react-bootstrap';
 
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
+import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 
 const testCommunities = require('./testCommunities');
-const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
 const defaultAvatars = require('./testImages');
 
@@ -222,7 +223,8 @@ class Communities extends React.Component {
         <div className="container-fluid">
           <div className="row">
             <div className="card-body">
-              <h1 className="h2">Your Communities</h1>
+              <h1 className="h2" style={{ 'paddingBottom': '25px' }}>Your Communities</h1>
+              <Button variant="dark" href={`/users/community`} style={{ width: '15rem' }}> Manage users </Button>
 
               <div className="input-group-prepend" key={uuidv4()} style={{ paddingTop: '25px' }}>
                 <button

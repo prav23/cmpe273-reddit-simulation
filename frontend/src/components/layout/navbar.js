@@ -8,6 +8,7 @@ import { Button } from "react-bootstrap";
 import { ChatIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
+
 import logo from "../../icons/reddit-logo.png";
 import "./navbar.css";
 
@@ -44,6 +45,7 @@ class Navbar extends Component {
     // const { profile } = this.props.dashboard;
     // const isProfile = profile != null ? true : false;
     return (
+    <div className="redditNavbar">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         { redirectToSearchPage ? <Redirect to={`/findcommunities?q=${searchText}`} /> : null }
         <div class="container-fluid">
@@ -100,6 +102,11 @@ class Navbar extends Component {
                         aria-labelledby="dropdownMenuButton1"
                       >
                         <li>
+                            <Link className="nav-link" to="/invites">
+                              View Invites
+                            </Link>
+                          </li>            
+                        <li>
                           <Link class="nav-link" to="/">
                             Logout
                           </Link>
@@ -110,9 +117,10 @@ class Navbar extends Component {
                 </>
               )}
             </ul>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
     );
   }
 }

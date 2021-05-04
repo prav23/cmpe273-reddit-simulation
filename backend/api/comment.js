@@ -22,9 +22,10 @@ const createSubComment = async (req, res) => {
     try {
         // TODO: Input Validation
         //const validatecreateSubComment = require("../validation/comment");
-        const { author, postTitle, votes, body, parentCommentId } = req.body;
+        const { author, postId, postTitle, votes, body, parentCommentId } = req.body;
         const comment = await Comment.create({
             author,
+            postId,
             postTitle,
             votes,
             body,

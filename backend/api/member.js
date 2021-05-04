@@ -10,7 +10,7 @@ const {
   updateValidation,
 } = require("../validation/memberValidation");
 
-const defaultAvatars = require('../utils/defaultImages');
+const defaultAvatars = require("../utils/defaultImages");
 
 exports.create = (req, res) => {
   const error = createValidation(req.body);
@@ -20,30 +20,36 @@ exports.create = (req, res) => {
     });
   }
 
-  User.find({ _id: req.body.userId }).then((users) => {
-    if (!users || users.length === 0) {
-      return res.status(400).send(`User with id ${req.body.userId} does not exist`);
-    }
-    const user = users[0];
-    req.body.userName = user.name;
-    req.body.photo = user.profilePicture ? user.profilePicture : defaultAvatars.userAvatar;
-
-    const newMember = new Member({ ...req.body });
-    newMember.save((saveError, data) => {
-      if (saveError) {
-        return res.status(400).send({
-          message: saveError.toString(),
-        });
+  User.find({ _id: req.body.userId })
+    .then((users) => {
+      if (!users || users.length === 0) {
+        return res
+          .status(400)
+          .send(`User with id ${req.body.userId} does not exist`);
       }
+      const user = users[0];
+      req.body.userName = user.name;
+      req.body.photo = user.profilePicture
+        ? user.profilePicture
+        : defaultAvatars.userAvatar;
 
-      return res.status(200).send({
-        data,
-        message: "Invite created successfully",
+      const newMember = new Member({ ...req.body });
+      newMember.save((saveError, data) => {
+        if (saveError) {
+          return res.status(400).send({
+            message: saveError.toString(),
+          });
+        }
+
+        return res.status(200).send({
+          data,
+          message: "Invite created successfully",
+        });
       });
+    })
+    .catch((error) => {
+      return res.status(500).send(error);
     });
-  }).catch((error) => {
-    return res.status(500).send(error);
-  });
 };
 
 exports.createMany = (req, res) => {
@@ -86,7 +92,7 @@ exports.createMany = (req, res) => {
 };
 
 exports.getAllNewInvitesForUser = (req, res) => {
-  if (!req.params.userId) {
+  if (!req.params.id) {
     return res.status(400).send({
       message: "Id params missing",
     });
@@ -110,14 +116,13 @@ exports.getAllNewInvitesForUser = (req, res) => {
     [
       {
         $match: {
-          userId: ObjectId(req.params.userId),
-          status: "invited",
+          $and: [{ userId: ObjectId(req.params.id) }, { status: "invited" }],
         },
       },
       {
         $lookup: {
           from: Community.collection.name,
-          localField: "groupId",
+          localField: "communityId",
           foreignField: "_id",
           as: "community_info",
         },
@@ -135,6 +140,7 @@ exports.getAllNewInvitesForUser = (req, res) => {
       {
         $project: {
           userId: 1,
+          userName: 1,
           communityId: 1,
           communityName: 1,
           "community_info.photo": 1,
@@ -236,26 +242,32 @@ exports.updateInvite = (req, res) => {
         .then((communities) => {
           if (communities.length > 0) {
             const community = communities[0];
-            if (req.body.status === 'joined') {
+            if (req.body.status === "joined") {
               community.numUsers += 1;
-            } else if (req.body.status === 'rejected' && community.numUsers > 0) {
+            } else if (
+              req.body.status === "rejected" &&
+              community.numUsers > 0
+            ) {
               community.numUsers -= 1;
             }
 
-            community.save().then(() => {
-              return res.status(200).send({
-                message: "Invite update successfully",
+            community
+              .save()
+              .then(() => {
+                return res.status(200).send({
+                  message: "Invite update successfully",
+                });
+              })
+              .catch((error) => {
+                return res.status(500).send(error);
               });
-            }).catch((error) => {
-              return res.status(500).send(error);
-            });
           } else {
             return res.status(400).send({
               message: `Community ${req.body.communityName} does not exist`,
             });
           }
-
-        }).catch((error) => {
+        })
+        .catch((error) => {
           return res.status(500).send(error);
         });
     }

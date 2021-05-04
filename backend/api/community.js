@@ -10,6 +10,8 @@ const {
 } = require("../validation/communityValidation");
 
 const Member = require("../models/member");
+const Post = require("../models/post");
+const Comment = require("../models/comment");
 
 // create a new community
 const createCommunity = async (req, res) => {
@@ -46,20 +48,30 @@ const getCommunities = async (req, res) => {
 
 // get community by name
 const getCommunity = async (req, res) => {
-  if (!req.query.communityId || !req.query.createdBy) {
-    return res.status(400).send('communityId and createdBy are required');
+  if (!req.query.createdBy) {
+    return res.status(400).send('createdBy is required');
   }
 
-  const community = await Community.find({
-    _id: req.query.communityId,
-    createdBy: req.query.createdBy,
-  }).exec();
+  let communities = [];
+  if (req.query.communityId) {
+    communities = await Community.find({
+      _id: req.query.communityId,
+      createdBy: req.query.createdBy,
+    }).exec();
+  } else {
+    communities = await Community.find({
+      createdBy: req.query.createdBy,
+    }).exec();
+  }
 
-  if (community.length === 0) {
+  if (communities.length === 0) {
     return res.status(400).send(`Community ${req.query.communityId} doesn't exist`);
   }
 
-  return res.status(200).send(community[0]);
+  if (communities.length === 1) {
+    return res.status(200).send(communities[0]);
+  }
+  return res.status(200).send(communities);
 };
 
 // add a new rule to the community
@@ -120,23 +132,37 @@ const updateCommunity = async (req, res) => {
 
 // get community members (optionally specify status)
 const getCommunityMembers = async (req, res) => {
-  if (!req.query.communityId && !req.query.createdby) {
-    return res.status(400).send('communityId and createdby are required');
+  if (!req.query.createdBy) {
+    return res.status(400).send('createdby is required');
   }
 
-  const communities = await Community.find({ _id: req.query.communityId });
-  if (!communities || communities.length === 0) {
-    return res.status(400).send(`Community ${req.query.communityId} does not exist`);
-  }
+  if (req.query.communityId) {
+    const communities = await Community.find({ _id: req.query.communityId });
+    if (!communities || communities.length === 0) {
+      return res.status(400).send(`Community ${req.query.communityId} does not exist`);
+    }
 
-  const community = communities[0];
-  if (community.createdBy !== req.query.createdBy) {
-    return res.status(403).send(`User ${req.query.createdBy} is not community ${req.query.communityId} admin`);
-  }
+    const community = communities[0];
+    if (community.createdBy !== req.query.createdBy) {
+      return res.status(403).send(`User ${req.query.createdBy} is not community ${req.query.communityId} admin`);
+    }
 
-  const status = req.query.status ? req.query.status : 'invited';
-  const members = await Member.find({ communityId: community._id, status: status });
-  return res.status(200).send(members);
+    const status = req.query.status ? req.query.status : 'invited';
+    const members = await Member.find({ communityId: community._id, status: status });
+    return res.status(200).send(members);
+  } else {
+    const communities = await Community.find({ createdBy: req.query.createdBy });
+    if (!communities || communities.length === 0) {
+      return res.status(400).send(`User ${req.query.createdBy} has not created communities`);
+    }
+
+    const status = req.query.status ? req.query.status : 'invited';
+    const members = await Member.find({
+      communityId: { $in: communities.map((community) => community._id) },
+      status: status
+    });
+    return res.status(200).send(members);
+  }
 }
 
 // approve community members that have requested to join
@@ -181,10 +207,84 @@ const updatePostCount = async (req, res) => {
 
   // increased num posts in the community
   const community = communities[0];
-  community.numPosts += req.body.numPosts;
+  community.numPosts += 1;
   await community.save();
 
   return res.status(200).send(community);
+}
+
+const getCommunitiesForUser = async(req, res) => {
+  if (!req.query.userId || !req.query.createdBy) {
+    return res.status(400).send('userId and createdBy are required');
+  }
+
+  // find all communities created by admin
+  const communities = await Community.find({ createdBy: req.query.createdBy });
+  if (communities.length > 0) {
+    const communityIds = communities.map((community) => {
+      return community._id;
+    });
+
+    // find all memberships for user in communities created by admin
+    const members = await Member.find({
+      userId: req.query.userId,
+      communityId: { $in: communityIds },
+      status: 'joined',
+    });
+
+    const memberIds = members.map((member) => member.communityId);
+    const userCommunities = await Community.find({
+      _id: { $in: memberIds },
+    });
+
+    return res.status(200).send({ communities: userCommunities });
+  }
+
+  return res.status(200).send({ communities: [] })
+}
+
+// delete all of a user's posts, comments, and memberships from a community
+const leaveCommunity = async(req, res) => {
+  if (!req.query.userId && !req.query.communityIds) {
+    return res.status.send('userId and communityIds are required');
+  }
+
+  // find user
+  const users = await User.find({ _id: req.query.userId });
+  if (!users || users.length === 0) {
+    return res.status(400).send(`User ${req.query.userId} does not exist`);
+  }
+
+  // find communities
+  const communities = await Community.find({ _id: { $in: req.query.communityIds.split(',') } });
+  if (!communities || communities.length === 0) {
+    return res.status(400).send(`No communities ${req.query.communityIds} found`);
+  }
+
+  const user = users[0];
+  const communityNames = communities.map((community) => community.name);
+
+  // find posts
+  const posts = await Post.find({
+    author: req.query.userId,
+    communityName: { $in: communityNames },
+  });
+  const postIds = posts.map((post) => post._id);
+
+  // delete comments and posts
+  await Comment.deleteMany({ postId: { $in: postIds } });
+  await Post.deleteMany({
+    author: req.query.userId,
+    communityName: { $in: communityNames },
+  });
+
+  // delete memberships
+  await Member.deleteMany({
+    userId: req.query.userId,
+    communityId: { $in: req.query.communityIds.split(',') },
+  });
+
+  return res.status(200).send(`removed ${req.query.userId} from communities ${req.query.communityIds}`);
 }
 
 module.exports = {
@@ -196,4 +296,6 @@ module.exports = {
   getCommunityMembers,
   approveMembers,
   updatePostCount,
+  getCommunitiesForUser,
+  leaveCommunity,
 };

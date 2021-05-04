@@ -1,62 +1,83 @@
-.login{
-    border: 1px solid #0079D3;
-    background: #f9fbfd;
-    color: #0079D3;
-    border-radius: 25px;
+.redditNavbar{
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.redditNavbar .login{
+    border: 1px solid #0079D3 ;
+    background: #f9fbfd ;
+    color: #0079D3  ;
+    border-radius: 25px  ;
     width: 100px;
 }
 
-.login:focus{
-    border: 1px solid #0079D3;
-    background: #d6d7d8;
-    color: #0079D3;
-    border-radius: 25px;
+.redditNavbar .login:focus{
+    border: 1px solid #0079D3 ;
+    background: #d6d7d8 ;
+    color: #0079D3 ;
+    border-radius: 25px ;
     width: 100px;
 }
 
-.login:hover{
-    border: 1px solid #0079D3;
-    background: #d9dadb;
-    color: #0079D3;
-    border-radius: 25px;
+.redditNavbar .login:hover{
+    border: 1px solid #0079D3 ;
+    background: #d9dadb ;
+    color: #0079D3 ;
+    border-radius: 25px ;
     width: 100px;
 }
 
-.signup{
-    border: 1px solid #0079D3;
+.redditNavbar .signup{
+    border: 1px solid #0079D3 ;
     background: #0079D3;
-    color: #f9fbfd;
-    border-radius: 25px;
+    color: #f9fbfd ;
+    border-radius: 25px ;
     width: 100px;
 }
 
-.signup:hover{
-    border: 1px solid #0079D3;
+.redditNavbar .signup:hover{
+    border: 1px solid #0079D3 ;
     background: #0367b3;
-    color: #f9fbfd;
-    border-radius: 25px;
+    color: #f9fbfd ;
+    border-radius: 25px ;
     width: 100px;
 }
 
-.signup:focus{
-    border: 1px solid #0079D3;
+.redditNavbar .signup:focus{
+    border: 1px solid #0079D3 ;
     background: #0079D3;
-    color: #f9fbfd;
-    border-radius: 25px;
+    color: #f9fbfd ;
+    border-radius: 25px ;
     width: 100px;
 }
 
-.userName{
-    background: transparent;
-    border: transparent;
-    color: #6c757d;
+.redditNavbar .userName{
+    background: transparent ;
+    border: transparent ;
+    color: #6c757d ;
+    padding: 15px ;
 }
 
-.userName:hover{
-    background: transparent;
-    border: 0.5px solid #b3b7bb;
-    color: #6c757d;
+.redditNavbar .userName:hover{
+    background: transparent ;
+    border: 0.5px solid #b3b7bb ;
+    color: #6c757d ;
 }
+
+.redditNavbar .userName:focus{
+    background: transparent ;
+    border: 0.5px solid #b3b7bb ;
+    color: #6c757d ;
+    box-shadow: 0 0 0 0.2px rgb(130 138 145 / 50%) ;
+}
+
+/* .redditNavbar .tabs {
+    padding: 15px;    
+    line-height: 25px;
+} */
+
 
 .userName:focus{
     background: transparent;
@@ -77,4 +98,10 @@
     background-color: transparent;
     border: none;
     outline: none;
+
+.redditNavbar .tabs > a {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    color: #1c1c1c;
+    font-size: 16px;
 }

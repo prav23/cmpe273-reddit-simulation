@@ -1,14 +1,18 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Button, Modal } from 'react-bootstrap';
+import axios from 'axios';
+import setAuthToken from '../../utils/setAuthToken';
 
-const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
 
 class UpdateCommunity extends React.Component {
   constructor(props) {
     // TODO: get auth token from redux state
     super(props);
-    const { community } = this.props;
+    const { community, auth } = this.props;
+    setAuthToken(auth.user.token);
 
     this.state = {
       show: false,
@@ -108,4 +112,12 @@ class UpdateCommunity extends React.Component {
   }
 }
 
-export default UpdateCommunity;
+UpdateCommunity.propTypes = {
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps)(UpdateCommunity);

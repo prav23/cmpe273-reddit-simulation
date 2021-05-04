@@ -6,9 +6,11 @@ import { withRouter } from 'react-router';
 import AddCommunityRule from './AddCommunityRule';
 import AddCommunityMember from './AddCommunityMember';
 import UpdateCommunity from './UpdateCommunity';
+import CommunityUsers from './CommunityUsers';
+import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
+import { Link } from 'react-router-dom';
 
-const axios = require('axios').default;
 const { API_URL } = require('../../utils/Constants').default;
 const defaultAvatars = require('./testImages');
 
@@ -16,7 +18,6 @@ class Community extends React.Component {
   constructor(props) {
     super(props);
     const { match, auth } = this.props;
-    setAuthToken(auth.user.token);
 
     this.state = {
       communityId: match.params.communityId,
@@ -108,6 +109,7 @@ class Community extends React.Component {
 
     return (
       <header style={{'margin': '25px' }}>
+        <p className="card-text"><Link to={`/createpost/${community.name}`}> Create Post </Link></p>
         <div className="card border-dark mb-3" style={{'width': '100%' }}>
           <div className="card-header">
             <span style={{'margin': '5px' }}>
@@ -126,6 +128,7 @@ class Community extends React.Component {
             <p className="card-text">{`Num posts: ${community.numPosts}`}</p>
           </div>
         </div>
+        
         <UpdateCommunity updateCommunity={this.updateCommunity} community={this.state}/>
         {this.getRulesTable(community)}
         <AddCommunityRule updateCommunity={this.updateCommunity} community={this.state}/>
