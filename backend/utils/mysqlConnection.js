@@ -9,7 +9,11 @@ const pool = mysql.createPool({
     user: mysqlUser,
     port: myPort,
     password: mysqlPassword,
-    database: mysqlDatabase
+    database: mysqlDatabase,
+    connectionLimit : 1000,
+    connectTimeout  : 60 * 60 * 1000,
+    acquireTimeout  : 60 * 60 * 1000,
+    timeout         : 60 * 60 * 1000,
 });
 
 pool.getConnection((err) => {
