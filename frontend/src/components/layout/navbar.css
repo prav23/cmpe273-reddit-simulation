@@ -98,6 +98,7 @@
     background-color: transparent;
     border: none;
     outline: none;
+}
 
 .redditNavbar .tabs > a {
     font-family: 'IBM Plex Sans', sans-serif;
