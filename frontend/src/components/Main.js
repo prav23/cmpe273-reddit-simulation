@@ -8,7 +8,7 @@ import Register from "./auth/register";
 import Login from "./auth/login";
 import Communities from './communities/Communities';
 import Community from './communities/Community';
-import CreatePost from './posts/createpost';
+import CreatePost from './posts/CreatePost';
 import Dashboard from "./dashboard/dashboard";
 import Posts from "./posts/posts";
 import Comments from "./comments/comments";
