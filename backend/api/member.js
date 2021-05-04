@@ -140,6 +140,7 @@ exports.getAllNewInvitesForUser = (req, res) => {
       {
         $project: {
           userId: 1,
+          userName: 1,
           communityId: 1,
           communityName: 1,
           "community_info.photo": 1,

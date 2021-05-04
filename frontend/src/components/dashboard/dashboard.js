@@ -27,9 +27,12 @@ class Dashboard extends Component {
               <div className="row mt-4" key={post._id}>
                 <div className="col-1">
                   <div className="d-flex flex-column ps-5 mt-2">
-                    <i data-test="fa" class="fa fa-lg fa-angle-up"></i>
+                    <i data-test="fa" className="fa fa-lg fa-angle-up"></i>
                     <p className="fs-3 mt-2 pe-1">{post.score}</p>
-                    <i data-test="fa" class="fa fa-lg fa-angle-down mt-n1"></i>
+                    <i
+                      data-test="fa"
+                      className="fa fa-lg fa-angle-down mt-n1"
+                    ></i>
                   </div>
                 </div>
                 <div className="col">

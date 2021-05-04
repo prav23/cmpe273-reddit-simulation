@@ -1,5 +1,10 @@
 .invite{}
 
+.invite .column{
+    float: none;
+    margin: 0 auto;
+}
+
 .invite  h1 {    
     padding-bottom: 6px;
     font-size: 22px;
@@ -8,10 +13,13 @@
     font-family: 'IBM Plex Sans', sans-serif;
     color: #1c1c1c;
     text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .invite .communityImg{
-    height: 40px !important;
+    height: 40px;
+    margin-right: 5px;
 }
 
 .invite .communityName {

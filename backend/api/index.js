@@ -38,26 +38,34 @@ router.get(
   user.findAllUsers
 );
 
+// Create invite
 router.post(
   "/invites",
   passport.authenticate("jwt", { session: false }),
   member.create
 );
+
+// Get invites sent out by community admin
 router.get(
   "/communities/:id/invites",
   passport.authenticate("jwt", { session: false }),
   member.getAllInvitesForCommunity
 );
+
+// Get invites received by user
 router.get(
   "/users/:id/invites",
   passport.authenticate("jwt", { session: false }),
   member.getAllNewInvitesForUser
 );
+
+// Update invite status to joined, rejected
 router.put(
   "/invites/:id",
   passport.authenticate("jwt", { session: false }),
   member.updateInvite
 );
+
 router.post(
   "/community",
   passport.authenticate("jwt", { session: false }),

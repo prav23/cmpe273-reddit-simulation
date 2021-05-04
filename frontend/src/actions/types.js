@@ -15,3 +15,4 @@ export const CLEAR_COMMENTS = "CLEAR_COMMENTS";
 
 export const USER_LOGOUT = "USER_LOGOUT";
 export const SET_JWT_TOKEN = "SET_JWT_TOKEN";
+export const SET_INVITE_UPDATED = "SET_INVITE_UPDATED";
