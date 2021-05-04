@@ -18,10 +18,12 @@ class Dashboard extends Component {
   render() {
     const { isAuthenticated } = this.props.auth;
     const { postsDetails } = this.props.posts;
-
+    const sortedpostsDetails = postsDetails.sort(function(a,b){
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
     return (
       isAuthenticated && <div className="posts">
-      {postsDetails.map(post => {
+      {sortedpostsDetails.map(post => {
         return (
         <div className="row mt-4">
           <div className="col-1">

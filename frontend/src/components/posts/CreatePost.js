@@ -40,7 +40,7 @@ class CreatePost extends Component {
       votes: this.state.votes,
       postType: this.state.postType,
       url: this.state.url,
-      text: this.state.text,
+      text: this.state.text,  
       image: this.state.base64URL
     };
     console.log(postData);

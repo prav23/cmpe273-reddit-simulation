@@ -34,11 +34,12 @@ class Comments extends Component {
   //   }
   // }
 
-  submitNewRootComment(postTitle, postID){
-    axios.post('http://localhost:3001/api/expensecomments', {
+  submitNewRootComment(postTitle, postId){
+    axios.post('http://localhost:3001/api/comments', {
       postTitle,
-      postID,
-      body: this.state.newRootCommentText
+      postId,
+      body: this.state.newRootCommentText,
+      author: this.props.auth.user.name
     }).then(response => {
       this.setState({newRootCommentText: ''})
       // const oldExpenseId = this.state.activatedExpense;
@@ -48,12 +49,13 @@ class Comments extends Component {
     })
   }
 
-  submitNewSubComment(parentCommentId, postTitle, postID){
-    axios.post('http://localhost:3001/api/expensecomments', {
+  submitNewSubComment(parentCommentId, postTitle, postId){
+    axios.post('http://localhost:3001/api/comments/subcomment', {
       parentCommentId,
       postTitle,
-      postID,
-      body: this.state.newSubCommentText
+      postId,
+      body: this.state.newSubCommentText,
+      author: this.props.auth.user.name
     }).then(response => {
       this.setState({newSubCommentText: ''})
       // const oldExpenseId = this.state.activatedExpense;
@@ -99,8 +101,8 @@ class Comments extends Component {
             <div className="col-1"> </div>
             <div className="col">
               <div>
-                <input type="text" class="form-control my-2" onChange={(event) => this.setState({newRootCommentText: event.target.value})} placeholder="Enter comment" value={this.state.newRootCommentText}></input>
-                <button type="button" onClick={() => this.submitNewRootComment(selectedPost.title, selectedPost._id)} class="btn btn-primary">Post Comment</button>
+                <input type="text" class="form-control my-2" onChange={(event) => this.setState({newRootCommentText: event.target.value})} placeholder="Enter post comment" value={this.state.newRootCommentText}></input>
+                <button type="button" onClick={() => this.submitNewRootComment(selectedPost.title, selectedPost._id)} class="btn btn-primary">Comment Post</button>
               </div>
             </div>
           </div>
@@ -116,25 +118,31 @@ class Comments extends Component {
                 <i data-test="fa" class="fa fa-lg fa-angle-down mt-n1"></i>
               </div>
             </div>}
-            {comment.parentCommentId !== "" && <div className="col-2">
-            </div>}
-            <div className="col">
+            {comment.parentCommentId === "" && <div className="col">
               <div className="card">
                 <div className="card-body">
                 <p className="card-text"> {comment.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(comment.createdAt))}</span></p>
                   <h5 className="card-title">{comment.body}</h5>
                 </div>
               </div>
+              <div>
+                  <input type="text" class="form-control my-2" onChange={(event) => this.setState({newSubCommentText: event.target.value})} placeholder="Reply comment" value={this.state.newSubCommentText}></input>
+                  <button type="button" onClick={() => this.submitNewSubComment(comment._id, selectedPost.title, selectedPost._id)} class="btn btn-primary">Reply Comment</button>
+                </div>
             </div>
-            <div className="row mt-2">
-              <div className="col-2"></div>
+            }
+            {comment.parentCommentId !== "" &&  <div className="row mt-2">
+              <div className="col-3"></div>
               <div className="col">
-                <div>
-                  <input type="text" class="form-control my-2" onChange={(event) => this.setState({newSubCommentText: event.target.value})} placeholder="Enter comment" value={this.state.newSubCommentText}></input>
-                  <button type="button" onClick={() => this.submitNewSubComment(comment._id, selectedPost.title, selectedPost._id)} class="btn btn-primary">Post Reply</button>
+                <div className="card">
+                  <div className="card-body">
+                  <p className="card-text"> {comment.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(comment.createdAt))}</span></p>
+                    <h5 className="card-title">{comment.body}</h5>
+                  </div>
                 </div>
               </div>
             </div>
+            }
           </div>
         )
         })}
