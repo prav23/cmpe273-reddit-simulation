@@ -15,6 +15,7 @@ import Posts from "./posts/posts";
 import Comments from "./comments/comments";
 import Message from "./message/messagePage";
 import Invite from "./invites/Invite";
+import SearchCommunities from './communities/SearchCommunities';
 
 //Create a Main Component
 class Main extends Component {
@@ -38,6 +39,7 @@ class Main extends Component {
             <Route path="/community/:communityId" component={Community} />
             <Route path="/message" component={Message} />
             <Route path="/invites" component={Invite} />
+            <Route path="/findcommunities" component={SearchCommunities} />
           </div>
         </div>
       </div>

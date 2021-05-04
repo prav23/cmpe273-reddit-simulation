@@ -1,21 +1,23 @@
 import { combineReducers } from "redux";
 import authReducer from "./authReducer";
 // import errorReducer from './errorReducer';
-import dashboardReducer from "./dashboardReducer";
-import postsReducer from "./postsReducer";
-import commentsReducer from "./commentsReducer";
+import dashboardReducer from './dashboardReducer';
+import postsReducer from './postsReducer';
+import commentsReducer from './commentsReducer';
 import inviteReducer from "./inviteReducer";
-import { USER_LOGOUT } from "../actions/types";
+import searchCommunitiesReducer from './searchCommunitiesReducer'
+import { USER_LOGOUT } from '../actions/types';
 
 const appReducer = combineReducers({
-  /* your app’s top-level reducers */
-  auth: authReducer,
-  dashboard: dashboardReducer,
-  posts: postsReducer,
-  comments: commentsReducer,
-  invite: inviteReducer,
-});
-
+/* your app’s top-level reducers */
+    auth:authReducer,
+    dashboard: dashboardReducer,
+    posts: postsReducer,
+    comments: commentsReducer,
+    searchCommunities: searchCommunitiesReducer,
+    invite: inviteReducer,
+})
+  
 const rootReducer = (state, action) => {
   if (action.type === USER_LOGOUT) {
     state = undefined;
