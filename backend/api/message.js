@@ -1,41 +1,42 @@
 const express = require('express');
-const Message = require("../models/message");
+const { successResponse, errorResponse } = require("./helper");
+//const Message = require("../models/message");
+const { Message } = require("../sqlmodels");
 var kafka = require("../kafka/client");
 
 const sendMessage = async (req, res) => {
-    const receivedBy = req.body.receivedBy;
-    const sentBy = req.body.sentBy;
-    const message = req.body.message;
-    var newmessage = new Message({
-        receivedBy: receivedBy,
-        sentBy: sentBy,
-        message: message
-    });
-    newmessage.save((error, response) => {
-        if (error) {
-            console.log(error);
-            res.status(500).end("Error");
-        }
-        if (response){
-            res.status(200).end("Success_Send_Message");
-        }
-    });
+    try{
+        const { receivedBy, sentBy, message } = req.body;
+        var payload = {
+            receivedBy: receivedBy,
+            sentBy: sentBy,
+            message: message
+        };
+        const newMessage = await Message.create(payload);
+        return successResponse(req, res, { newMessage }, 201);
+    }catch(error){
+        return errorResponse(req, res, error.message);
+    }
 }
 
 const getMessage = async (req, res) => {
-    Message.find({ }, (error, message) => {
-        if (error) {
-            console.log(error);
-            res.status(500).end("Error");
+    try {
+        const allMessages = await Message.findAll({
+          where: {},
+        });
+        if (allMessages) {
+          return successResponse(req, res, { allMessages });
+        } else {
+          return errorResponse(
+            req,
+            res,
+            "Unable to find messages",
+            401
+          );
         }
-        if (message) {
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            });
-            console.log(message);
-            res.end(JSON.stringify(message));
-        }
-    });
+      } catch (error) {
+        return errorResponse(req, res, error.message);
+      }
 }
 
     // let msg = {

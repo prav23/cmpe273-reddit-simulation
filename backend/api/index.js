@@ -119,11 +119,9 @@ router.delete(
 
 //message
 router.get("/message", 
-  passport.authenticate("jwt", { session: false }),
   message.getMessage
 );
 router.post("/message", 
-  passport.authenticate("jwt", { session: false }),
   message.sendMessage
 );
 

@@ -17,7 +17,20 @@ const UserSchema = new Schema({
   },
   profilePicture: {
     type: String,
+    default: ""
   },
+  gender: {
+    type: String,
+    default: ""
+  },
+  location: {
+    type: String,
+    default: ""
+  },
+  description: {
+    type: String,
+    default: ""
+  }
 });
 
 module.exports = User = mongoose.model('users', UserSchema);
