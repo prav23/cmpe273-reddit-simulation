@@ -13,7 +13,7 @@ import CreatePost from './posts/CreatePost';
 import Dashboard from "./dashboard/dashboard";
 import Posts from "./posts/posts";
 import Comments from "./comments/comments";
-import Message from "./message/messagePage";
+import Message from "./message/Message";
 import Invite from "./invites/Invite";
 import SearchCommunities from './communities/SearchCommunities';
 

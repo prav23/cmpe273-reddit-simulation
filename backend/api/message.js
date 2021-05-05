@@ -1,5 +1,4 @@
 const express = require('express');
-const User = require('../models/User');
 const Message = require("../models/message");
 var kafka = require("../kafka/client");
 
@@ -7,14 +6,10 @@ const sendMessage = async (req, res) => {
     const receivedBy = req.body.receivedBy;
     const sentBy = req.body.sentBy;
     const message = req.body.message;
-    const date = Date.now();
-    var d = Date(); 
-    const createAt = d.toString();
     var newmessage = new Message({
         receivedBy: receivedBy,
         sentBy: sentBy,
-        message: message,
-        createAt: createAt
+        message: message
     });
     newmessage.save((error, response) => {
         if (error) {
@@ -28,9 +23,7 @@ const sendMessage = async (req, res) => {
 }
 
 const getMessage = async (req, res) => {
-    const email = req.params.email;
-    const receivedBy = req.params.receivedBy;
-    Message.find({ sentBy: email, receivedBy: receivedBy }, (error, message) => {
+    Message.find({ }, (error, message) => {
         if (error) {
             console.log(error);
             res.status(500).end("Error");
@@ -43,23 +36,8 @@ const getMessage = async (req, res) => {
             res.end(JSON.stringify(message));
         }
     });
-
 }
 
-const getUsers = async (req, res) => {
-    User.find({ }, (error, user) => {
-        if (error) {
-            console.log(error);
-            res.status(500).end("Error");
-        }
-        if (user) {
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            });
-            console.log(user);
-            res.end(JSON.stringify(user));
-        }
-    });
     // let msg = {
     //     route: "get_users",
     //     body: req.body,
@@ -78,6 +56,5 @@ const getUsers = async (req, res) => {
     //         return res.status(results.status).end(results.data);
     //     }
     // });
-}
 
-module.exports = { sendMessage, getMessage, getUsers };
+module.exports = { sendMessage, getMessage };
