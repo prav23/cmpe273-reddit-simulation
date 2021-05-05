@@ -4,6 +4,13 @@ const { successResponse, errorResponse } = require("./helper");
 const { Message } = require("../sqlmodels");
 var kafka = require("../kafka/client");
 
+const { redisHost, redisPort } = require("../utils/config");
+var cacher = require('sequelize-redis-cache');
+var redis = require('redis');
+var rc = redis.createClient(redisPort, redisHost);
+const sqldb = require("../sqlmodels");
+var cacheObj = cacher(sqldb.sequelize, rc).model('Message').ttl(10000);
+
 const sendMessage = async (req, res) => {
     try{
         const { receivedBy, sentBy, message } = req.body;
@@ -25,6 +32,11 @@ const getMessage = async (req, res) => {
           where: {},
         });
         if (allMessages) {
+          cacheObj.findAll({ where: {}, logging: console.log})
+            .then(function(row) {
+              //console.log(row); // sequelize db object
+              console.log(cacheObj.cacheHit); // true or false
+            });
           return successResponse(req, res, { allMessages });
         } else {
           return errorResponse(
@@ -35,6 +47,7 @@ const getMessage = async (req, res) => {
           );
         }
       } catch (error) {
+        console.log(error);
         return errorResponse(req, res, error.message);
       }
 }
