@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "0fb3e2ee-73d8-4445-9440-850828551488",
+		"name": "Analytics",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Number of posts in a community",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/communities/Dogs/numPosts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"communities",
+						"Dogs",
+						"numPosts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Number of users in a community",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/communities/Workout/numUsers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"communities",
+						"Workout",
+						"numUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Most upvoted post in a community",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/communities/Cooking/mostUpvotedPost",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"communities",
+						"Cooking",
+						"mostUpvotedPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Most active user for a community",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/communities/Cooking/mostActiveUser",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"communities",
+						"Cooking",
+						"mostActiveUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Community with max posts created by user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/api/communities/mostActiveCommunity?createdBy=admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"communities",
+						"mostActiveCommunity"
+					],
+					"query": [
+						{
+							"key": "createdBy",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
