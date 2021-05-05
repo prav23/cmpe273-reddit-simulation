@@ -3,7 +3,7 @@ const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
 const community = require("./community");
-
+const analytics = require("./analytics");
 const posts = require("./post");
 const comment = require("./comment");
 const message = require("./message");
@@ -109,12 +109,12 @@ router.put(
 router.get(
   "/user/communities",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunitiesForUser,
+  community.getCommunitiesForUser
 );
 router.delete(
   "/user/communities",
   passport.authenticate("jwt", { session: false }),
-  community.leaveCommunity,
+  community.leaveCommunity
 );
 
 //message
@@ -124,5 +124,26 @@ router.get("/message",
 router.post("/message", 
   message.sendMessage
 );
+
+// Get number of posts for a community
+router.get("/communities/:communityName/numPosts", analytics.getNumOfPosts);
+
+// Get number of users for a community
+router.get("/communities/:communityName/numUsers", analytics.getNumOfMembers);
+
+// Get the most upvoted post for a community
+router.get(
+  "/communities/:communityName/mostUpvotedPost",
+  analytics.mostUpvotedPost
+);
+
+// Get user who has created maximum number of posts in a community
+router.get(
+  "/communities/:communityName/mostActiveUser",
+  analytics.userWithMaximumNumPosts
+);
+
+// Get admin's community with maximum number of posts
+router.get("/communities/mostActiveCommunity", analytics.communityWithMaxPosts);
 
 module.exports = router;
