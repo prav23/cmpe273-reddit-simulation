@@ -118,8 +118,13 @@ router.delete(
 );
 
 //message
-router.get("/message", message.getUsers);
-router.get("/message/:email/:receivedBy", message.getMessage);
-router.post("/message", message.sendMessage);
+router.get("/message", 
+  passport.authenticate("jwt", { session: false }),
+  message.getMessage
+);
+router.post("/message", 
+  passport.authenticate("jwt", { session: false }),
+  message.sendMessage
+);
 
 module.exports = router;

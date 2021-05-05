@@ -9,7 +9,7 @@ import { Grid, Toolbar, Typography, Paper } from "@material-ui/core";
 import { Form, Button } from 'react-bootstrap';
 import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
-import { getDashboardDetails } from '../../actions/dashboardActions';
+import { getMessage, sendMessage } from '../../actions/messageActions';
 
 const { API_URL } = require('../../utils/Constants').default;
 const axios = require('axios').default;
@@ -47,6 +47,7 @@ class Message extends Component {
         sentBy : "",
         receivedBy : "",
         message : "",
+        allmessagelist : [],
         messagelist : [],
         //auto suggest
         emaillist : [],
@@ -56,10 +57,10 @@ class Message extends Component {
   }
   componentDidMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
-    axios.get(`${API_URL}/message`)
+    axios.get(`${API_URL}/users`)
     .then(response => { 
-      let emaillist = Array.from(response.data);
-      console.log(emaillist);
+      let emaillist = response.data.data.allUsers;
+      console.log(response.data.data.allUsers);
       let emailarray = [];
       emaillist.map((listing) => {
         emailarray.push(listing.email);
@@ -68,31 +69,53 @@ class Message extends Component {
     })
     .catch(error => { console.log(error) });  
   }
+  componentWillMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
+    this.props.getMessage();
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.message) {
+        var { message } = nextProps;
+        let allmessage = Array.from(message);
+        let allmessagelist = [];
+        allmessage.map((listing) => {
+          if (listing.sentBy === this.props.auth.user.user_id)
+            allmessagelist.push(listing);
+        })
+        this.setState({allmessagelist : allmessagelist})
+        let messagelist = [];
+        allmessage.map((listing) => {
+          if (listing.sentBy === this.props.auth.user.user_id && listing.receivedBy === localStorage.getItem("receivedBy"))
+            messagelist.push(listing);
+        })
+        this.setState({messagelist : messagelist})
+    }  
+  }
   messageChangeHandler = (event) => {
     this.setState({message : event.target.value})
   }
   submitSearch = () => {
-    axios.get(`${API_URL}/message/${localStorage.getItem("email")}/${this.state.receivedBy}`)
-      .then(response => { 
-        this.setState({messagelist : response.data})
-      })
-      .catch(error => { console.log(error) });  
+    let messagelist = this.state.allmessagelist;
+    let message = [];
+    messagelist.map((listing) => {
+      if (listing.sentBy === this.props.auth.user.user_id && listing.receivedBy === localStorage.getItem("receivedBy"))
+        message.push(listing);
+    })
+    this.setState({messagelist : message})
   }
   sendMessage = () => {
     const data = {
-      receivedBy : this.state.receivedBy,
-      sentBy : localStorage.getItem("email"),
+      receivedBy : localStorage.getItem("receivedBy"),
+      sentBy : this.props.auth.user.user_id,
       message : this.state.message
     }
     console.log(data);
-    axios.post(`${API_URL}/message`, data)
-      .then(response => { 
-      })
-      .catch(error => { console.log(error) });  
+    this.props.sendMessage(data); 
   }
   emailTextChange = (event) => {
     this.setState({receivedBy: event.target.value});
     const value = event.target.value;
+    localStorage.setItem("receivedBy", value);
     let emailsuggestions = [];
     if (value.length > 0){
         const regex = new RegExp(`^${value}`, 'i');
@@ -105,6 +128,7 @@ class Message extends Component {
           receivedBy : value,
           emailsuggestions : [],
       }));
+      localStorage.setItem("receivedBy", value);
   }
   renderEmailSuggestions = () => {
       const {emailsuggestions} = this.state;
@@ -124,7 +148,6 @@ class Message extends Component {
     const { classes } = this.props;
     let redirectVar = null;
     console.log(this.state);
-    console.log(localStorage.getItem('jwtToken'));
     if(!localStorage.getItem("jwtToken")){
         redirectVar = <Redirect to= "/"/>
     }
@@ -220,11 +243,17 @@ class Message extends Component {
 }
 
 Message.propTypes = {
-  
+  auth: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  getMessage: PropTypes.object.isRequired,
+  sendMessage: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  
+  auth: state.auth,
+  message: state.message.message,
+  user: state.message.user,
 });
 
-export default connect(mapStateToProps, { getDashboardDetails})(withStyles(useStyles)(Message));
+export default connect(mapStateToProps, { getMessage, sendMessage})(withStyles(useStyles)(Message));

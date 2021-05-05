@@ -5,7 +5,8 @@ import dashboardReducer from './dashboardReducer';
 import postsReducer from './postsReducer';
 import commentsReducer from './commentsReducer';
 import inviteReducer from "./inviteReducer";
-import searchCommunitiesReducer from './searchCommunitiesReducer'
+import searchCommunitiesReducer from './searchCommunitiesReducer';
+import messageReducer from './messageReducer';
 import { USER_LOGOUT } from '../actions/types';
 
 const appReducer = combineReducers({
@@ -16,6 +17,7 @@ const appReducer = combineReducers({
     comments: commentsReducer,
     searchCommunities: searchCommunitiesReducer,
     invite: inviteReducer,
+    message: messageReducer,
 })
   
 const rootReducer = (state, action) => {
