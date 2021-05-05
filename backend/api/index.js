@@ -8,7 +8,16 @@ const posts = require("./post");
 const comment = require("./comment");
 const message = require("./message");
 
+const performance = require("./performance");
+
 const router = express.Router();
+
+// measure performance api requests
+router.get("/performance/createusers/:userCount", performance.createFakeUsers);
+router.get("/performance/createmessages/:messageCount", performance.createFakeMessages);
+router.get("/performance/users", performance.getAllUsers);
+router.get("/performance/messages", performance.getAllMessages);
+router.get("/performance/messages/redis", performance.getAllMessagesRedis);
 
 // post route requests
 router.post("/posts", posts.create);
