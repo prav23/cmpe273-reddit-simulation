@@ -33,10 +33,19 @@ const useStyles = (theme) => ({
     flexGrow: 1,
     fontSize: 13,
     fontWeight: 'bold',
+    textAlign: 'left'
+  },
+  date: {
+    flexGrow: 1,
+    fontSize: 13,
+    textAlign: 'left',
   },
   message: {
       flexGrow: 1,
       fontSize: 20,
+  },
+  accord: {
+    backgroundColor: "#b4eefa"
   }
 });
 
@@ -189,32 +198,63 @@ class Message extends Component {
                   <Grid item xs={8}>
                     <Paper className={classes.paper}>
                     <List>
+                      <Typography className={classes.message}>Chat with {this.state.receivedBy}</Typography>
                       {!this.state.messagelist.length && <Typography className={classes.message}>No Recent Chat to Show...</Typography>}
                       { this.state.messagelist.map((listing) => {
                           return (
                               <div>
-                                  <Accordion>
-                                      <AccordionDetails>
-                                          <Grid container spacing={3}>
-                                              <Grid item xs={3}>
-                                                  <Typography className={classes.text}>Username: {listing.receivedBy}</Typography>
+                                {/* sent from other */}
+                                {listing.sentBy === localStorage.getItem("receivedBy") && <div>
+                                  <Grid container spacing={1}>
+                                    <Grid item xs={8}>
+                                      <Accordion>
+                                        <AccordionDetails>
+                                          <Grid container spacing={1}>
+                                              <Grid item xs={5}>
+                                                <Typography className={classes.text}>{listing.sentBy}</Typography>
                                               </Grid>
-                                              <Grid item xs={9}>
-                                                  <Typography className={classes.text}>Date: {listing.createAt}</Typography>
+                                              <Grid item xs={7}>
+                                                  <Typography className={classes.date}>{listing.createdAt}</Typography>
                                               </Grid>
                                               <Grid item xs={8}>
-                                                  <Typography className={classes.text}>message: {listing.message}</Typography>
+                                                  <Typography className={classes.text}>{listing.message}</Typography>
                                               </Grid>
-                                          </Grid>
-                                      </AccordionDetails>
-                                  </Accordion>
-                                  <Divider />
+                                            </Grid>
+                                          </AccordionDetails>
+                                      </Accordion>
+                                      <Divider />
+                                    </Grid>
+                                    <Grid item xs={4}></Grid>
+                                  </Grid>
+                                </div>}
+                                {/* sent from the user */}
+                                {listing.sentBy === this.props.auth.user.email && <div>
+                                  <Grid container spacing={1}>
+                                    <Grid item xs={4}></Grid>
+                                    <Grid item xs={8}>
+                                      <Accordion className={classes.accord}>
+                                          <AccordionDetails>
+                                              <Grid container spacing={1}>
+                                                  <Grid item xs={5}>
+                                                      <Typography className={classes.text}>{this.props.auth.user.name}</Typography>                                              </Grid>
+                                                  <Grid item xs={7}>
+                                                      <Typography className={classes.date}>{listing.createdAt}</Typography>
+                                                  </Grid>
+                                                  <Grid item xs={8}>
+                                                      <Typography className={classes.text}>{listing.message}</Typography>
+                                                  </Grid>
+                                              </Grid>
+                                          </AccordionDetails>
+                                      </Accordion>
+                                      <Divider />
+                                    </Grid>
+                                  </Grid>
+                                </div>}
                               </div>
                               );        
                           })
-                          }                                            
+                      }                                            
                       </List>
-
 
                       <Grid container spacing={1}>
                         <Grid item xs={11}>
