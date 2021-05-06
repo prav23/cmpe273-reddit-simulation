@@ -15,6 +15,8 @@ const router = express.Router();
 // measure performance api requests
 router.get("/performance/createusers/:userCount", performance.createFakeUsers);
 router.get("/performance/createmessages/:messageCount", performance.createFakeMessages);
+router.get("/performance/createuserskafka/:userCount", performance.createFakeUsersKafka);
+router.get("/performance/createmessageskafka/:messageCount", performance.createFakeMessagesKafka);
 router.get("/performance/users", performance.getAllUsers);
 router.get("/performance/messages", performance.getAllMessages);
 router.get("/performance/messages/redis", performance.getAllMessagesRedis);
