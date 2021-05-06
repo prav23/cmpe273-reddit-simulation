@@ -76,16 +76,18 @@ class Message extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.message) {
         var { message } = nextProps;
-        let allmessage = Array.from(message);
+        let allmessage = Array.from(message.data.allMessages);
+        console.log(allmessage);
         let allmessagelist = [];
         allmessage.map((listing) => {
-          if (listing.sentBy === this.props.auth.user.user_id)
+          if (listing.sentBy === this.props.auth.user.email || listing.receivedBy === this.props.auth.user.email)
             allmessagelist.push(listing);
         })
         this.setState({allmessagelist : allmessagelist})
         let messagelist = [];
         allmessage.map((listing) => {
-          if (listing.sentBy === this.props.auth.user.user_id && listing.receivedBy === localStorage.getItem("receivedBy"))
+          if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
             messagelist.push(listing);
         })
         this.setState({messagelist : messagelist})
@@ -98,7 +100,8 @@ class Message extends Component {
     let messagelist = this.state.allmessagelist;
     let message = [];
     messagelist.map((listing) => {
-      if (listing.sentBy === this.props.auth.user.user_id && listing.receivedBy === localStorage.getItem("receivedBy"))
+      if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
         message.push(listing);
     })
     this.setState({messagelist : message})
@@ -106,7 +109,7 @@ class Message extends Component {
   sendMessage = () => {
     const data = {
       receivedBy : localStorage.getItem("receivedBy"),
-      sentBy : this.props.auth.user.user_id,
+      sentBy : this.props.auth.user.email,
       message : this.state.message
     }
     console.log(data);
