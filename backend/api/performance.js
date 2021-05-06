@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { Message } = require("../sqlmodels");
 const bcrypt = require("bcryptjs");
 const faker = require('faker');
+const kafka = require("../kafka/client");
 
 // Enable this config if you want to test getAllMessages with Redis caching
 // const { redisHost, redisPort } = require("../utils/config");
@@ -54,11 +55,31 @@ const createFakeUsers = async (req, res) => {
   }
 };
 
+const createFakeUsersKafka = async (req, res) => {
+  let msg = {};
+  msg.route = "create_users";
+  msg.input = req.params.userCount;
+  
+  kafka.make_request("performance", msg, function (err, results) {
+    console.log("in make request call back");
+    console.log(results);
+    console.log(err);
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      console.log(results);
+      return res.status(results.status).send(results.data);
+    }
+  });
+};
+
 const createFakeMessages = async (req, res) => {
     try{
       const messageCount = Number(req.params.messageCount);
       for (i = 0; i < messageCount; i++) {
-        const sentBy = faker.name.findName(); 
+        const sentBy = faker.internet.email(); 
         const receivedBy = faker.internet.email();
         const message = faker.random.word();
         const payload = {
@@ -75,7 +96,27 @@ const createFakeMessages = async (req, res) => {
     }
   };
 
-  const getAllUsers = async (req, res) => {
+const createFakeMessagesKafka = async (req, res) => {
+  let msg = {};
+  msg.route = "create_messages";
+  msg.input = req.params.messageCount;
+  
+  kafka.make_request("performance", msg, function (err, results) {
+    console.log("in make request call back");
+    console.log(results);
+    console.log(err);
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      console.log(results);
+      return res.status(results.status).send(results.data);
+    }
+  });
+};
+
+const getAllUsers = async (req, res) => {
     try {
         const allUsers = await User.find({});
         if (allUsers) {
@@ -141,4 +182,4 @@ const getAllMessagesRedis = async (req, res) => {
       }
 }
 
-module.exports = {createFakeUsers, createFakeMessages, getAllUsers, getAllMessages, getAllMessagesRedis};
+module.exports = {createFakeUsers, createFakeMessages, createFakeUsersKafka, createFakeMessagesKafka, getAllUsers, getAllMessages, getAllMessagesRedis};
