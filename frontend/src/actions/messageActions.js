@@ -5,6 +5,7 @@ import { GET_MESSAGE, SEND_MESSAGE } from "./types";
 export const getMessage = (data) => dispatch => {
   axios.get(`http://localhost:3001/api/message`)
     .then(response => { 
+      //console.log(response.data);
       dispatch({
         type: GET_MESSAGE,
         payload: response.data

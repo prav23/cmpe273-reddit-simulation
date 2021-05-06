@@ -38,7 +38,8 @@ export const loginUser = (userData) => (dispatch) => {
       const decoded = jwt_decode(token);
       const name = decoded.name;
       const user_id = decoded.id;
-      dispatch(setCurrentUser({ token, name, user_id }));
+      const email = decoded.email;
+      dispatch(setCurrentUser({ token, name, user_id, email }));
     })
     .catch((err) => {
       console.log(err);
@@ -63,6 +64,7 @@ export const setCurrentUser = (decoded) => {
 export const logoutUser = () => (dispatch) => {
   // Remove token from localStorage
   localStorage.removeItem("jwtToken");
+  localStorage.removeItem("receivedBy");
   // Remove auth header for future requests
   setAuthToken(false);
   dispatch({
