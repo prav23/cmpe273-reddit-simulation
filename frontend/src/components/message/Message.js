@@ -9,7 +9,7 @@ import { Grid, Toolbar, Typography, Paper } from "@material-ui/core";
 import { Form, Button } from 'react-bootstrap';
 import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
-import { getDashboardDetails } from '../../actions/dashboardActions';
+import { getMessage, sendMessage } from '../../actions/messageActions';
 
 const { API_URL } = require('../../utils/Constants').default;
 const axios = require('axios').default;
@@ -33,10 +33,19 @@ const useStyles = (theme) => ({
     flexGrow: 1,
     fontSize: 13,
     fontWeight: 'bold',
+    textAlign: 'left'
+  },
+  date: {
+    flexGrow: 1,
+    fontSize: 13,
+    textAlign: 'left',
   },
   message: {
       flexGrow: 1,
       fontSize: 20,
+  },
+  accord: {
+    backgroundColor: "#b4eefa"
   }
 });
 
@@ -47,6 +56,7 @@ class Message extends Component {
         sentBy : "",
         receivedBy : "",
         message : "",
+        allmessagelist : [],
         messagelist : [],
         //auto suggest
         emaillist : [],
@@ -56,10 +66,10 @@ class Message extends Component {
   }
   componentDidMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
-    axios.get(`${API_URL}/message`)
+    axios.get(`${API_URL}/users`)
     .then(response => { 
-      let emaillist = Array.from(response.data);
-      console.log(emaillist);
+      let emaillist = response.data.data.allUsers;
+      console.log(response.data.data.allUsers);
       let emailarray = [];
       emaillist.map((listing) => {
         emailarray.push(listing.email);
@@ -68,31 +78,56 @@ class Message extends Component {
     })
     .catch(error => { console.log(error) });  
   }
+  componentWillMount() {
+    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
+    this.props.getMessage();
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.message) {
+        var { message } = nextProps;
+        let allmessage = Array.from(message.data.allMessages);
+        console.log(allmessage);
+        let allmessagelist = [];
+        allmessage.map((listing) => {
+          if (listing.sentBy === this.props.auth.user.email || listing.receivedBy === this.props.auth.user.email)
+            allmessagelist.push(listing);
+        })
+        this.setState({allmessagelist : allmessagelist})
+        let messagelist = [];
+        allmessage.map((listing) => {
+          if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
+            messagelist.push(listing);
+        })
+        this.setState({messagelist : messagelist})
+    }  
+  }
   messageChangeHandler = (event) => {
     this.setState({message : event.target.value})
   }
   submitSearch = () => {
-    axios.get(`${API_URL}/message/${localStorage.getItem("email")}/${this.state.receivedBy}`)
-      .then(response => { 
-        this.setState({messagelist : response.data})
-      })
-      .catch(error => { console.log(error) });  
+    let messagelist = this.state.allmessagelist;
+    let message = [];
+    messagelist.map((listing) => {
+      if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
+        message.push(listing);
+    })
+    this.setState({messagelist : message})
   }
   sendMessage = () => {
     const data = {
-      receivedBy : this.state.receivedBy,
-      sentBy : localStorage.getItem("email"),
+      receivedBy : localStorage.getItem("receivedBy"),
+      sentBy : this.props.auth.user.email,
       message : this.state.message
     }
     console.log(data);
-    axios.post(`${API_URL}/message`, data)
-      .then(response => { 
-      })
-      .catch(error => { console.log(error) });  
+    this.props.sendMessage(data); 
   }
   emailTextChange = (event) => {
     this.setState({receivedBy: event.target.value});
     const value = event.target.value;
+    localStorage.setItem("receivedBy", value);
     let emailsuggestions = [];
     if (value.length > 0){
         const regex = new RegExp(`^${value}`, 'i');
@@ -105,6 +140,7 @@ class Message extends Component {
           receivedBy : value,
           emailsuggestions : [],
       }));
+      localStorage.setItem("receivedBy", value);
   }
   renderEmailSuggestions = () => {
       const {emailsuggestions} = this.state;
@@ -124,7 +160,6 @@ class Message extends Component {
     const { classes } = this.props;
     let redirectVar = null;
     console.log(this.state);
-    console.log(localStorage.getItem('jwtToken'));
     if(!localStorage.getItem("jwtToken")){
         redirectVar = <Redirect to= "/"/>
     }
@@ -163,32 +198,63 @@ class Message extends Component {
                   <Grid item xs={8}>
                     <Paper className={classes.paper}>
                     <List>
+                      <Typography className={classes.message}>Chat with {this.state.receivedBy}</Typography>
                       {!this.state.messagelist.length && <Typography className={classes.message}>No Recent Chat to Show...</Typography>}
                       { this.state.messagelist.map((listing) => {
                           return (
                               <div>
-                                  <Accordion>
-                                      <AccordionDetails>
-                                          <Grid container spacing={3}>
-                                              <Grid item xs={3}>
-                                                  <Typography className={classes.text}>Username: {listing.receivedBy}</Typography>
+                                {/* sent from other */}
+                                {listing.sentBy === localStorage.getItem("receivedBy") && <div>
+                                  <Grid container spacing={1}>
+                                    <Grid item xs={8}>
+                                      <Accordion>
+                                        <AccordionDetails>
+                                          <Grid container spacing={1}>
+                                              <Grid item xs={5}>
+                                                <Typography className={classes.text}>{listing.sentBy}</Typography>
                                               </Grid>
-                                              <Grid item xs={9}>
-                                                  <Typography className={classes.text}>Date: {listing.createAt}</Typography>
+                                              <Grid item xs={7}>
+                                                  <Typography className={classes.date}>{listing.createdAt}</Typography>
                                               </Grid>
                                               <Grid item xs={8}>
-                                                  <Typography className={classes.text}>message: {listing.message}</Typography>
+                                                  <Typography className={classes.text}>{listing.message}</Typography>
                                               </Grid>
-                                          </Grid>
-                                      </AccordionDetails>
-                                  </Accordion>
-                                  <Divider />
+                                            </Grid>
+                                          </AccordionDetails>
+                                      </Accordion>
+                                      <Divider />
+                                    </Grid>
+                                    <Grid item xs={4}></Grid>
+                                  </Grid>
+                                </div>}
+                                {/* sent from the user */}
+                                {listing.sentBy === this.props.auth.user.email && <div>
+                                  <Grid container spacing={1}>
+                                    <Grid item xs={4}></Grid>
+                                    <Grid item xs={8}>
+                                      <Accordion className={classes.accord}>
+                                          <AccordionDetails>
+                                              <Grid container spacing={1}>
+                                                  <Grid item xs={5}>
+                                                      <Typography className={classes.text}>{this.props.auth.user.name}</Typography>                                              </Grid>
+                                                  <Grid item xs={7}>
+                                                      <Typography className={classes.date}>{listing.createdAt}</Typography>
+                                                  </Grid>
+                                                  <Grid item xs={8}>
+                                                      <Typography className={classes.text}>{listing.message}</Typography>
+                                                  </Grid>
+                                              </Grid>
+                                          </AccordionDetails>
+                                      </Accordion>
+                                      <Divider />
+                                    </Grid>
+                                  </Grid>
+                                </div>}
                               </div>
                               );        
                           })
-                          }                                            
+                      }                                            
                       </List>
-
 
                       <Grid container spacing={1}>
                         <Grid item xs={11}>
@@ -220,11 +286,17 @@ class Message extends Component {
 }
 
 Message.propTypes = {
-  
+  auth: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  getMessage: PropTypes.object.isRequired,
+  sendMessage: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  
+  auth: state.auth,
+  message: state.message.message,
+  user: state.message.user,
 });
 
-export default connect(mapStateToProps, { getDashboardDetails})(withStyles(useStyles)(Message));
+export default connect(mapStateToProps, { getMessage, sendMessage})(withStyles(useStyles)(Message));

@@ -60,6 +60,9 @@ var db = mongoose.connection;
 if (!db) console.log("Error connecting to db");
 else console.log("Db connected successfully");
 
+const sqldb = require("./sqlmodels");
+sqldb.sequelize.sync();
+
 // Setup an express server and define port to listen all incoming requests for this application
 const setUpExpress = () => {
   const port = process.env.APP_PORT || 3001;

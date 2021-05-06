@@ -12,7 +12,9 @@ const config = {
    // Keys can't be added here because AWS categorizes this as vulnerability.
    awsAccessKey: "",
    awsSecretAccessKey: "",
-   awsPermission: "public-read"
+   awsPermission: "public-read",
+   redisHost: "localhost",
+   redisPort: 6379  
 };
 
 module.exports = config;

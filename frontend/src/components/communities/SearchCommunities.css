@@ -1,0 +1,78 @@
+.search {
+    height: 100vh;
+    background-color: #dae0e6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search__filters{
+    margin-top: 15px;
+    width: 90%;
+    height: 50px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+}
+
+.search__sortbytext {
+    margin-left: 15px;
+    font-size: 13px;
+}
+
+.search__communities{
+    margin-top: 10px;
+    width: 90%;
+    height: 100vh;
+    background-color: white;
+}
+
+.search__community{
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+}
+
+.search__communityinfo{
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+    width: 150px
+}
+
+.search__communityname{
+    font-size: 15px;
+}
+
+.search__communitymembers{
+    font-size: 12px;
+    color: gray;
+}
+
+.search__communitydescription{
+    width: 70%;
+    display: flex;
+    align-items: center;
+    line-height: 14px;
+}
+
+.search__communitydescription > p {
+    font-size: 12px;
+    color: gray;
+}
+
+.search__joincommunity{
+    margin-left: 15px;
+}
+
+.search__joincommunity > button {
+    width:85px;
+    height: 30px;
+    border: none;
+    background-color: #0079d3;
+    color: white;
+    font-weight: bold;
+    border-radius: 7px;
+}

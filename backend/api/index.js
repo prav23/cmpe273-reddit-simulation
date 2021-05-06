@@ -3,12 +3,23 @@ const passport = require("passport");
 const user = require("./users");
 const member = require("./member");
 const community = require("./community");
-
+const analytics = require("./analytics");
 const posts = require("./post");
 const comment = require("./comment");
 const message = require("./message");
 
+const performance = require("./performance");
+
 const router = express.Router();
+
+// measure performance api requests
+router.get("/performance/createusers/:userCount", performance.createFakeUsers);
+router.get("/performance/createmessages/:messageCount", performance.createFakeMessages);
+router.get("/performance/createuserskafka/:userCount", performance.createFakeUsersKafka);
+router.get("/performance/createmessageskafka/:messageCount", performance.createFakeMessagesKafka);
+router.get("/performance/users", performance.getAllUsers);
+router.get("/performance/messages", performance.getAllMessages);
+router.get("/performance/messages/redis", performance.getAllMessagesRedis);
 
 // post route requests
 router.post("/posts", posts.create);
@@ -38,71 +49,112 @@ router.get(
   user.findAllUsers
 );
 
+// Create invite
 router.post(
   "/invites",
   passport.authenticate("jwt", { session: false }),
   member.create
 );
+
+// Get invites sent out by community admin
 router.get(
   "/communities/:id/invites",
   passport.authenticate("jwt", { session: false }),
   member.getAllInvitesForCommunity
 );
+
+// Get invites received by user
 router.get(
   "/users/:id/invites",
   passport.authenticate("jwt", { session: false }),
-  member.getAllInvitesForUser
+  member.getAllNewInvitesForUser
 );
+
+// Update invite status to joined, rejected
 router.put(
   "/invites/:id",
   passport.authenticate("jwt", { session: false }),
   member.updateInvite
 );
+
 router.post(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.createCommunity,
+  community.createCommunity
 );
 router.get(
   "/communities",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunities,
+  community.getCommunities
 );
 router.get(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunity,
+  community.getCommunity
 );
 router.put(
   "/community",
   passport.authenticate("jwt", { session: false }),
-  community.updateCommunity,
+  community.updateCommunity
 );
 router.put(
   "/community/rule",
   passport.authenticate("jwt", { session: false }),
-  community.addCommunityRule,
+  community.addCommunityRule
 );
 router.get(
   "/community/members",
   passport.authenticate("jwt", { session: false }),
-  community.getCommunityMembers,
+  community.getCommunityMembers
 );
 router.put(
   "/community/members/approve",
   passport.authenticate("jwt", { session: false }),
-  community.approveMembers,
+  community.approveMembers
 );
 router.put(
   "/community/posts",
   passport.authenticate("jwt", { session: false }),
-  community.updatePostCount,
+  community.updatePostCount
+);
+router.get(
+  "/user/communities",
+  passport.authenticate("jwt", { session: false }),
+  community.getCommunitiesForUser
+);
+router.delete(
+  "/user/communities",
+  passport.authenticate("jwt", { session: false }),
+  community.leaveCommunity
 );
 
 //message
-router.get("/message", message.getUsers);
-router.get("/message/:email/:receivedBy", message.getMessage);
-router.post("/message", message.sendMessage);
+router.get("/message", 
+  message.getMessage
+);
+router.post("/message", 
+  message.sendMessage
+);
 
+// Get number of posts for a community
+router.get("/communities/:communityName/numPosts", analytics.getNumOfPosts);
+
+// Get number of users for a community
+router.get("/communities/:communityName/numUsers", analytics.getNumOfMembers);
+
+// Get the most upvoted post for a community
+router.get(
+  "/communities/:communityName/mostUpvotedPost",
+  analytics.mostUpvotedPost
+);
+
+// Get user who has created maximum number of posts in a community
+router.get(
+  "/communities/:communityName/mostActiveUser",
+  analytics.userWithMaximumNumPosts
+);
+
+// Get admin's community with maximum number of posts
+router.get("/communities/mostActiveCommunity", analytics.communityWithMaxPosts);
 
 module.exports = router;
