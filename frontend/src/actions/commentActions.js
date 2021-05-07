@@ -6,12 +6,12 @@ import {
   CLEAR_COMMENTS,
   GET_ERRORS
 } from "./types";
-
+const { API_URL } = require('../utils/Constants').default;
 // Get Dashboard Details
 export const getComments =  postId => dispatch => {
   dispatch(setCommentsLoading());
   axios
-    .get(`http://localhost:3001/api/comments/${postId}`)
+    .get(`${API_URL}/comments/${postId}`)
     .then(res =>
       dispatch({
         type: GET_COMMENTS,
@@ -43,7 +43,7 @@ export const clearPosts = () => {
 // Create Root Comments
 export const createRootComment = (rootCommentData, history) => dispatch => {
   axios
-    .post("http://localhost:3001/api/comments", rootCommentData)
+    .post(`${API_URL}/comments`, rootCommentData)
     .then(res => history.push("/dashboard"))
     .catch(err =>
       dispatch({
@@ -56,7 +56,7 @@ export const createRootComment = (rootCommentData, history) => dispatch => {
 // Create Sub Comments
 export const createSubComment = (subCommentData, history) => dispatch => {
   axios
-    .post("http://localhost:3001/api/comments/subcomment", subCommentData)
+    .post(`${API_URL}/comments/subcomment`, subCommentData)
     .then(res => history.push("/dashboard"))
     .catch(err =>
       dispatch({

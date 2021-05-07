@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { getComments } from '../../actions/commentActions';
 import ago from 's-ago';
 import axios from "axios";
+const { API_URL } = require('../../utils/Constants').default;
+
 class Comments extends Component {
 
   constructor(props){
@@ -35,7 +37,7 @@ class Comments extends Component {
   // }
 
   submitNewRootComment(postTitle, postId){
-    axios.post('http://localhost:3001/api/comments', {
+    axios.post(`${API_URL}/comments`, {
       postTitle,
       postId,
       body: this.state.newRootCommentText,
@@ -50,7 +52,7 @@ class Comments extends Component {
   }
 
   submitNewSubComment(parentCommentId, postTitle, postId){
-    axios.post('http://localhost:3001/api/comments/subcomment', {
+    axios.post(`${API_URL}/comments/subcomment`, {
       parentCommentId,
       postTitle,
       postId,
