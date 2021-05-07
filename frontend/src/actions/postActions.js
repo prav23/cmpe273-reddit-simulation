@@ -6,12 +6,13 @@ import {
   CLEAR_POSTS,
   GET_ERRORS
 } from "./types";
+const { API_URL } = require('../utils/Constants').default;
 
 // Get Dashboard Details
 export const getPosts =  () => dispatch => {
   dispatch(setPostsLoading());
   axios
-    .get(`http://localhost:3001/api/posts`)
+    .get(`${API_URL}/posts`)
     .then(res =>
       dispatch({
         type: GET_POSTS,
@@ -43,12 +44,12 @@ export const clearPosts = () => {
 // Create Posts
 export const createPost = (postData, history) => dispatch => {
   axios
-    .post("http://localhost:3001/api/posts", postData)
+    .post(`${API_URL}/posts`, postData)
     .then(res => {
       const updatePostData = {
         communityName : postData.communityName,
       }
-      axios.put("http://localhost:3001/api/community/posts", updatePostData)
+      axios.put(`${API_URL}/community/posts`, updatePostData)
       .then(res => history.push("/dashboard"));
     })
     .catch(err =>

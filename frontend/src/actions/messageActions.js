@@ -1,9 +1,10 @@
 import axios from "axios";
 import { GET_MESSAGE, SEND_MESSAGE } from "./types";
+const { API_URL } = require('../utils/Constants').default;
 
 //get message list
 export const getMessage = (data) => dispatch => {
-  axios.get(`http://localhost:3001/api/message`)
+  axios.get(`${API_URL}/message`)
     .then(response => { 
       //console.log(response.data);
       dispatch({
@@ -25,7 +26,7 @@ export const getMessage = (data) => dispatch => {
   
 //send messages
 export const sendMessage = (data) => dispatch => {
-  axios.post(`http://localhost:3001/api/message`, data)
+  axios.post(`${API_URL}/message`, data)
   .then(response => { 
     dispatch({
       type: SEND_MESSAGE,

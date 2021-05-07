@@ -7,11 +7,12 @@ import {
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
+const { API_URL } = require('../utils/Constants').default;
 
 //Register User
 export const registerUser = (userData, history) => (dispatch) => {
   axios
-    .post("http://localhost:3001/api/register", userData)
+    .post(`${API_URL}/register`, userData)
     .then((res) => history.push("/login"))
     .catch((err) =>
       dispatch({
@@ -24,7 +25,7 @@ export const registerUser = (userData, history) => (dispatch) => {
 //Login- Get User Token
 export const loginUser = (userData) => (dispatch) => {
   axios
-    .post("http://localhost:3001/api/login", userData)
+    .post(`${API_URL}/login`, userData)
     .then((res) => {
       //Save to localStorage
       const { token } = res.data;
