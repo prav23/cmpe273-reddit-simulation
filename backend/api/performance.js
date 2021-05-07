@@ -137,7 +137,8 @@ const getAllUsers = async (req, res) => {
 const getAllMessages = async (req, res) => {
 try {
     const allMessages = await Message.findAll({
-        where: {},
+        //where: {},
+        where: {message_id: {lte: 135}},
     });
     if (allMessages) {
         return successResponse(req, res, { allMessages });
@@ -158,7 +159,8 @@ try {
 const getAllMessagesRedis = async (req, res) => {
     try {
         const allMessages = await Message.findAll({
-          where: {},
+          //where: {},
+          where: {message_id: {lte: 100}},
         });
         if (allMessages) {
           // Uncomment this code when testing redis caching
@@ -185,7 +187,7 @@ const getAllMessagesRedis = async (req, res) => {
 const getAllMessagesRedisKafka = async (req, res) => {
   let msg = {};
   msg.route = "get_messages";
-  
+
   kafka.make_request("performance", msg, function (err, results) {
     console.log("in make request call back");
     console.log(results);
