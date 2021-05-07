@@ -20,6 +20,7 @@ router.get("/performance/createmessageskafka/:messageCount", performance.createF
 router.get("/performance/users", performance.getAllUsers);
 router.get("/performance/messages", performance.getAllMessages);
 router.get("/performance/messages/redis", performance.getAllMessagesRedis);
+router.get("/performance/messages/redis/kafka", performance.getAllMessagesRedisKafka);
 
 // post route requests
 router.post("/posts", posts.create);

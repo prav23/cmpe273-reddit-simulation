@@ -6,12 +6,12 @@ const faker = require('faker');
 const kafka = require("../kafka/client");
 
 // Enable this config if you want to test getAllMessages with Redis caching
-// const { redisHost, redisPort } = require("../utils/config");
-// var cacher = require('sequelize-redis-cache');
-// var redis = require('redis');
-// var rc = redis.createClient(redisPort, redisHost);
-// const sqldb = require("../sqlmodels");
-// var cacheObj = cacher(sqldb.sequelize, rc).model('Message').ttl(10000);
+const { redisHost, redisPort } = require("../utils/config");
+var cacher = require('sequelize-redis-cache');
+var redis = require('redis');
+var rc = redis.createClient(redisPort, redisHost);
+const sqldb = require("../sqlmodels");
+var cacheObj = cacher(sqldb.sequelize, rc).model('Message').ttl(10000);
 
 const createFakeUsers = async (req, res) => {
   try{
@@ -162,11 +162,11 @@ const getAllMessagesRedis = async (req, res) => {
         });
         if (allMessages) {
           // Uncomment this code when testing redis caching
-          // cacheObj.findAll({ where: {}, logging: console.log})
-          //   .then(function(row) {
-          //     //console.log(row); // sequelize db object
-          //     console.log(cacheObj.cacheHit); // true or false
-          //   });
+          cacheObj.findAll({ where: {}, logging: console.log})
+            .then(function(row) {
+              //console.log(row); // sequelize db object
+              console.log(cacheObj.cacheHit); // true or false
+            });
           return successResponse(req, res, { allMessages });
         } else {
           return errorResponse(
@@ -182,4 +182,23 @@ const getAllMessagesRedis = async (req, res) => {
       }
 }
 
-module.exports = {createFakeUsers, createFakeMessages, createFakeUsersKafka, createFakeMessagesKafka, getAllUsers, getAllMessages, getAllMessagesRedis};
+const getAllMessagesRedisKafka = async (req, res) => {
+  let msg = {};
+  msg.route = "get_messages";
+  
+  kafka.make_request("performance", msg, function (err, results) {
+    console.log("in make request call back");
+    console.log(results);
+    console.log(err);
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      console.log(results);
+      return res.status(results.status).send(results.data);
+    }
+  });
+}
+
+module.exports = {createFakeUsers, createFakeMessages, createFakeUsersKafka, createFakeMessagesKafka, getAllUsers, getAllMessages, getAllMessagesRedis, getAllMessagesRedisKafka};
