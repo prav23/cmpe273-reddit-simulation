@@ -129,6 +129,9 @@ router.delete(
   community.leaveCommunity
 );
 
+// Search for communities based off navbar query
+router.get("/findcommunities", community.searchForCommunities);
+
 //message
 router.get("/message", 
   message.getMessage
