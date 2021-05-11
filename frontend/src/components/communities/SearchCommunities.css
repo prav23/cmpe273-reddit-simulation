@@ -44,6 +44,16 @@
     align-items: center;
 }
 
+.search__vote{
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.search__vote > span {
+    font-size: 12px;
+}
+
 .search__communityinfo{
     margin-left: 15px;
     display: flex;
@@ -74,7 +84,6 @@
 }
 
 .search__joincommunity{
-    margin-left: 15px;
 }
 
 .search__joincommunity > button {
@@ -114,4 +123,9 @@
 
 .disabled{
     visibility: hidden;
+}
+
+.search__pagesizetext {
+    margin-left: 30px;
+    font-size: 13px;
 }

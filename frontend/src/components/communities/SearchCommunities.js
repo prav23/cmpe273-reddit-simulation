@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 import Select from "react-dropdown-select";
 import ReactPaginate from "react-paginate";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { resetSearchRedirect } from "../../actions/searchCommunitiesActions";
 import './SearchCommunities.css';
 
@@ -20,6 +21,7 @@ class SearchCommunities extends Component {
       pageCount: 0,
       currentSortBy: "created",
       currentSortOpt: "asc",
+      currentPageSize: 2,
       sortBy: [
         { label: "created at", value: "created" },
         { label: "most users", value: "users" },
@@ -30,6 +32,11 @@ class SearchCommunities extends Component {
         { label: "ascending", value: "asc" }, 
         { label: "descending", value: "desc" },
       ],
+      pageSizeOpts: [
+        { label: "2", value: 2 }, 
+        { label: "5", value: 5 },
+        { label: "10", value: 10 }, 
+      ]
     };
   }
 
@@ -42,10 +49,11 @@ class SearchCommunities extends Component {
     const search_query = window.location.href.split("?");
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
+      const { currentPageSize } = this.state;
       this.setState({
         foundCommunities: communities.data,
         newSearch: true,
-        pageCount: communities.data.length/5,
+        pageCount: Math.ceil(communities.data.length/currentPageSize),
       });
     } catch (e) {
       console.log(e);
@@ -65,9 +73,10 @@ class SearchCommunities extends Component {
     const search_query = window.location.href.split("?");
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
+      const { currentPageSize } = this.state;
       this.setState({
         foundCommunities: communities.data,
-        pageCount: communities.data.length/5,
+        pageCount: Math.ceil(communities.data.length/currentPageSize),
       });
     } catch (e) {
       console.log(e);
@@ -210,6 +219,15 @@ class SearchCommunities extends Component {
     });
   }
 
+  setPageSize = (values) => {
+    const { foundCommunities, currentPageSize, currentPage } = this.state;
+    this.setState({
+      currentPageSize: values[0].value,
+      pageCount: Math.ceil(foundCommunities.length / values[0].value),
+      currentPage: (currentPage * currentPageSize) / values[0].value,
+    });
+  }
+
   handlePageClick= (selectedPage) => {
     console.log(selectedPage.selected);
     this.setState({ 
@@ -218,7 +236,16 @@ class SearchCommunities extends Component {
   }
 
   render() {
-    const { foundCommunities, newSearch, sortBy, sortOptions, pageCount, currentPage } = this.state;
+    const {
+      foundCommunities,
+      newSearch,
+      sortBy,
+      sortOptions,
+      pageCount,
+      currentPage,
+      currentPageSize,
+      pageSizeOpts,
+    } = this.state;
     const { redirectToSearchPage } = this.props.searchCommunities;
 
     if (redirectToSearchPage && newSearch) {
@@ -231,14 +258,21 @@ class SearchCommunities extends Component {
           <span className="search__sortbytext">Sort By</span>
           <Select options={sortBy} values={[sortBy.find(op=>op.label === "created at")]} searchable={false} onChange={values => this.setSortBy(values)} className="search__sortby" />
           <Select options={sortOptions} values={[sortOptions.find(op=>op.label === "ascending")]} searchable={false} onChange={values => this.setSortOptions(values)} className="search__sortby" />
+          <span className="search__pagesizetext">Page Size</span>
+          <Select options={pageSizeOpts} values={[pageSizeOpts.find(op=>op.label === "2")]} searchable={false} onChange={values => this.setPageSize(values)} className="search__sortby" />
         </div>
 
         <div className="search__communities">
           {
             foundCommunities.length===0
             ? <span className="search__noresults">No results found, try another search!</span>
-            : foundCommunities.slice(currentPage*5, currentPage*5+5).map((community) => (
+            : foundCommunities.slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize).map((community) => (
             <div key={community.id} className="search__community">
+              <div className="search__vote">
+                <ArrowUpwardIcon fontSize="small" />
+                <span>{community?.upVotes - community?.downVotes}</span>
+                <ArrowDownwardIcon fontSize="small" />
+              </div>
               <div className="search__communityinfo">
                 <span className="search__communityname">{`r/${community.name}`}</span>
                 <span className="search__communitymembers">{`${community?.numUsers} Members`}</span>
@@ -266,7 +300,7 @@ class SearchCommunities extends Component {
                   nextLabel={'next'}
                   pageCount={pageCount}
                   marginPagesDisplayed={1}
-                  pageRangeDisplayed={5}
+                  pageRangeDisplayed={10}
                   onPageChange={this.handlePageClick}
                   containerClassName={'pagination'}
                   activeClassName={'active'}
@@ -277,7 +311,6 @@ class SearchCommunities extends Component {
                 />
               )
             }
-            
           </div>
         </div>
       </div>
