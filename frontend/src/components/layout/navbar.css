@@ -100,6 +100,10 @@
     height: 40px;
 }
 
+.searchBar__icon {
+    margin-left: 5px;
+}
+
 .searchBar > input {
     background-color: transparent;
     border: none;

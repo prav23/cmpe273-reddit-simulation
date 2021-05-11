@@ -28,7 +28,7 @@ class Navbar extends Component {
 
   handleSearchSubmit = (e) => {
     e.preventDefault();
-    const { searchText } = this.state;
+    console.log("Search entered");
 
     this.props.searchRedirect();
   };
@@ -55,7 +55,7 @@ class Navbar extends Component {
               <img alt="logo" src={logo} height="25px" />
             </Link>
             <form onSubmit={this.handleSearchSubmit} className="searchBar">
-              <SearchIcon color="disabled" />
+              <SearchIcon color="disabled" className="searchBar__icon" />
               <input
                 type="text"
                 placeholder="Search for communities"

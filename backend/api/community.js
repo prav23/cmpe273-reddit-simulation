@@ -287,6 +287,24 @@ const leaveCommunity = async(req, res) => {
   return res.status(200).send(`removed ${req.query.userId} from communities ${req.query.communityIds}`);
 }
 
+// search for communities based off query from navbar
+const searchForCommunities = async(req, res) => {
+  if(!req.query.q){
+    return res.status(400).send('search query required');
+  }
+
+  try {
+    const communities = await Community.find(
+      { name: { $regex: req.query.q, $options: "i" }, },
+      null,
+      { sort: { createdAt: -1 } },
+    );
+    res.json(communities);
+  } catch (e) {
+    res.status(500);
+  }
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -298,4 +316,5 @@ module.exports = {
   updatePostCount,
   getCommunitiesForUser,
   leaveCommunity,
+  searchForCommunities,
 };
