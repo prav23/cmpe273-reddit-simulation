@@ -4,50 +4,292 @@ import PropTypes from "prop-types";
 import { getPosts } from "../../actions/postActions";
 import ago from "s-ago";
 import { Link } from "react-router-dom";
+import Select from "react-dropdown-select";
+import ReactPaginate from "react-paginate";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import CommentIcon from '@material-ui/icons/Comment';
+import './dashboard.css'
 
 class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    const { postsDetails } = this.props.posts;
+    this.state ={
+      allPosts: postsDetails,
+      searchQuery: "",
+      currentPage: 0,
+      pageCount: 0,
+      currentSortBy: "created",
+      currentSortOpt: "asc",
+      currentPageSize: 2,
+      sortBy: [
+        { label: "created at", value: "created" },
+        { label: "most users", value: "users" },
+        { label: "most comments", value: "comments" },
+        { label: "most upvoted posts", value: "upvotedposts" },
+      ],
+      sortOptions: [
+        { label: "ascending", value: "asc" }, 
+        { label: "descending", value: "desc" },
+      ],
+      pageSizeOpts: [
+        { label: "2", value: 2 }, 
+        { label: "5", value: 5 },
+        { label: "10", value: 10 }, 
+      ]
+    };
+  }
+
   componentDidMount() {
     const { isAuthenticated } = this.props.auth;
     if (isAuthenticated) {
       //this.props.getDashboardDetails(user.user_id);
       // TODO: filter posts related to user
       this.props.getPosts();
+
+      const { allPosts, currentPageSize } = this.state;
+      this.setState({
+        pageCount: Math.ceil(allPosts.length/currentPageSize),
+      });
     }
   }
 
-  render() {
-    const { isAuthenticated } = this.props.auth;
-    const { postsDetails } = this.props.posts;
-    const sortedpostsDetails = postsDetails.sort(function(a,b){
-      return new Date(b.createdAt) - new Date(a.createdAt);
+  searchPosts = (e) => {
+    this.setState({
+      searchQuery: e.target.value,
     });
+  }
+
+  setSortBy = (values) => {
+    const { allPosts } = this.state;
+    let temp = allPosts;
+    if (values[0].value === "created") {
+      temp = temp.sort(this.sortByCreatedAt);
+    } else if (values[0].value === "users") {
+      temp = temp.sort(this.sortByMostUsers);
+    } else if (values[0].value === "comments") {
+      temp = temp.sort(this.sortByMostComments);
+    } else if (values[0].value === "upvotedposts") {
+      temp = temp.sort(this.sortByMostUpvotedPosts);
+    }
+    
+    this.setState({
+      currentSortBy: values[0].value,
+      allPosts: temp
+    });
+  }
+
+  setSortOptions = (values) => {
+    const { allPosts } = this.state;
+    let temp = allPosts;
+    if (values[0].value === "asc") {
+      temp = temp.sort(this.sortByAscending);
+    } else if (values[0].value === "desc") {
+      temp = temp.sort(this.sortByDescending);
+    } 
+
+    this.setState({
+      currentSortOpt: values[0].value,
+      allPosts: temp,
+    });
+  }
+
+  sortByCreatedAt = (a, b) => {
+    const { currentSortOpt } = this.state;
+    if(currentSortOpt === "asc") {
+      if (a.createdAt < b.createdAt) { return 1; }
+      if (a.createdAt > b.createdAt) { return -1; }
+      return 0;
+    } else {
+      if (a.createdAt < b.createdAt) { return -1; }
+      if (a.createdAt > b.createdAt) { return 1; }
+      return 0;
+    }
+  }
+
+  sortByMostUpvotedPosts = (a, b) => {
+    const { currentSortOpt } = this.state;
+    if(currentSortOpt === "asc") {
+      if (a.votes.length < b.votes.length) { return -1; }
+      if (a.votes.length > b.votes.length) { return 1; }
+      return 0;
+    } else {
+      if (a.votes.length < b.votes.length) { return 1; }
+      if (a.votes.length > b.votes.length) { return -1; }
+      return 0;
+    }
+  }
+
+  // NEED TO GET NUM USERS OF COMMUNITY FROM BACKEND
+  // rn only have post info, not com info
+  sortByMostUsers = (a, b) => {
+    const { currentSortOpt } = this.state;
+    if(currentSortOpt === "asc") {
+      if (a.numUsers < b.numUsers) { return -1; }
+      if (a.numUsers > b.numUsers) { return 1; }
+      return 0;
+    } else {
+      if (a.numUsers < b.numUsers) { return 1; }
+      if (a.numUsers > b.numUsers) { return -1; }
+      return 0;
+    }
+  }
+
+  // NEED TO GET NUM COMMENTS FROM COMMENTS DB
+  sortByMostComments = (a, b) => {
+    
+  }
+
+  sortByAscending = (a, b) => {
+    const { currentSortBy } = this.state;
+    if(currentSortBy === "created") {
+      if (a.createdAt < b.createdAt) { return 1; }
+      if (a.createdAt > b.createdAt) { return -1; }
+      return 0;
+    } else if(currentSortBy === "users"){
+      if (a.numUsers < b.numUsers) { return -1; }
+      if (a.numUsers > b.numUsers) { return 1; }
+      return 0;
+    } else if(currentSortBy === "comments"){
+      // update later
+      return 0;
+    } else if(currentSortBy === "upvotedposts"){
+      if (a.votes.length < b.votes.length) { return -1; }
+      if (a.votes.length > b.votes.length) { return 1; }
+      return 0;
+    }
+  }
+
+  sortByDescending = (a, b) => {
+    const { currentSortBy } = this.state;
+    if(currentSortBy === "created") {
+      if (a.createdAt < b.createdAt) { return -1; }
+      if (a.createdAt > b.createdAt) { return 1; }
+      return 0;
+    } else if(currentSortBy === "users"){
+      if (a.numUsers < b.numUsers) { return 1; }
+      if (a.numUsers > b.numUsers) { return -1; }
+      return 0;
+    } else if(currentSortBy === "comments"){
+      // update later
+      return 0;
+    } else if(currentSortBy === "upvotedposts"){
+      if (a.votes.length < b.votes.length) { return 1; }
+      if (a.votes.length > b.votes.length) { return -1; }
+      return 0;
+    }
+  }
+
+  setPageSize = (values) => {
+    const { allPosts, currentPageSize, currentPage } = this.state;
+    this.setState({
+      currentPageSize: values[0].value,
+      pageCount: Math.ceil(allPosts.length / values[0].value),
+      currentPage: (currentPage * currentPageSize) / values[0].value,
+    });
+  }
+
+  handlePageClick= (selectedPage) => {
+    this.setState({ 
+      currentPage: selectedPage.selected
+    });
+  }
+
+  render() {
+    const { isAuthenticated } = this.props.auth;  
+    const {
+      sortBy,
+      sortOptions,
+      pageSizeOpts,
+      searchQuery,
+      allPosts,
+      pageCount,
+      currentPage,
+      currentPageSize,
+    } = this.state;
+
     return (
 
-      isAuthenticated && <div className="posts">
-        {sortedpostsDetails.map(post => {
+      isAuthenticated && <div className="dashboard__body">
+        <div className="dashboard__filters">
+          <span className="dashboard__sortbytext">Sort By</span>
+          <Select options={sortBy} values={[sortBy.find(op=>op.label === "created at")]} searchable={false} onChange={values => this.setSortBy(values)} className="dashboard__sortby" />
+          <Select options={sortOptions} values={[sortOptions.find(op=>op.label === "ascending")]} searchable={false} onChange={values => this.setSortOptions(values)} className="dashboard__sortby" />
+          <span className="dashboard__pagesizetext">Page Size</span>
+          <Select options={pageSizeOpts} values={[pageSizeOpts.find(op=>op.label === "2")]} searchable={false} onChange={values => this.setPageSize(values)} className="dashboard__sortby" />
+        </div>
+        <div className="dashboard__searchbar">
+          <label className="dashboard__sortbytext">Search Posts</label>
+          <input type="text" placeholder="e.g. workout, dogs, etc." className="dashboard__input" onChange={this.searchPosts} />
+        </div>
+
+        {allPosts.filter(
+          (p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.text.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+        .slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize)
+        .map(post => {
+          let postClass = "dashboard__textpost";
+          if(post.postType === "image"){
+            postClass = "dashboard__imagepost";
+          } else if(post.postType === "url"){
+            postClass = "dashboard__urlpost";
+          }
+
           return (
-          <div className="row mt-4">
-            <div className="col-1">
-              <div className="d-flex flex-column ps-5 mt-2">
-                <i data-test="fa" class="fa fa-lg fa-angle-up"></i>
-                <p className="fs-3 mt-2 pe-1">{post.score}</p>
-                <i data-test="fa" class="fa fa-lg fa-angle-down mt-n1"></i>
+            <div key={post._id} className={postClass}>
+              <div className="dashboard__votes">
+                <ArrowUpwardIcon color="action" style={{ fontSize: 17 }} />
+                <span>{post?.votes.length}</span>
+                <ArrowDownwardIcon color="action" style={{ fontSize: 17 }} />
               </div>
-            </div>
-            <div className="col">
-              <div className="card">
-                <div className="card-body">
-                <p className="card-text"> /r/{post.communityName} &nbsp; Posted by u/{post.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(post.createdAt))}</span></p>
-                  <h5 className="card-title">{post.title}</h5>
+              <div className="post__body">
+                <div className="post__communityinfo">
+                  <span className="post__community">{`r/${post.communityName}`}</span>
+                  <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
+                </div>
+                <div className="post__title">
+                  <span>{post.title}</span>
+                </div>
+                <div className="post__description">
                   <p className="card-text">{post.text} </p>
-                  {post.image !== "" && <img style = {{width:"400px",height:"400px"}} src={post.image} class="img-thumbnail" alt="..."/>}
-                  {post.url !== "" && <iframe id={post._id} src= {post.url} width="400" height="400"></iframe>}
-                  <p className="card-text"><Link to={`/comments/${post._id}`}> Comments</Link></p>
+                  {post.image !== "" && <img className="post__image" src={post.image} class="img-thumbnail" alt="..."/>}
+                  {post.url !== "" && <iframe title={post._id} src= {post.url} width="400" height="400"></iframe>}
+                </div>
+                <div className="post__comments">
+                  <Link to={`/comments/${post._id}`}>
+                    <button className="post__commentbutton">
+                      <CommentIcon color="action" style={{ fontSize: 15 }} />
+                      <span>Comments</span>
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>
-          </div>
         )})}
+
+        <div className="dashboard__paginate">
+            {
+              allPosts.length===0
+              ? null 
+              : (
+                <ReactPaginate
+                  previousLabel={'prev'}
+                  nextLabel={'next'}
+                  pageCount={pageCount}
+                  marginPagesDisplayed={1}
+                  pageRangeDisplayed={10}
+                  onPageChange={this.handlePageClick}
+                  containerClassName={'pagination'}
+                  activeClassName={'active'}
+                  pageClassName={'page'}
+                  previousClassName={'prev__page'}
+                  nextClassName={'next__page'}
+                  disabledClassName={'disabled'}
+                />
+              )
+            }
+          </div>
       </div>
     );
   }
