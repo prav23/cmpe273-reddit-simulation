@@ -45,6 +45,12 @@
     outline: none;
 }
 
+.dashboard__arrow {
+    outline:none;
+    border: none;
+    background-color: transparent;
+}
+
 .dashboard__loading {
     margin-top: 20px;
     font-size: 30px;

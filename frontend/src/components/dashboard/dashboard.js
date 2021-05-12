@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import axios from 'axios';
 import PropTypes from "prop-types";
 import { getDashboardDetails } from "../../actions/dashboardActions";
 import ago from "s-ago";
@@ -11,6 +12,8 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import CommentIcon from '@material-ui/icons/Comment';
 import setAuthToken from '../../utils/setAuthToken';
 import './dashboard.css';
+
+const { API_URL } = require('../../utils/Constants').default;
 
 class Dashboard extends Component {
   constructor(props) {
@@ -212,6 +215,30 @@ class Dashboard extends Component {
     });
   }
 
+  async votePost(postId, vote) {
+    const { user } = this.props.auth;
+    const payload = {
+      post_id: postId,
+      user: user.user_id,
+      vote, 
+    };
+    console.log(payload);
+    try {
+      const returnedPost = await axios.put(`${API_URL}/posts/vote`, payload);
+      const { allPosts } = this.state;
+      let postIndex = allPosts.findIndex(p => p._id === returnedPost._id);
+      let allPostsCopy = [...allPosts];
+      let post = {...allPostsCopy[postIndex]};
+      post.votes.push({ user: user.user_id, vote });
+      post.score += vote;
+      this.setState({
+        allPosts: allPostsCopy,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
     const { isAuthenticated } = this.props.auth;  
     const { dashboardLoading } = this.props.dashboard;
@@ -271,9 +298,13 @@ class Dashboard extends Component {
           return (
             <div key={post._id} className={postClass}>
               <div className="dashboard__votes">
-                <ArrowUpwardIcon color="action" style={{ fontSize: 17 }} />
+                <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, 1)} className="dashboard__arrow">
+                  <ArrowUpwardIcon color="action" style={{ fontSize: 17 }} />
+                </button>
                 <span>{post?.votes.length}</span>
-                <ArrowDownwardIcon color="action" style={{ fontSize: 17 }} />
+                <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, -1)} className="dashboard__arrow">
+                  <ArrowDownwardIcon color="action"  style={{ fontSize: 17 }} />
+                </button>
               </div>
               <div className="post__body">
                 <div className="post__communityinfo">

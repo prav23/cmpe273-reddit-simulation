@@ -6,14 +6,17 @@ import ReactPaginate from "react-paginate";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { resetSearchRedirect } from "../../actions/searchCommunitiesActions";
+import setAuthToken from '../../utils/setAuthToken';
 import './SearchCommunities.css';
+import { Redirect } from 'react-router';
 
 const { API_URL } = require('../../utils/Constants').default;
 
 class SearchCommunities extends Component {
   constructor(props) {
     super(props);
-    
+    const { user } = this.props.auth;
+    setAuthToken(user.token);
     this.state = {
       foundCommunities: [],
       newSearch: false,
@@ -36,7 +39,8 @@ class SearchCommunities extends Component {
         { label: "2", value: 2 }, 
         { label: "5", value: 5 },
         { label: "10", value: 10 }, 
-      ]
+      ],
+      communityPageRedirect: "",
     };
   }
 
@@ -54,13 +58,14 @@ class SearchCommunities extends Component {
         foundCommunities: communities.data,
         newSearch: true,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
+        communityPageRedirect: "",
       });
     } catch (e) {
-      console.log(e);
       this.setState({
         foundCommunities: [],
         newSearch: true,
         pageCount: 0,
+        communityPageRedirect: "",
       });
     }
   }
@@ -77,12 +82,13 @@ class SearchCommunities extends Component {
       this.setState({
         foundCommunities: communities.data,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
+        communityPageRedirect: "",
       });
     } catch (e) {
-      console.log(e);
       this.setState({
         foundCommunities: [],
         pageCount: 0,
+        communityPageRedirect: "",
       });
     }
   }
@@ -196,7 +202,6 @@ class SearchCommunities extends Component {
       tempFC = tempFC.sort(this.sortByMostUpvotedPosts);
     }
     
-    console.log(tempFC);
     this.setState({
       currentSortBy: values[0].value,
       foundCommunities: tempFC
@@ -212,7 +217,6 @@ class SearchCommunities extends Component {
       tempFC = tempFC.sort(this.sortByDescending);
     } 
 
-    console.log(tempFC);
     this.setState({
       currentSortOpt: values[0].value,
       foundCommunities: tempFC
@@ -229,9 +233,15 @@ class SearchCommunities extends Component {
   }
 
   handlePageClick= (selectedPage) => {
-    console.log(selectedPage.selected);
     this.setState({ 
       currentPage: selectedPage.selected
+    });
+  }
+
+  clickCommunity = (e) => {
+    console.log(e.currentTarget.dataset.community_id);
+    this.setState({
+      communityPageRedirect: e.currentTarget.dataset.community_id,
     });
   }
 
@@ -245,6 +255,7 @@ class SearchCommunities extends Component {
       currentPage,
       currentPageSize,
       pageSizeOpts,
+      communityPageRedirect,
     } = this.state;
     const { redirectToSearchPage } = this.props.searchCommunities;
 
@@ -254,6 +265,11 @@ class SearchCommunities extends Component {
 
     return (
       <div className="search">
+        {
+          communityPageRedirect !== "" ?
+          <Redirect to={`/community/${communityPageRedirect}`} /> :
+          null
+        }
         <div className="search__filters">
           <span className="search__sortbytext">Sort By</span>
           <Select options={sortBy} values={[sortBy.find(op=>op.label === "created at")]} searchable={false} onChange={values => this.setSortBy(values)} className="search__sortby" />
@@ -267,7 +283,7 @@ class SearchCommunities extends Component {
             foundCommunities.length===0
             ? <span className="search__noresults">No results found, try another search!</span>
             : foundCommunities.slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize).map((community) => (
-            <div key={community.id} className="search__community">
+            <div key={community._id} data-community_id={community._id} className="search__community" onClick={this.clickCommunity}>
               <div className="search__vote">
                 <ArrowUpwardIcon fontSize="small" />
                 <span>{community?.upVotes - community?.downVotes}</span>
@@ -282,10 +298,6 @@ class SearchCommunities extends Component {
                 <p className="search__communitytext">
                   {community.description}
                 </p>
-              </div>
-
-              <div className="search__joincommunity">
-                <button type='button'>Join</button>
               </div>
             </div>
             ))
