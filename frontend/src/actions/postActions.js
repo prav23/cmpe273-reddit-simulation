@@ -26,7 +26,26 @@ export const getPosts =  () => dispatch => {
       })
     );
 };
-  
+
+// Get Community Home Posts
+export const getCommunityPosts =  (communityName) => dispatch => {
+  dispatch(setPostsLoading());
+  axios
+    .get(`${API_URL}/posts/${communityName}`)
+    .then(res =>
+      dispatch({
+        type: GET_POSTS,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: POSTS_LOADING,
+        payload: {}
+      })
+    );
+};
+
 // Posts loading
 export const setPostsLoading = () => {
   return {

@@ -277,7 +277,9 @@ class Dashboard extends Component {
               </div>
               <div className="post__body">
                 <div className="post__communityinfo">
-                  <span className="post__community">{`r/${post.communityName}`}</span>
+                  <Link to={`/communityhome/${post.communityName}`}>
+                      <span className="post__community">{`r/${post.communityName}`}</span>
+                  </Link>
                   <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
                 </div>
                 <div className="post__title">
