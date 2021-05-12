@@ -243,6 +243,33 @@ const getCommunitiesForUser = async(req, res) => {
   return res.status(200).send({ communities: [] })
 }
 
+const joinCommunity = async(req, res) => {
+  const { userId, userName, communityId, communityName } = req.body;
+  if (!userId && !communityId) {
+    return res.status(401).send('userId and communityId are required');
+  }
+
+  try {
+    const member = new Member(
+      {
+        userId,
+        userName,
+        communityId,
+        communityName,
+        status: "invited",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        photo: 'https://avataaars.io/?avatarStyle=Transparent&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light'
+      }
+    );
+    await member.save();
+  
+    res.json(member);
+  } catch (err) {
+    res.status(500).send('Error in joining community');
+  }
+}
+
 // delete all of a user's posts, comments, and memberships from a community
 const leaveCommunity = async(req, res) => {
   if (!req.query.userId && !req.query.communityIds) {
@@ -368,6 +395,7 @@ module.exports = {
   approveMembers,
   updatePostCount,
   getCommunitiesForUser,
+  joinCommunity,
   leaveCommunity,
   searchForCommunities,
   getDashboard,

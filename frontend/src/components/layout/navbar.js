@@ -54,14 +54,19 @@ class Navbar extends Component {
             <Link class="navbar-brand" to="/dashboard">
               <img alt="logo" src={logo} height="25px" />
             </Link>
-            <form onSubmit={this.handleSearchSubmit} className="searchBar">
-              <SearchIcon color="disabled" className="searchBar__icon" />
-              <input
-                type="text"
-                placeholder="Search for communities"
-                onChange={this.handleSearchChange}
-              />
-            </form>
+            {
+              isAuthenticated ?
+              <form onSubmit={this.handleSearchSubmit} className="searchBar">
+                <SearchIcon color="disabled" className="searchBar__icon" />
+                <input
+                  type="text"
+                  placeholder="Search for communities"
+                  onChange={this.handleSearchChange}
+                />
+              </form>
+              : null
+            }
+            
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav w-100 d-flex justify-content-end">
                 {!isAuthenticated && (

@@ -123,6 +123,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   community.getCommunitiesForUser
 );
+router.post(
+  "/user/communities",
+  passport.authenticate("jwt", { session: false }),
+  community.joinCommunity
+);
 router.delete(
   "/user/communities",
   passport.authenticate("jwt", { session: false }),
@@ -130,10 +135,18 @@ router.delete(
 );
 
 // Search for communities based off navbar query
-router.get("/findcommunities", community.searchForCommunities);
+router.get(
+  "/findcommunities",
+  passport.authenticate("jwt", { session: false }),
+  community.searchForCommunities
+);
 
 // Get Dashboard posts
-router.get("/dashboard", community.getDashboard);
+router.get(
+  "/dashboard", 
+  passport.authenticate("jwt", { session: false }),
+  community.getDashboard
+);
 
 //message
 router.get("/message", 
