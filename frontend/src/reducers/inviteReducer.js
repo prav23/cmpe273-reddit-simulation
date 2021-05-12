@@ -1,7 +1,13 @@
-import { SET_INVITE_UPDATED } from "../actions/types";
+import {
+  SET_INVITE_UPDATED,
+  SET_COMMUNITY_ID,
+  SET_COMMUNITY_NAME,
+} from "../actions/types";
 
 const initialState = {
   bInviteUpdated: false,
+  communityId: "",
+  communityName: "",
 };
 
 const inviteReducer = (state = initialState, action) => {
@@ -10,6 +16,16 @@ const inviteReducer = (state = initialState, action) => {
       return {
         ...state,
         bInviteUpdated: action.bInviteUpdated,
+      };
+    case SET_COMMUNITY_ID:
+      return {
+        ...state,
+        communityId: action.communityId,
+      };
+    case SET_COMMUNITY_NAME:
+      return {
+        ...state,
+        communityName: action.communityName,
       };
     default:
       return {
