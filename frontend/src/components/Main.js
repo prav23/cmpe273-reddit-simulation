@@ -6,16 +6,17 @@ import Sidebar from "./layout/sidebar";
 import Landing from "./layout/landing";
 import Register from "./auth/register";
 import Login from "./auth/login";
-import Communities from './communities/Communities';
-import Community from './communities/Community';
-import CommunityUsers from './communities/CommunityUsers';
-import CreatePost from './posts/CreatePost';
+import Communities from "./communities/Communities";
+import Community from "./communities/Community";
+import CommunityUsers from "./communities/CommunityUsers";
+import CreatePost from "./posts/CreatePost";
 import Dashboard from "./dashboard/dashboard";
 import Posts from "./posts/posts";
 import Comments from "./comments/comments";
 import Message from "./message/Message";
 import Invite from "./invites/Invite";
-import SearchCommunities from './communities/SearchCommunities';
+import SearchCommunities from "./communities/SearchCommunities";
+import Analytics from "./analytics/Analytics";
 
 //Create a Main Component
 class Main extends Component {
@@ -40,6 +41,7 @@ class Main extends Component {
             <Route path="/message" component={Message} />
             <Route path="/invites" component={Invite} />
             <Route path="/findcommunities" component={SearchCommunities} />
+            <Route path="/analytics" component={Analytics} />
           </div>
         </div>
       </div>

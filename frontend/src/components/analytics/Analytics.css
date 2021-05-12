@@ -1,0 +1,18 @@
+.analytic{
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.analytic .rows {
+    margin-top: 20px;
+    border: 1px solid rgb(0,0,0,0.125);
+    padding: 15px;
+}
+
+.analytic .cardCol{
+    display: inline-block;
+}
+
+.analytic .card-text:last-child {
+    text-align: center;
+    color: blue;
+}

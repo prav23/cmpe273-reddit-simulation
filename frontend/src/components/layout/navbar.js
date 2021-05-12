@@ -83,6 +83,9 @@ class Navbar extends Component {
                     <li class="tabs nav-item">
                       <Link to="/communities">Communities</Link>
                     </li>
+                    <li class="tabs nav-item">
+                      <Link to="/analytics">Analytics</Link>
+                    </li>
                     <li class="nav-item">
                       <Link to="/message">
                         <IconButton>

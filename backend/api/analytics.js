@@ -96,12 +96,12 @@ exports.mostUpvotedPost = async (req, res) => {
         score: -1,
       },
     },
+    {
+      $limit: 5,
+    },
   ]);
 
-  console.log(post);
-  return res.status(200).send({
-    ...post,
-  });
+  return res.status(200).json(post);
 };
 
 exports.userWithMaximumNumPosts = async (req, res) => {
@@ -182,11 +182,9 @@ exports.communityWithMaxPosts = async (req, res) => {
       },
     },
     {
-      $limit: 1,
+      $limit: 5,
     },
   ]);
 
-  return res.status(200).send({
-    ...community,
-  });
+  return res.status(200).json(community);
 };
