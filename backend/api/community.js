@@ -314,7 +314,7 @@ const getDashboard = async(req, res) => {
   try {
     // get Member (communities that user is a part of)
     const userIsMemberOf = await Member.find(
-      { userId: req.query.id },
+      { userId: req.query.id, status: "joined" },
     );
     
     // get community names array from Member
