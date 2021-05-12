@@ -15,10 +15,10 @@ class CreateCommunity extends React.Component {
 
     this.state = {
       show: false,
+      user: user,
       fields: {
         name: '',
         description: '',
-        createdBy: user.user_id,
       },
       error: '',
     };
@@ -44,9 +44,8 @@ class CreateCommunity extends React.Component {
   }
 
   async handleSubmit() {
-    const { fields } = this.state;
+    const { fields, user } = this.state;
     const { updateCommunities } = this.props;
-    console.log(fields);
 
     if (!fields.name) {
       this.setState({ error: 'Community name is required', fields: {} });
@@ -54,7 +53,7 @@ class CreateCommunity extends React.Component {
     }
 
     try {
-      // TODO: add jwt auth token
+      fields.createdBy = user.user_id;
       await axios.post(`${API_URL}/community`, fields);
       updateCommunities(true);
     } catch(error) {
