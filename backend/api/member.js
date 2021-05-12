@@ -186,7 +186,7 @@ exports.getAllInvitesForCommunity = (req, res) => {
     });
   }
 
-  Member.find({ communityId: req.params.id }, (err, data) => {
+  Member.find({ communityId: req.params.id, sentBy: "admin" }, (err, data) => {
     if (err) {
       return res.status(400).send({
         message: saveError.toString(),

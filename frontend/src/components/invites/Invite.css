@@ -84,3 +84,31 @@
     border-radius: 25px ;
     width: 100px;
 }
+
+.invite .userImg {
+    width: 50px;
+    height: 50px;
+}
+
+.invite .joined{
+    text-transform: uppercase;
+    color: green;
+    margin-left: 5px;
+}
+
+.invite .pending{
+    text-transform: uppercase;
+    color: orange;
+    margin-left: 5px;
+}
+
+.invite .reject{
+    text-transform: uppercase;
+    color: red;
+    margin-left: 5px;
+}
+
+.invite .accept {
+    float: right;
+    font-size: 12px;
+}

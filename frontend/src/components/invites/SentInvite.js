@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 import Constant from "../../utils/Constants";
 import "./SendInvite.css";
@@ -12,6 +13,7 @@ const SendInvite = ({ user, jwtToken, communityId, communityName }) => {
   const [usersList, setUserList] = React.useState([]);
   const [inputList, setInputList] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const history = useHistory();
   const headers = {
     headers: {
       Authorization: jwtToken || user.token || localStorage.getItem("jwtToken"),
@@ -28,12 +30,14 @@ const SendInvite = ({ user, jwtToken, communityId, communityName }) => {
         communityId,
         communityName,
         status: Constant.INVITED,
+        sentBy: "admin",
       });
     });
     axios.post(`${Constant.API_URL}/invites/create`, body, headers).then(
       (result) => {
         if (result.status === 200) {
           alert("Invitations sent successfully");
+          history.push("/sentInvites");
         }
       },
       (error) => {

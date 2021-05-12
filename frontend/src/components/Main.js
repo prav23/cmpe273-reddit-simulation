@@ -19,6 +19,7 @@ import Invite from "./invites/Invite";
 import SearchCommunities from "./communities/SearchCommunities";
 import Analytics from "./analytics/Analytics";
 import SendInvite from "./invites/SentInvite";
+import AdminInvites from "./invites/AdminInvites";
 
 //Create a Main Component
 class Main extends Component {
@@ -43,6 +44,7 @@ class Main extends Component {
               <Route path="/community/:communityId" component={Community} />
               <Route path="/communityhome/:communityName" component={CommunityHome} />
               <Route exact path="/sendInvites" component={SendInvite} />
+              <Route path="/sentInvites" component={AdminInvites} />
               <Route path="/message" component={Message} />
               <Route path="/invites" component={Invite} />
               <Route path="/findcommunities" component={SearchCommunities} />

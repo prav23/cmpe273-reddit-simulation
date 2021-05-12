@@ -7,6 +7,7 @@ const createValidation = (body) => {
     communityId: Joi.string().required(),
     communityName: Joi.string().required(),
     status: Joi.string(),
+    sentBy: Joi.string(),
   });
 
   const { error } = createSchema.validate(body);
@@ -21,6 +22,7 @@ const createManyValidation = (body) => {
       communityId: Joi.string().required(),
       communityName: Joi.string().required(),
       status: Joi.string(),
+      sentBy: Joi.string(),
     })
   );
 
