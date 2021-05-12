@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const defaultAvatars = require('../utils/defaultImages');
+const defaultAvatars = require("../utils/defaultImages");
 
 const Schema = mongoose.Schema;
 
@@ -29,10 +29,13 @@ const Member = new Schema(
       type: String,
       default: defaultAvatars.userAvatar,
     },
+    sentBy: {
+      type: String,
+    },
     userName: {
       type: String,
       required: true,
-    }
+    },
   },
   {
     versionKey: false,

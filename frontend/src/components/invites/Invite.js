@@ -27,9 +27,6 @@ const Invite = ({ dispatch, user, jwtToken, bInviteUpdated }) => {
       );
       console.log(result);
       dispatch(setInviteUpdated(true));
-      const listItem = e.target.parentElement;
-      const listGroup = listItem.parentElement;
-      listGroup.removeChild(listItem);
     } catch (err) {
       if (err.response && err.response.data) {
         dispatch({
