@@ -5,8 +5,8 @@ import {
   } from '../actions/types';
   
   const initialState = {
-    dashboardDetails: null,
-    postsLoading: false,
+    dashboardDetails: [],
+    dashboardLoading: false,
   };
   
   export default function dashRed(state = initialState, action) {
@@ -17,6 +17,7 @@ import {
           dashboardLoading: true
         };
       case GET_DASHBOARD_DETAILS:
+        console.log(action.payload);
         return {
           ...state,
           dashboardDetails: action.payload,
@@ -26,7 +27,7 @@ import {
       case CLEAR_DASHBOARD_DETAILS:
         return {
           ...state,
-          dashboardDetails: null,
+          dashboardDetails: [],
         };
        
       default:

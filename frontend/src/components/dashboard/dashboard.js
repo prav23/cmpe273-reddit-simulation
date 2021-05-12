@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { getPosts } from "../../actions/postActions";
+import { getDashboardDetails } from "../../actions/dashboardActions";
 import ago from "s-ago";
 import { Link } from "react-router-dom";
 import Select from "react-dropdown-select";
@@ -9,14 +9,17 @@ import ReactPaginate from "react-paginate";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import CommentIcon from '@material-ui/icons/Comment';
-import './dashboard.css'
+import setAuthToken from '../../utils/setAuthToken';
+import './dashboard.css';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    const { postsDetails } = this.props.posts;
+    const { user } = this.props.auth;
+    setAuthToken(user.token);
+
     this.state ={
-      allPosts: postsDetails,
+      allPosts: [],
       searchQuery: "",
       currentPage: 0,
       pageCount: 0,
@@ -42,15 +45,20 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    const { isAuthenticated } = this.props.auth;
+    const { isAuthenticated, user } = this.props.auth;
     if (isAuthenticated) {
-      //this.props.getDashboardDetails(user.user_id);
-      // TODO: filter posts related to user
-      this.props.getPosts();
+      this.props.getDashboardDetails(user.user_id);
+    }
+  }
 
-      const { allPosts, currentPageSize } = this.state;
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.dashboard.dashboardDetails !== this.props.dashboard.dashboardDetails){
+      const { currentPageSize } = this.state;
       this.setState({
-        pageCount: Math.ceil(allPosts.length/currentPageSize),
+        allPosts: this.props.dashboard.dashboardDetails,
+        pageCount: Math.ceil(this.props.dashboard.dashboardDetails.length/currentPageSize),
+      }, () => {
+        console.log(this.state.pageCount);
       });
     }
   }
@@ -121,24 +129,30 @@ class Dashboard extends Component {
     }
   }
 
-  // NEED TO GET NUM USERS OF COMMUNITY FROM BACKEND
-  // rn only have post info, not com info
   sortByMostUsers = (a, b) => {
     const { currentSortOpt } = this.state;
     if(currentSortOpt === "asc") {
-      if (a.numUsers < b.numUsers) { return -1; }
-      if (a.numUsers > b.numUsers) { return 1; }
+      if (a.numCommunityUsers < b.numCommunityUsers) { return -1; }
+      if (a.numCommunityUsers > b.numCommunityUsers) { return 1; }
       return 0;
     } else {
-      if (a.numUsers < b.numUsers) { return 1; }
-      if (a.numUsers > b.numUsers) { return -1; }
+      if (a.numCommunityUsers < b.numCommunityUsers) { return 1; }
+      if (a.numCommunityUsers > b.numCommunityUsers) { return -1; }
       return 0;
     }
   }
 
-  // NEED TO GET NUM COMMENTS FROM COMMENTS DB
   sortByMostComments = (a, b) => {
-    
+    const { currentSortOpt } = this.state;
+    if(currentSortOpt === "asc") {
+      if (a.numComments < b.numComments) { return -1; }
+      if (a.numComments > b.numComments) { return 1; }
+      return 0;
+    } else {
+      if (a.numComments < b.numComments) { return 1; }
+      if (a.numComments > b.numComments) { return -1; }
+      return 0;
+    }
   }
 
   sortByAscending = (a, b) => {
@@ -148,11 +162,12 @@ class Dashboard extends Component {
       if (a.createdAt > b.createdAt) { return -1; }
       return 0;
     } else if(currentSortBy === "users"){
-      if (a.numUsers < b.numUsers) { return -1; }
-      if (a.numUsers > b.numUsers) { return 1; }
+      if (a.numCommunityUsers < b.numCommunityUsers) { return -1; }
+      if (a.numCommunityUsers > b.numCommunityUsers) { return 1; }
       return 0;
     } else if(currentSortBy === "comments"){
-      // update later
+      if (a.numComments < b.numComments) { return -1; }
+      if (a.numComments > b.numComments) { return 1; }
       return 0;
     } else if(currentSortBy === "upvotedposts"){
       if (a.votes.length < b.votes.length) { return -1; }
@@ -168,11 +183,12 @@ class Dashboard extends Component {
       if (a.createdAt > b.createdAt) { return 1; }
       return 0;
     } else if(currentSortBy === "users"){
-      if (a.numUsers < b.numUsers) { return 1; }
-      if (a.numUsers > b.numUsers) { return -1; }
+      if (a.numCommunityUsers < b.numCommunityUsers) { return 1; }
+      if (a.numCommunityUsers > b.numCommunityUsers) { return -1; }
       return 0;
     } else if(currentSortBy === "comments"){
-      // update later
+      if (a.numComments < b.numComments) { return 1; }
+      if (a.numComments > b.numComments) { return -1; }
       return 0;
     } else if(currentSortBy === "upvotedposts"){
       if (a.votes.length < b.votes.length) { return 1; }
@@ -198,6 +214,7 @@ class Dashboard extends Component {
 
   render() {
     const { isAuthenticated } = this.props.auth;  
+    const { dashboardLoading } = this.props.dashboard;
     const {
       sortBy,
       sortOptions,
@@ -223,7 +240,22 @@ class Dashboard extends Component {
           <label className="dashboard__sortbytext">Search Posts</label>
           <input type="text" placeholder="e.g. workout, dogs, etc." className="dashboard__input" onChange={this.searchPosts} />
         </div>
+        {
+          dashboardLoading
+          ? <div>
+              <span className="dashboard__loading">LOADING...</span>
+            </div>
+          : null
+        }
 
+        {
+          allPosts.length === 0 && !dashboardLoading
+          ? <div>
+              <span className="dashboard__none">No Posts to show! Join a community to see posts!</span>
+            </div>
+          : null
+        }
+        
         {allPosts.filter(
           (p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.text.toLowerCase().includes(searchQuery.toLowerCase()),
         )
@@ -296,7 +328,7 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  getPosts: PropTypes.func.isRequired,
+  getDashboardDetails: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   posts: PropTypes.object.isRequired,
 };
@@ -304,6 +336,7 @@ Dashboard.propTypes = {
 const mapStateToProps = (state) => ({
   posts: state.posts,
   auth: state.auth,
+  dashboard: state.dashboard,
 });
 
-export default connect(mapStateToProps, { getPosts })(Dashboard);
+export default connect(mapStateToProps, { getDashboardDetails })(Dashboard);
