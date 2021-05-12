@@ -42,10 +42,10 @@ class Communities extends React.Component {
   }
 
   async componentDidMount() {
-    // const { isAuthenticated } = this.state;
+    const { isAuthenticated } = this.state;
     const { pagedCommunities, sortedCommunities } = await this.getCommunities();
 
-    if (this.props.auth.isAuthenticated) {
+    if (isAuthenticated) {
       this.setState({ communities: pagedCommunities, allCommunities: sortedCommunities });
     } else {
       alert('Youre not logged in');
