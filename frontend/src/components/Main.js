@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import Navbar from "./layout/navbar";
 import Sidebar from "./layout/sidebar";
@@ -18,6 +18,7 @@ import Message from "./message/Message";
 import Invite from "./invites/Invite";
 import SearchCommunities from "./communities/SearchCommunities";
 import Analytics from "./analytics/Analytics";
+import SendInvite from "./invites/SentInvite";
 
 //Create a Main Component
 class Main extends Component {
@@ -29,21 +30,24 @@ class Main extends Component {
         </div>
         <div className="row">
           <div className="col">
-            <Route exact path="/" component={Landing} />
-            <Route path="/register" component={Register} />
-            <Route path="/login" component={Login} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/posts" component={Posts} />
-            <Route path="/comments/:postId" component={Comments} />
-            <Route path="/createpost/:communityName" component={CreatePost} />
-            <Route path="/users/community" component={CommunityUsers} />
-            <Route path="/communities" component={Communities} />
-            <Route path="/community/:communityId" component={Community} />
-            <Route path="/communityhome/:communityName" component={CommunityHome} />
-            <Route path="/message" component={Message} />
-            <Route path="/invites" component={Invite} />
-            <Route path="/findcommunities" component={SearchCommunities} />
-            <Route path="/analytics" component={Analytics} />
+            <Switch>
+              <Route exact path="/" component={Landing} />
+              <Route path="/register" component={Register} />
+              <Route path="/login" component={Login} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/posts" component={Posts} />
+              <Route path="/comments/:postId" component={Comments} />
+              <Route path="/createpost/:communityName" component={CreatePost} />
+              <Route path="/users/community" component={CommunityUsers} />
+              <Route path="/communities" component={Communities} />
+              <Route path="/community/:communityId" component={Community} />
+              <Route path="/communityhome/:communityName" component={CommunityHome} />
+              <Route exact path="/sendInvites" component={SendInvite} />
+              <Route path="/message" component={Message} />
+              <Route path="/invites" component={Invite} />
+              <Route path="/findcommunities" component={SearchCommunities} />
+              <Route path="/analytics" component={Analytics} />
+            </Switch>
           </div>
         </div>
       </div>
