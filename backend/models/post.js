@@ -41,7 +41,11 @@ const Post = new Schema(
     score: {
         type: Number,
         default: 0,
-    }
+    },
+    numComments: {
+        type: Number,
+        default: 0,
+    },
   }
 );
 

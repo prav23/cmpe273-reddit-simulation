@@ -1,4 +1,5 @@
 const Comment = require("../models/comment");
+const Post = require("../models/post");
 
 const createRootComment = async (req, res) => {
     try {
@@ -12,6 +13,12 @@ const createRootComment = async (req, res) => {
             votes,
             body,
         });
+
+        // increase comment count
+        const post = await Post.findOne({ _id: postId });
+        post.numComments += 1;
+        await post.save();
+
         return res.status(201).json(comment);
       } catch (error) {
         return res.status(400).json(error.message);
@@ -88,6 +95,13 @@ const deleteComment = async(req, res) => {
         const comment_id = req.params.comment_id;
         const comment = await Comment.findOne({ _id : comment_id });
         if(comment !== null){
+            // decrease comment count in post (if root comment)
+            if (comment.parentCommentId === "") {
+                const post = await Post.findOne({ _id: comment.postId });
+                post.numComments -= 1;
+                await post.save();
+            }
+            
             await Comment.deleteOne({ _id : comment_id});
             return res.status(200).json(comment);
         }

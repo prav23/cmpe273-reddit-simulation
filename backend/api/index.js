@@ -132,6 +132,9 @@ router.delete(
 // Search for communities based off navbar query
 router.get("/findcommunities", community.searchForCommunities);
 
+// Get Dashboard posts
+router.get("/dashboard", community.getDashboard);
+
 //message
 router.get("/message", 
   message.getMessage

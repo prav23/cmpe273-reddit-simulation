@@ -6,11 +6,14 @@ import {
   CLEAR_DASHBOARD_DETAILS
 } from "./types";
 
+const { API_URL } = require('../utils/Constants').default;
+
 // Get Dashboard Details
 export const getDashboardDetails =  user_id => dispatch => {
+  console.log('actions')
   dispatch(setDashboardLoading());
   axios
-    .get(`http://localhost:3001/api/xxxx/${user_id}`)
+    .get(`${API_URL}/dashboard?id=${user_id}`)
     .then(res =>
       dispatch({
         type: GET_DASHBOARD_DETAILS,
