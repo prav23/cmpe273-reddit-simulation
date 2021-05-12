@@ -1,4 +1,6 @@
-.invite{}
+.invite{
+    font-family: 'IBM Plex Sans', sans-serif;
+}
 
 .invite .column{
     float: none;

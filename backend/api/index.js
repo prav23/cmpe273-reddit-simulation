@@ -14,13 +14,25 @@ const router = express.Router();
 
 // measure performance api requests
 router.get("/performance/createusers/:userCount", performance.createFakeUsers);
-router.get("/performance/createmessages/:messageCount", performance.createFakeMessages);
-router.get("/performance/createuserskafka/:userCount", performance.createFakeUsersKafka);
-router.get("/performance/createmessageskafka/:messageCount", performance.createFakeMessagesKafka);
+router.get(
+  "/performance/createmessages/:messageCount",
+  performance.createFakeMessages
+);
+router.get(
+  "/performance/createuserskafka/:userCount",
+  performance.createFakeUsersKafka
+);
+router.get(
+  "/performance/createmessageskafka/:messageCount",
+  performance.createFakeMessagesKafka
+);
 router.get("/performance/users", performance.getAllUsers);
 router.get("/performance/messages", performance.getAllMessages);
 router.get("/performance/messages/redis", performance.getAllMessagesRedis);
-router.get("/performance/messages/redis/kafka", performance.getAllMessagesRedisKafka);
+router.get(
+  "/performance/messages/redis/kafka",
+  performance.getAllMessagesRedisKafka
+);
 
 // post route requests
 router.post("/posts", posts.create);
@@ -55,6 +67,13 @@ router.post(
   "/invites",
   passport.authenticate("jwt", { session: false }),
   member.create
+);
+
+// Create multiple invites
+router.post(
+  "/invites/create",
+  passport.authenticate("jwt", { session: false }),
+  member.createMany
 );
 
 // Get invites sent out by community admin
@@ -133,12 +152,8 @@ router.delete(
 router.get("/findcommunities", community.searchForCommunities);
 
 //message
-router.get("/message", 
-  message.getMessage
-);
-router.post("/message", 
-  message.sendMessage
-);
+router.get("/message", message.getMessage);
+router.post("/message", message.sendMessage);
 
 // Get number of posts for a community
 router.get("/communities/:communityName/numPosts", analytics.getNumOfPosts);
