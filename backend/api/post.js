@@ -25,33 +25,33 @@ const create = async (req, res) => {
 const votePost = async(req, res) => { 
     try{
         const { post_id, user, vote } = req.body;
+        const voteValue = Number(vote);
         const post = await Post.findOne({ _id: post_id});
         let updateScore;
-        let updatedVotes;
         if(post !== null){
-            const existingVote = post.votes.find(item => item.user.equals(user));
+            const existingVote = post.votes.find(item => item.user === user);
             if(existingVote){
                 // reset score
                 updateScore = post.score - existingVote.vote;
-                if(vote === 0){
+                if(voteValue === 0){
                     // remove vote
-                    updatedVotes = post.votes.pull(existingVote);
+                    post.votes.pull(existingVote);
                 }else{
                     // change vote
-                    updateScore = post.score + vote;
-                    updatedVotes = post.votes.pull(existingVote);
-                    existingVote.vote = vote;
-                    updatedVotes = post.votes.push(existingVote);
+                    updateScore = updateScore + voteValue;
+                    post.votes.pull(existingVote);
+                    existingVote.vote = voteValue;
+                    post.votes.push(existingVote);
                 }
-                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": updatedVotes }});
+                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": post.votes }});
             } else if(vote !== 0){
                 // new vote
-                updateScore = post.score + vote;
-                updatedVotes = post.votes.push({ user, vote});
-                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": updatedVotes }});
+                updateScore = post.score + voteValue;
+                post.votes.push({ user, vote: voteValue});
+                await Post.findOneAndUpdate({ "_id": post_id }, { "$set": { "score": updateScore, "votes": post.votes }});
             }
             
-            return res.status(201).json(post);
+            return res.status(201).json("Successfully voted");
         }
         else{
             throw new Error("Post doesnt exist");
