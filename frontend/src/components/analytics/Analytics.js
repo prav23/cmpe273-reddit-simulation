@@ -49,7 +49,7 @@ const Analytics = ({ user, jwtToken }) => {
   };
 
   const getNumberOfUsers = async (comm) => {
-    comm = "testCommunity";
+    // comm = "testCommunity";
     try {
       const result = await axios.get(
         `${Constant.API_URL}/communities/${comm}/numUsers`,
@@ -62,7 +62,7 @@ const Analytics = ({ user, jwtToken }) => {
   };
 
   const getNumberOfPosts = async (comm) => {
-    comm = "Dogs";
+    // comm = "Dogs";
     try {
       const result = await axios.get(
         `${Constant.API_URL}/communities/${comm}/numPosts`,
@@ -75,7 +75,7 @@ const Analytics = ({ user, jwtToken }) => {
   };
 
   const getMostActiveUser = async (comm) => {
-    comm = "Dogs";
+    // comm = "Dogs";
     try {
       const result = await axios.get(
         `${Constant.API_URL}/communities/${comm}/mostActiveUser`,
@@ -88,7 +88,7 @@ const Analytics = ({ user, jwtToken }) => {
   };
 
   const getMostUpvotedPosts = async (comm) => {
-    comm = "Cooking";
+    // comm = "Cooking";
     try {
       const result = await axios.get(
         `${Constant.API_URL}/communities/${comm}/mostUpvotedPost`,
@@ -115,7 +115,7 @@ const Analytics = ({ user, jwtToken }) => {
   const fetchMostActiveComm = async () => {
     try {
       const mostActiveCommunities = await axios.get(
-        `${Constant.API_URL}/communities/mostActiveCommunity?createdBy=admin`,
+        `${Constant.API_URL}/communities/mostActiveCommunity?createdBy=${userId}`,
         headers
       );
       if (
