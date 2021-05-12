@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { ListGroup, Button, Col } from "react-bootstrap";
 import axios from "axios";
+import ReactPaginate from "react-paginate";
 
 import { setInviteUpdated } from "../../actions/inviteActions";
 import Constants from "../../utils/Constants";
@@ -11,12 +12,19 @@ import "./Invite.css";
 const Invite = ({ dispatch, user, jwtToken, bInviteUpdated }) => {
   const [inviteList, setInviteList] = React.useState([]);
   const [bInvites, setBInvites] = React.useState(false);
+  const [displayList, setDisplayList] = React.useState([]);
+  const [numPages, setNumPages] = React.useState(1);
   const headers = {
     headers: {
       Authorization: jwtToken || user.token || localStorage.getItem("jwtToken"),
     },
   };
   const userId = user.user_id;
+
+  const handlePageChange = (e) => {
+    const list = inviteList;
+    setDisplayList(list.slice(5 * e.selected, 5 + 5 * e.selected));
+  };
 
   const handleInvite = async (e, inviteId, status) => {
     try {
@@ -58,14 +66,25 @@ const Invite = ({ dispatch, user, jwtToken, bInviteUpdated }) => {
         if (invites.data.length !== 0) {
           setInviteList(invites.data);
           setBInvites(true);
+          const mod = invites.data.length % 5;
+          if (mod == 0) {
+            setNumPages(parseInt(invites.data.length / 5, 10));
+          } else {
+            setNumPages(parseInt(invites.data.length / 5 + 1, 10));
+          }
+          const list = invites.data;
+          setDisplayList(list.slice(0, 5));
+          setNumPages(0);
         } else {
           setInviteList([]);
           setBInvites(false);
+          setNumPages(0);
         }
       })
       .catch(() => {
         setInviteList([]);
         setBInvites(false);
+        setNumPages(0);
       });
   }, [bInviteUpdated]);
 
@@ -126,6 +145,27 @@ const Invite = ({ dispatch, user, jwtToken, bInviteUpdated }) => {
             </ListGroup>
           )}
         </ListGroup>
+      </Col>
+
+      <Col xs={8} style={{ marginTop: "15px" }}>
+        {numPages > 1 && (
+          <ReactPaginate
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            activeClassName="active"
+            pageCount={numPages}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={numPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </Col>
     </div>
   );

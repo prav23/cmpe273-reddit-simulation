@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Container, Row, Col, ListGroup } from "react-bootstrap";
 import axios from "axios";
 import { connect } from "react-redux";
+import ReactPaginate from "react-paginate";
 
 import Constants from "../../utils/Constants";
 import "./Invite.css";
@@ -9,10 +10,19 @@ import "./Invite.css";
 const AdminInvites = ({ user, jwtToken, communityId, communityName }) => {
   const [bInvites, setBInvites] = React.useState(false);
   const [inviteList, setInviteList] = React.useState([]);
+  const [activePage, setActivePage] = React.useState(0);
+  const [displayList, setDisplayList] = React.useState([]);
+  const [numPages, setNumPages] = React.useState(1);
   const headers = {
     headers: {
       Authorization: jwtToken || user.token || localStorage.getItem("jwtToken"),
     },
+  };
+
+  const handlePageChange = (e) => {
+    setActivePage(e.selected);
+    const list = inviteList;
+    setDisplayList(list.slice(5 * e.selected, 5 + 5 * e.selected));
   };
 
   useEffect(() => {
@@ -23,15 +33,25 @@ const AdminInvites = ({ user, jwtToken, communityId, communityName }) => {
           if (result.status === 200) {
             setInviteList(result.data);
             setBInvites(true);
+            const mod = result.data.length % 5;
+            if (mod == 0) {
+              setNumPages(parseInt(result.data.length / 5, 10));
+            } else {
+              setNumPages(parseInt(result.data.length / 5 + 1, 10));
+            }
+            const list = result.data;
+            setDisplayList(list.slice(0, 5));
           } else {
             setInviteList([]);
             setBInvites(false);
+            setNumPages(0);
           }
         },
         (error) => {
           console.log(error);
           setInviteList([]);
           setBInvites(false);
+          setNumPages(0);
         }
       );
   }, []);
@@ -45,7 +65,7 @@ const AdminInvites = ({ user, jwtToken, communityId, communityName }) => {
           </header>
           <Col xs={8}>
             <ListGroup>
-              {inviteList.map((invite) => {
+              {displayList.map((invite) => {
                 return (
                   <ListGroup.Item key={invite._id} id={invite._id}>
                     <div className="d-flex w-100 justify-content-between">
@@ -93,6 +113,28 @@ const AdminInvites = ({ user, jwtToken, communityId, communityName }) => {
                   </h4>
                 </ListGroup.Item>
               </ListGroup>
+            )}
+          </Col>
+        </Row>
+        <Row className="justify-content-center">
+          <Col xs={8} style={{ marginTop: "15px" }}>
+            {numPages > 1 && (
+              <ReactPaginate
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                containerClassName="pagination"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                activeClassName="active"
+                pageCount={numPages}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={numPages}
+                onPageChange={handlePageChange}
+              />
             )}
           </Col>
         </Row>
