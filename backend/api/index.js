@@ -168,7 +168,7 @@ router.get(
 );
 
 //message
-router.get("/message", message.getMessage);
+router.get("/message/:email", message.getMessage);
 router.post("/message", message.sendMessage);
 
 // Get number of posts for a community
