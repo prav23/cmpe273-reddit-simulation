@@ -64,7 +64,7 @@
 .dashboard__textpost {
     background-color: white;
     width: 80%;
-    height: 180px;
+    max-height: 200px;
     margin-bottom: 15px;
     display:flex;
 }
@@ -72,7 +72,7 @@
 .dashboard__imagepost {
     background-color: white;
     width: 80%;
-    min-height: 400px;
+    max-height: 500px;
     margin-bottom: 15px;
     display:flex;
 }
@@ -80,7 +80,7 @@
 .dashboard__urlpost {
     background-color: white;
     width: 80%;
-    min-height: 400px;
+    max-height: 500px;
     margin-bottom: 15px;
     display:flex;
 }
@@ -133,14 +133,14 @@
 }
 
 .post__image{
-    min-width: 100px;
+    min-width: auto;
     min-height: 100px;
-    max-width: 300px;
     max-height: 300px;
+    max-width: auto;
 }
 
 .post__comments{
-    height: 50%;
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
