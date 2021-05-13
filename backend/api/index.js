@@ -137,6 +137,11 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   community.updatePostCount
 );
+router.put(
+  "/community/vote",
+  passport.authenticate("jwt", { session: false }),
+  community.voteCommunity
+);
 router.get(
   "/user/communities",
   passport.authenticate("jwt", { session: false }),

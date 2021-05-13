@@ -356,6 +356,38 @@ const searchForCommunities = async(req, res) => {
       null,
       { sort: { createdAt: -1 } },
     );
+
+    /*
+    const returnedCommunities = [];
+    communities.forEach(async(c) => {
+      try {
+        const posts = await Post.find({ communityName: c.name });  
+        console.log(posts);
+        let totalScore = 0;
+        posts.forEach(p => {
+          totalScore += p.score;
+        });
+        returnedCommunities.push({
+          upvotedPosts: totalScore,
+          _id: c._id,
+          name: c.name,
+          description: c.description,
+          photo: c.photo,
+          createdBy: c.createdBy,
+          numUsers: c.numUsers,
+          numPosts: c.numPosts,
+          rules: c.rules,
+          createdAt: c.createdAt,
+          updatedAt: c.updatedAt,
+          score: c.score,
+          votes: c.votes,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    });
+    */
+  
     res.json(communities);
   } catch (e) {
     res.status(500);
@@ -415,6 +447,46 @@ const getDashboard = async(req, res) => {
   }
 }
 
+const voteCommunity = async(req, res) => {
+  try{
+    const { community_id, user, vote } = req.body;
+    const voteValue = Number(vote);
+    const community = await Community.findOne({ _id: community_id});
+    let updateScore;
+    if(community !== null){
+        const existingVote = community.votes.find(item => item.user === user);
+        let retCommunity = null;
+        if(existingVote){
+            // reset score
+            updateScore = community.score - existingVote.vote;
+            if(voteValue === 0){
+                // remove vote
+                community.votes.pull(existingVote);
+            }else{
+                // change vote
+                updateScore = updateScore + voteValue;
+                community.votes.pull(existingVote);
+                existingVote.vote = voteValue;
+                community.votes.push(existingVote);
+            }
+            retCommunity = await Community.findOneAndUpdate({ "_id": community_id }, { "$set": { "score": updateScore, "votes": community.votes } }, { new: true });
+        } else if(vote !== 0){
+            // new vote
+            updateScore = community.score + voteValue;
+            community.votes.push({ user, vote: voteValue});
+            retCommunity = await Community.findOneAndUpdate({ "_id": community_id }, { "$set": { "score": updateScore, "votes": community.votes } }, { new: true });
+        }
+        
+        return res.json(retCommunity);
+    }
+    else{
+        throw new Error("Community doesnt exist");
+    }
+  }catch(error){
+      return res.status(400).json(error.message);
+  }
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -429,4 +501,5 @@ module.exports = {
   leaveCommunity,
   searchForCommunities,
   getDashboard,
+  voteCommunity,
 };
