@@ -1,5 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const defaultAvatars = require("../utils/defaultImages");
+
+const Vote = new Schema(
+  {
+    user: {
+      type: String,
+      required: true,
+    },
+    vote: {
+      type: Number,
+      default: 0,
+    },
+  }
+);
 
 const Community = new Schema(
   {
@@ -7,10 +21,9 @@ const Community = new Schema(
       type: Schema.Types.ObjectId,
     },
     name: { type: String, required: true },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "users",
-    },
+    numUsers: { type: Number },
+    numPosts: { type: Number },
+    createdBy: { type: String },
     description: { type: String },
     rules: [
       {
@@ -18,12 +31,19 @@ const Community = new Schema(
         description: { type: String },
       },
     ],
-    photo: { type: String },
-    upVotes: {
-      type: Number,
+    photo: {
+      type: String,
+      default: defaultAvatars.communityAvatar,
     },
-    downVotes: { type: Number },
     paginationSize: { type: Number },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    votes: {
+      type: [Vote],
+      default: [],
+    }
   },
   {
     versionKey: false,
@@ -31,7 +51,7 @@ const Community = new Schema(
   }
 );
 
-Group.index(
+Community.index(
   {
     name: 1,
   },
@@ -39,3 +59,4 @@ Group.index(
 );
 
 module.exports = mongoose.model("community", Community);
+

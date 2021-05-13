@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const defaultAvatars = require("../utils/defaultImages");
+
 const Schema = mongoose.Schema;
 
 const Member = new Schema(
@@ -21,7 +23,18 @@ const Member = new Schema(
     },
     status: {
       type: String,
-      default: "new",
+      default: "invited",
+    },
+    photo: {
+      type: String,
+      default: defaultAvatars.userAvatar,
+    },
+    sentBy: {
+      type: String,
+    },
+    userName: {
+      type: String,
+      required: true,
     },
   },
   {

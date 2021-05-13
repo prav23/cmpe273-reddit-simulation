@@ -1,4 +1,5 @@
 const express = require('express');
+const kafka = require("../kafka/client");
 const router = express.Router();
 
 const Community = require("../models/community");
@@ -346,145 +347,55 @@ const leaveCommunity = async(req, res) => {
 
 // search for communities based off query from navbar
 const searchForCommunities = async(req, res) => {
-  if(!req.query.q){
-    return res.status(400).send('search query required');
-  }
-
-  try {
-    const communities = await Community.find(
-      { name: { $regex: req.query.q, $options: "i" }, },
-      null,
-      { sort: { createdAt: -1 } },
-    );
-
-    /*
-    const returnedCommunities = [];
-    communities.forEach(async(c) => {
-      try {
-        const posts = await Post.find({ communityName: c.name });  
-        console.log(posts);
-        let totalScore = 0;
-        posts.forEach(p => {
-          totalScore += p.score;
-        });
-        returnedCommunities.push({
-          upvotedPosts: totalScore,
-          _id: c._id,
-          name: c.name,
-          description: c.description,
-          photo: c.photo,
-          createdBy: c.createdBy,
-          numUsers: c.numUsers,
-          numPosts: c.numPosts,
-          rules: c.rules,
-          createdAt: c.createdAt,
-          updatedAt: c.updatedAt,
-          score: c.score,
-          votes: c.votes,
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    });
-    */
+  let msg = {};
+  msg.route = "search_for_communities";
+  msg.q = req.query.q;
   
-    res.json(communities);
-  } catch (e) {
-    res.status(500);
-  }
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(results.status).send(results.data);
+    }
+  });
 }
 
 // get community posts for user dashboard
 const getDashboard = async(req, res) => {
-  if(!req.query.id){
-    return res.status(400).send('user required');
-  }
-
-  try {
-    // get Member (communities that user is a part of)
-    const userIsMemberOf = await Member.find(
-      { userId: req.query.id, status: "joined" },
-    );
-    
-    // get community names array from Member
-    const communityNames = userIsMemberOf.map((u) => u.communityName);
-
-    // get posts that have the same community name
-    const posts = await Post.find(
-      { communityName: { $in: communityNames } },
-      null,
-      { sort: { createdAt: -1 } },
-    );
-
-    // get # of users in community
-    const communities = await Community.find();
-    
-    const retPosts = [];
-    posts.forEach((p) => {
-      let community = communities.find(c => c.name === p.communityName);
-      
-      retPosts.push({
-        _id: p._id,
-        postType: p.postType,
-        url: p.url,
-        text: p.text,
-        image: p.image,
-        score: p.score,
-        numComments: p.numComments,
-        communityName: p.communityName,
-        author: p.author,
-        title: p.title,
-        votes: p.votes,
-        createdAt: p.createdAt,
-        numCommunityUsers: community.numUsers,
-        __v: p.__v,
-      });
-    });
-
-    res.json(retPosts);
-  } catch (e) {
-    res.status(500);
-  }
+  let msg = {};
+  msg.route = "get_dashboard";
+  msg.user_id = req.query.id;
+  
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(results.status).send(results.data);
+    }
+  });
 }
 
 const voteCommunity = async(req, res) => {
-  try{
-    const { community_id, user, vote } = req.body;
-    const voteValue = Number(vote);
-    const community = await Community.findOne({ _id: community_id});
-    let updateScore;
-    if(community !== null){
-        const existingVote = community.votes.find(item => item.user === user);
-        let retCommunity = null;
-        if(existingVote){
-            // reset score
-            updateScore = community.score - existingVote.vote;
-            if(voteValue === 0){
-                // remove vote
-                community.votes.pull(existingVote);
-            }else{
-                // change vote
-                updateScore = updateScore + voteValue;
-                community.votes.pull(existingVote);
-                existingVote.vote = voteValue;
-                community.votes.push(existingVote);
-            }
-            retCommunity = await Community.findOneAndUpdate({ "_id": community_id }, { "$set": { "score": updateScore, "votes": community.votes } }, { new: true });
-        } else if(vote !== 0){
-            // new vote
-            updateScore = community.score + voteValue;
-            community.votes.push({ user, vote: voteValue});
-            retCommunity = await Community.findOneAndUpdate({ "_id": community_id }, { "$set": { "score": updateScore, "votes": community.votes } }, { new: true });
-        }
-        
-        return res.json(retCommunity);
+  let msg = {};
+  msg.route = "vote_community";
+  msg.body = req.body;
+  
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
     }
-    else{
-        throw new Error("Community doesnt exist");
+    else {
+      return res.status(results.status).send(results.data);
     }
-  }catch(error){
-      return res.status(400).json(error.message);
-  }
+  });
 }
 
 module.exports = {
