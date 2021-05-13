@@ -1,4 +1,5 @@
 const express = require('express');
+const kafka = require("../kafka/client");
 const router = express.Router();
 
 const Community = require("../models/community");
@@ -346,73 +347,55 @@ const leaveCommunity = async(req, res) => {
 
 // search for communities based off query from navbar
 const searchForCommunities = async(req, res) => {
-  if(!req.query.q){
-    return res.status(400).send('search query required');
-  }
-
-  try {
-    const communities = await Community.find(
-      { name: { $regex: req.query.q, $options: "i" }, },
-      null,
-      { sort: { createdAt: -1 } },
-    );
-    res.json(communities);
-  } catch (e) {
-    res.status(500);
-  }
+  let msg = {};
+  msg.route = "search_for_communities";
+  msg.q = req.query.q;
+  
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(results.status).send(results.data);
+    }
+  });
 }
 
 // get community posts for user dashboard
 const getDashboard = async(req, res) => {
-  if(!req.query.id){
-    return res.status(400).send('user required');
-  }
+  let msg = {};
+  msg.route = "get_dashboard";
+  msg.user_id = req.query.id;
+  
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(results.status).send(results.data);
+    }
+  });
+}
 
-  try {
-    // get Member (communities that user is a part of)
-    const userIsMemberOf = await Member.find(
-      { userId: req.query.id, status: "joined" },
-    );
-    
-    // get community names array from Member
-    const communityNames = userIsMemberOf.map((u) => u.communityName);
-
-    // get posts that have the same community name
-    const posts = await Post.find(
-      { communityName: { $in: communityNames } },
-      null,
-      { sort: { createdAt: -1 } },
-    );
-
-    // get # of users in community
-    const communities = await Community.find();
-    
-    const retPosts = [];
-    posts.forEach((p) => {
-      let community = communities.find(c => c.name === p.communityName);
-      
-      retPosts.push({
-        _id: p._id,
-        postType: p.postType,
-        url: p.url,
-        text: p.text,
-        image: p.image,
-        score: p.score,
-        numComments: p.numComments,
-        communityName: p.communityName,
-        author: p.author,
-        title: p.title,
-        votes: p.votes,
-        createdAt: p.createdAt,
-        numCommunityUsers: community.numUsers,
-        __v: p.__v,
-      });
-    });
-
-    res.json(retPosts);
-  } catch (e) {
-    res.status(500);
-  }
+const voteCommunity = async(req, res) => {
+  let msg = {};
+  msg.route = "vote_community";
+  msg.body = req.body;
+  
+  kafka.make_request("communities", msg, function (err, results) {
+    console.log("in make request call back");
+    if (err) {
+      console.log(err);
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(results.status).send(results.data);
+    }
+  });
 }
 
 module.exports = {
@@ -429,4 +412,5 @@ module.exports = {
   leaveCommunity,
   searchForCommunities,
   getDashboard,
+  voteCommunity,
 };

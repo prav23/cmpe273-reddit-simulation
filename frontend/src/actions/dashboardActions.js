@@ -23,7 +23,7 @@ export const getDashboardDetails =  user_id => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_DASHBOARD_DETAILS,
-        payload: {}
+        payload: [],
       })
     );
 };
