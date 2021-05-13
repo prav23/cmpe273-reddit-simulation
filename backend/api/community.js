@@ -184,7 +184,10 @@ const getCommunityMembers = async (req, res) => {
       communityId: { $in: communities.map((community) => community._id) },
       status: status
     });
-    return res.status(200).send(members);
+    const users = await User.find({
+      _id: { $in: members.map((member) => member.userId) }
+    });
+    return res.status(200).send(users);
   }
 }
 
