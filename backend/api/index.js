@@ -7,7 +7,7 @@ const analytics = require("./analytics");
 const posts = require("./post");
 const comment = require("./comment");
 const message = require("./message");
-
+const userprofile = require("./userprofile");
 const performance = require("./performance");
 
 const router = express.Router();
@@ -170,6 +170,10 @@ router.get(
 //message
 router.get("/message/:email", message.getMessage);
 router.post("/message", message.sendMessage);
+
+//user profile
+router.get("/userprofile/:email", userprofile.getProfile);
+router.get("/userprofile/community/:email", userprofile.getCommunity);
 
 // Get number of posts for a community
 router.get("/communities/:communityName/numPosts", analytics.getNumOfPosts);
