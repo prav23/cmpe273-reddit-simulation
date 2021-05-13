@@ -13,6 +13,8 @@ const Member = require("../models/member");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 
+const defaultAvatars = require("../utils/defaultImages");
+
 // create a new community
 const createCommunity = async (req, res) => {
   const error = newCommunityValidation(req.body);
@@ -25,14 +27,35 @@ const createCommunity = async (req, res) => {
     return res.status(400).send(`Community with name ${req.body.name} already exists`);
   }
 
+  const users = await User.find({ _id: req.body.createdBy });
+  if (users.length === 0) {
+    return res.status(400).send(`Community admin does not exist ${req.body.createdBy}`);
+  }
+
   const newComm = new Community({
     name: req.body.name,
     description: req.body.description,
     createdBy: req.body.createdBy,
-    numUsers: 0,
+    numUsers: 1,
     numPosts: 0,
   });
   await newComm.save();
+
+  const user = users[0];
+  const member = new Member(
+    {
+      userId: user._id,
+      userName: user.name,
+      communityId: newComm._id,
+      communityName: newComm.name,
+      status: "joined",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      photo: defaultAvatars.userAvatar,
+    }
+  );
+  await member.save();
+
   return res.status(200).send({ name: newComm.name, description: newComm.description });
 };
 
