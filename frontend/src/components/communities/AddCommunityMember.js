@@ -79,7 +79,9 @@ class AddCommunityMember extends React.Component {
   async getMembers() {
     const { communityId, createdBy } = this.state;
     try {
-      const response = await axios.get(`${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}&status=invited`);
+      const url = `${API_URL}/community/members?communityId=${communityId}&createdBy=${createdBy}&status=invited`;
+      const response = await axios.get(url);
+      console.log(response.data);
       return response.data;
     } catch(error) {
       this.setState({ show: true, error: error.response.data });

@@ -1,5 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const defaultAvatars = require("../utils/defaultImages");
+
+const Vote = new Schema(
+  {
+    user: {
+      type: String,
+      required: true,
+    },
+    vote: {
+      type: Number,
+      default: 0,
+    },
+  }
+);
 
 const Community = new Schema(
   {
@@ -17,12 +31,19 @@ const Community = new Schema(
         description: { type: String },
       },
     ],
-    photo: { type: String },
-    upVotes: {
-      type: Number,
+    photo: {
+      type: String,
+      default: defaultAvatars.communityAvatar,
     },
-    downVotes: { type: Number },
     paginationSize: { type: Number },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    votes: {
+      type: [Vote],
+      default: [],
+    }
   },
   {
     versionKey: false,

@@ -14,6 +14,7 @@ class Comments extends Component {
       pageNumber: 0,
       activatedExpense: null,
       newRootCommentText: "",
+      newCommentParentId: "",
       newSubCommentText: "",
     };
   }
@@ -70,6 +71,71 @@ class Comments extends Component {
       });
   }
 
+  deleteNestedComments(commentId, childrenComments){
+    if(childrenComments !== null && childrenComments !== undefined){
+      const childrenCommentIds = childrenComments.map(childrenComment => childrenComment._id);
+      console.log("childrenCommentIds", childrenCommentIds);
+      childrenCommentIds.forEach(childrenCommentId => {
+        axios.delete(`${API_URL}/comment/${childrenCommentId}`);
+      });
+    }
+    axios.delete(`${API_URL}/comment/${commentId}`);
+  }
+  returnNestedComments(parentId, selectedPost, reverseIndexedComments){
+    const comments = reverseIndexedComments[parentId];
+    return comments.map((comment) => {
+      return (<div className="row mt-2">
+      <div className="col-3"></div>
+      <div className="col">
+        <div className="card">
+          <div className="card-body">
+            <p className="card-text">
+              {" "}
+              {comment.author} &nbsp;{" "}
+              <span className="fw-lighter fst-italic text-muted">
+                {ago(new Date(comment.createdAt))}
+              </span>
+            </p>
+            <h5 className="card-title">{comment.body}</h5>
+          </div>
+        </div>
+        <div>
+          <input
+            type="text"
+            class="form-control my-1"
+            onChange={(event) =>
+              this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })
+            }
+            placeholder="Reply comment"
+            value={this.state.newCommentParentId === comment._id ? this.state.newSubCommentText : ""}
+          ></input>
+          <button
+            type="button"
+            onClick={() =>
+              this.submitNewSubComment(
+                comment._id,
+                selectedPost.title,
+                selectedPost._id
+              )
+            }
+            class="btn btn-primary"
+          >
+            Reply Comment
+          </button>
+          <button
+            type="button"
+            class="mx-4 btn btn-danger"
+            onClick={() => this.deleteNestedComments(comment._id, reverseIndexedComments[comment._id])}
+          >
+            Delete Comment
+          </button>
+        </div>
+        {reverseIndexedComments[comment._id] && this.returnNestedComments(comment._id, selectedPost, reverseIndexedComments)}
+      </div>
+    </div>)
+    })
+  }
+
   render() {
     const { isAuthenticated } = this.props.auth;
     const { commentsDetails, commentsloading } = this.props.comments;
@@ -84,10 +150,22 @@ class Comments extends Component {
     else {
       return "";
     }
+
+    const reverseIndexedComments = {};
+
+    commentsDetails.forEach(comment => {
+      const { parentCommentId } = comment;
+      if(reverseIndexedComments[parentCommentId] !== undefined){
+        reverseIndexedComments[parentCommentId].push(comment);
+      } else {
+        reverseIndexedComments[parentCommentId] = [comment];
+      }
+    });
+
     return (
       <div className="posts">
         <div className="row mt-4">
-          <div className="col-3">
+          <div className="col-1">
             <div className="d-flex flex-column ps-5 mt-2">
               <i data-test="fa" class="fa fa-lg fa-angle-up"></i>
               <p className="fs-3 mt-2 pe-1">{selectedPost.score}</p>
@@ -171,10 +249,10 @@ class Comments extends Component {
                       type="text"
                       class="form-control my-2"
                       onChange={(event) =>
-                        this.setState({ newSubCommentText: event.target.value })
+                        this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })
                       }
                       placeholder="Reply comment"
-                      value={this.state.newSubCommentText}
+                      value={this.state.newCommentParentId === comment._id ? this.state.newSubCommentText : ""}
                     ></input>
                     <button
                       type="button"
@@ -189,10 +267,19 @@ class Comments extends Component {
                     >
                       Reply Comment
                     </button>
+                    <button
+                      type="button"
+                      class="mx-4 btn btn-danger"
+                      onClick={() => this.deleteNestedComments(comment._id, reverseIndexedComments[comment._id])}
+                    >
+                      Delete Comment
+                    </button>
                   </div>
+                  {this.returnNestedComments(comment._id, selectedPost, reverseIndexedComments)}
                 </div>
+
               )}
-              {comment.parentCommentId !== "" && (
+              {/* {comment.parentCommentId !== "" && (
                 <div className="row mt-2">
                   <div className="col-3"></div>
                   <div className="col">
@@ -210,7 +297,7 @@ class Comments extends Component {
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           );
         })}
