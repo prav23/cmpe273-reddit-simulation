@@ -287,82 +287,84 @@ class Dashboard extends Component {
         }
 
         {
-          allPosts.length === 0 && !dashboardLoading
+          allPosts?.length === 0 && !dashboardLoading
           ? <div>
               <span className="dashboard__none">No Posts to show! Join a community to see posts!</span>
             </div>
           : null
         }
         
-        {allPosts?.filter(
-          (p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.text.toLowerCase().includes(searchQuery.toLowerCase()),
-        )
-        .slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize)
-        .map(post => {
-          // determines post size based on post type
-          let postClass = "dashboard__textpost";
-          if(post.postType === "image"){
-            postClass = "dashboard__imagepost";
-          } else if(post.postType === "url"){
-            postClass = "dashboard__urlpost";
-          }
-
-          // checks if user has voted on post
-          let upArrowColor = 'gray';
-          let downArrowColor = 'gray';
-          let numberColor = 'gray';
-          const userVote = post.votes.find(v => v.user === user.user_id)
-          if (userVote !== undefined) {
-            if(userVote.vote === 1){
-              upArrowColor = '#ff4500';
-              numberColor = '#ff4500';
-            } else if(userVote.vote === -1) {
-              downArrowColor = 'blue';
-              numberColor = 'blue';
+        {
+          allPosts?.filter(
+            (p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.text.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+          .slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize)
+          .map(post => {
+            // determines post size based on post type
+            let postClass = "dashboard__textpost";
+            if(post.postType === "image"){
+              postClass = "dashboard__imagepost";
+            } else if(post.postType === "url"){
+              postClass = "dashboard__urlpost";
             }
-          }
 
-          return (
-            <div key={post._id} className={postClass}>
-              <div className="dashboard__votes">
-                <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, 1)} className="dashboard__arrow">
-                  <ArrowUpwardIcon style={{ fontSize: 17, color: upArrowColor }} />        
-                </button>
-                <span style={{ color: numberColor }}>{post?.score}</span>
-                <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, -1)} className="dashboard__arrow">
-                  <ArrowDownwardIcon style={{ fontSize: 17, color: downArrowColor }} />
-                </button>
+            // checks if user has voted on post
+            let upArrowColor = 'gray';
+            let downArrowColor = 'gray';
+            let numberColor = 'gray';
+            const userVote = post.votes.find(v => v.user === user.user_id)
+            if (userVote !== undefined) {
+              if(userVote.vote === 1){
+                upArrowColor = '#ff4500';
+                numberColor = '#ff4500';
+              } else if(userVote.vote === -1) {
+                downArrowColor = 'blue';
+                numberColor = 'blue';
+              }
+            }
+
+            return (
+              <div key={post._id} className={postClass}>
+                <div className="dashboard__votes">
+                  <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, 1)} className="dashboard__arrow">
+                    <ArrowUpwardIcon style={{ fontSize: 17, color: upArrowColor }} />        
+                  </button>
+                  <span style={{ color: numberColor }}>{post?.score}</span>
+                  <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, -1)} className="dashboard__arrow">
+                    <ArrowDownwardIcon style={{ fontSize: 17, color: downArrowColor }} />
+                  </button>
+                </div>
+                <div className="post__body">
+                  <div className="post__communityinfo">
+                    <Link to={`/communityhome/${post.communityName}`}>
+                        <span className="post__community">{`r/${post.communityName}`}</span>
+                    </Link>
+                    <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
+                  </div>
+                  <div className="post__title">
+                    <span>{post.title}</span>
+                  </div>
+                  <div className="post__description">
+                    <p className="card-text">{post.text} </p>
+                    {post.image !== "" && <img className="post__image" src={post.image} alt="..."/>}
+                    {post.url !== "" && <iframe title={post._id} src= {post.url} width="400" height="300"></iframe>}
+                  </div>
+                  <div className="post__comments">
+                    <Link to={`/comments/${post._id}`}>
+                      <button className="post__commentbutton">
+                        <CommentIcon color="action" style={{ fontSize: 15 }} />
+                        <span>Comments</span>
+                      </button>
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <div className="post__body">
-                <div className="post__communityinfo">
-                  <Link to={`/communityhome/${post.communityName}`}>
-                      <span className="post__community">{`r/${post.communityName}`}</span>
-                  </Link>
-                  <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
-                </div>
-                <div className="post__title">
-                  <span>{post.title}</span>
-                </div>
-                <div className="post__description">
-                  <p className="card-text">{post.text} </p>
-                  {post.image !== "" && <img className="post__image" src={post.image} alt="..."/>}
-                  {post.url !== "" && <iframe title={post._id} src= {post.url} width="400" height="300"></iframe>}
-                </div>
-                <div className="post__comments">
-                  <Link to={`/comments/${post._id}`}>
-                    <button className="post__commentbutton">
-                      <CommentIcon color="action" style={{ fontSize: 15 }} />
-                      <span>Comments</span>
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-        )})}
+          )})
+        }
 
         <div className="dashboard__paginate">
             {
-              allPosts.length===0
+              allPosts?.length===0
               ? null 
               : (
                 <ReactPaginate
