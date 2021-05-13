@@ -171,7 +171,11 @@ const getCommunityMembers = async (req, res) => {
     }
 
     const status = req.query.status ? req.query.status : 'invited';
-    const members = await Member.find({ communityId: community._id, status: status });
+    const members = await Member.find({
+      communityId: community._id,
+      status: status,
+      sentBy: { $ne: req.query.createdBy },
+    });
     return res.status(200).send(members);
   } else {
     const communities = await Community.find({ createdBy: req.query.createdBy });
@@ -184,7 +188,10 @@ const getCommunityMembers = async (req, res) => {
       communityId: { $in: communities.map((community) => community._id) },
       status: status
     });
-    return res.status(200).send(members);
+    const users = await User.find({
+      _id: { $in: members.map((member) => member.userId) }
+    });
+    return res.status(200).send(users);
   }
 }
 
