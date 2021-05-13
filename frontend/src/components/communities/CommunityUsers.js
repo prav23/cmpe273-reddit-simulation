@@ -17,7 +17,7 @@ class CommunityUsers extends React.Component {
 
     this.state = {
       createdBy: auth.user.user_id,
-      members: [],
+      users: [],
       updateUsers: false,
     };
 
@@ -26,7 +26,7 @@ class CommunityUsers extends React.Component {
 
   async componentDidMount() {
     this.setState({
-      members: await this.getMembers(),
+      users: await this.getMembers(),
     });
   }
 
@@ -35,7 +35,7 @@ class CommunityUsers extends React.Component {
 
     if (updateUsers) {
       this.setState({
-        members: await this.getMembers(),
+        users: await this.getMembers(),
         updateUsers: false,
       });
     }
@@ -52,28 +52,28 @@ class CommunityUsers extends React.Component {
   }
 
   render() {
-    const { members } = this.state;
+    const { users } = this.state;
 
-    const rows = members.map((member) => (
+    const rows = users.map((user) => (
       <tr key={uuidv4()}>
         <td>
           <img
-            src={member.photo}
-            id={member._id}
-            alt={member._id}
+            src={user.profilePicture ? user.profilePicture : defaultAvatars.userAvatar}
+            id={user._id}
+            alt={user._id}
             style={{ width: '50px', height: '50px' }}
           />
         </td>
-        <td style={{ verticalAlign: 'middle' }}>{member.userName}</td>
+        <td style={{ verticalAlign: 'middle' }}>{user.name}</td>
         <td style={{ verticalAlign: 'middle' }}>
-          <ManageMembership member={member} updateUsers={this.updateUsers} />
+          <ManageMembership user={user} updateUsers={this.updateUsers} />
         </td>
       </tr>
     ));
 
     return (
       <>
-      <h2 className="h2" style={{ margin: '25px' }}>{`${members.length} active users`}</h2>
+      <h2 className="h2" style={{ margin: '25px' }}>{`${users.length} active users`}</h2>
       <div className="table-responsive" style={{ paddingTop: '25px' }}>
         <table className="table">
           <thead className="thead-dark">

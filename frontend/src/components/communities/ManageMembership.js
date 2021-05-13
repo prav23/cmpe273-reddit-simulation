@@ -10,12 +10,12 @@ const { API_URL } = require('../../utils/Constants').default;
 class ManageMembership extends React.Component {
   constructor(props) {
     super(props);
-    const { auth, member } = this.props;
+    const { auth, user } = this.props;
     setAuthToken(auth.user.token);
 
     this.state = {
       createdBy: auth.user.user_id,
-      member,
+      user,
       communities: [],
       communitiesToRemove: [],
     };
@@ -27,8 +27,8 @@ class ManageMembership extends React.Component {
   }
 
   async componentDidMount() {
-    const { createdBy, member } = this.state;
-    const response = await axios.get(`${API_URL}/user/communities?createdBy=${createdBy}&userId=${member.userId}`);
+    const { createdBy, user } = this.state;
+    const response = await axios.get(`${API_URL}/user/communities?createdBy=${createdBy}&userId=${user._id}`);
     this.setState({ communities: response.data.communities });
   }
 
@@ -50,10 +50,10 @@ class ManageMembership extends React.Component {
   }
 
   async handleSubmit() {
-    const { communitiesToRemove, member } = this.state;
+    const { communitiesToRemove, user } = this.state;
     const { updateUsers } = this.props;
 
-    const deleteData = { userId: member.userId, communityIds: communitiesToRemove };
+    const deleteData = { userId: user._id, communityIds: communitiesToRemove };
     const deleteParams = new URLSearchParams(deleteData).toString();
 
     const response = await axios.delete(`${API_URL}/user/communities?${deleteParams}`);
@@ -92,7 +92,7 @@ class ManageMembership extends React.Component {
   }
 
   render() {
-    const { show, error, member } = this.state;
+    const { show, error, user } = this.state;
     return (
       <>
         <div style={{ paddingTop: '25px' }}>
@@ -102,7 +102,7 @@ class ManageMembership extends React.Component {
 
           <Modal show={show} onHide={this.handleClose}>
             <Modal.Header>
-              <Modal.Title>{`Manage memberships for ${member.userName}`}</Modal.Title>
+              <Modal.Title>{`Manage memberships for ${user.name}`}</Modal.Title>
               <span style={{ color: 'red' }}>{error}</span>
             </Modal.Header>
 

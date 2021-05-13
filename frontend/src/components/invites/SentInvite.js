@@ -30,7 +30,7 @@ const SendInvite = ({ user, jwtToken, communityId, communityName }) => {
         communityId,
         communityName,
         status: Constant.INVITED,
-        sentBy: "admin",
+        sentBy: user.user_id,
       });
     });
     axios.post(`${Constant.API_URL}/invites/create`, body, headers).then(
