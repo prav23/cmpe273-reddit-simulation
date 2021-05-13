@@ -4,9 +4,10 @@ const { API_URL } = require('../utils/Constants').default;
 
 //get message list
 export const getMessage = (data) => dispatch => {
-  axios.get(`${API_URL}/message`)
+  const email = data.email;
+  axios.get(`${API_URL}/message/${email}`)
     .then(response => { 
-      //console.log(response.data);
+      console.log(response.data);
       dispatch({
         type: GET_MESSAGE,
         payload: response.data

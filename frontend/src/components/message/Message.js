@@ -9,6 +9,7 @@ import { Grid, Toolbar, Typography, Paper } from "@material-ui/core";
 import { Form, Button } from 'react-bootstrap';
 import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
+import setAuthToken from '../../utils/setAuthToken';
 import { getMessage, sendMessage } from '../../actions/messageActions';
 
 const { API_URL } = require('../../utils/Constants').default;
@@ -52,6 +53,8 @@ const useStyles = (theme) => ({
 class Message extends Component {
   constructor(props){
     super(props);
+    const { user } = this.props.auth;
+    setAuthToken(user.token);
     this.state = {
         sentBy : "",
         receivedBy : "",
@@ -80,18 +83,22 @@ class Message extends Component {
   }
   componentWillMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
-    this.props.getMessage();
+    const data = {
+      email : this.props.auth.user.email
+    }
+    this.props.getMessage(data);
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.message) {
         var { message } = nextProps;
-        let allmessage = Array.from(message.data.allMessages);
+        let allmessage = Array.from(message);
         console.log(allmessage);
         let allmessagelist = [];
         allmessage.map((listing) => {
           if (listing.sentBy === this.props.auth.user.email || listing.receivedBy === this.props.auth.user.email)
             allmessagelist.push(listing);
         })
+        allmessagelist.sort(function(a, b){return a.message_id - b.message_id});
         this.setState({allmessagelist : allmessagelist})
         let messagelist = [];
         allmessage.map((listing) => {
@@ -99,6 +106,7 @@ class Message extends Component {
             || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
             messagelist.push(listing);
         })
+        messagelist.sort(function(a, b){return a.message_id - b.message_id});
         this.setState({messagelist : messagelist})
     }  
   }

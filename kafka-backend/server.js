@@ -5,6 +5,7 @@ var connectMongoDB = require("./utils/dbConnection");
 //import topics files
 const accountService = require("./services/account");
 const performanceService = require("./services/performance");
+const messageService = require("./services/message");
 
 //MongoDB connection
 connectMongoDB();
@@ -49,3 +50,4 @@ const response = (data, res, err, producer) => {
 // Topics
 handleTopicRequest("account", accountService);
 handleTopicRequest("performance", performanceService);
+handleTopicRequest("message", messageService);
