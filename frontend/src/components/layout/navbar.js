@@ -27,9 +27,10 @@ class Navbar extends Component {
 
   handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log("Search entered");
-
-    this.props.searchRedirect();
+    const { searchText } = this.state;
+    if(searchText !== "") {
+      this.props.searchRedirect();
+    }
   };
 
   onLogoutClick(e) {

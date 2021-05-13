@@ -44,6 +44,40 @@ class SearchCommunities extends Component {
     };
   }
 
+  addMostVotedPost(communities) {
+    const retCommunities = [];
+    communities.map(async(c) => {
+      let postScore = 0;
+      try {
+        const post = await axios.get(`${API_URL}/communities/${c.name}/mostUpvotedPost`);
+        
+        if(post.data.length > 0){
+          postScore = post.data[0].score;
+        }
+      } catch (e) {
+        postScore = 0;
+      }
+      
+      retCommunities.push({
+        upvotedPosts: postScore,
+        _id: c._id,
+        name: c.name,
+        description: c.description,
+        photo: c.photo,
+        createdBy: c.createdBy,
+        numUsers: c.numUsers,
+        numPosts: c.numPosts,
+        rules: c.rules,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        score: c.score,
+        votes: c.votes,
+      });
+    });
+    console.log(retCommunities);
+    return retCommunities;
+  }
+
   async componentDidMount() {
     // makes navigating back to dashboard possible
     // sets redux value SearchRedirect = false
@@ -54,15 +88,17 @@ class SearchCommunities extends Component {
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
       const { currentPageSize } = this.state;
+
+      //const reformatedCommunities = this.addMostVotedPost(communities.data);
+
       this.setState({
         foundCommunities: communities.data,
         newSearch: true,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
         communityPageRedirect: "",
-      });
+      });  
     } catch (e) {
       this.setState({
-        foundCommunities: [],
         newSearch: true,
         pageCount: 0,
         communityPageRedirect: "",
@@ -79,6 +115,7 @@ class SearchCommunities extends Component {
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
       const { currentPageSize } = this.state;
+      //const reformatedCommunities = this.addMostVotedPost(communities.data);
       this.setState({
         foundCommunities: communities.data,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
@@ -86,7 +123,6 @@ class SearchCommunities extends Component {
       });
     } catch (e) {
       this.setState({
-        foundCommunities: [],
         pageCount: 0,
         communityPageRedirect: "",
       });
@@ -298,6 +334,9 @@ class SearchCommunities extends Component {
     if (redirectToSearchPage && newSearch) {
       this.newSearch();
     }
+
+    console.log(foundCommunities);
+    console.log(foundCommunities.length > 0);
 
     return (
       <div className="search">
