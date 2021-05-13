@@ -17,7 +17,6 @@ import {
           dashboardLoading: true
         };
       case GET_DASHBOARD_DETAILS:
-        console.log(action.payload);
         return {
           ...state,
           dashboardDetails: action.payload,

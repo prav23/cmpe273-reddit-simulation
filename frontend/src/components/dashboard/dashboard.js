@@ -122,12 +122,12 @@ class Dashboard extends Component {
   sortByMostUpvotedPosts = (a, b) => {
     const { currentSortOpt } = this.state;
     if(currentSortOpt === "asc") {
-      if (a.votes.length < b.votes.length) { return -1; }
-      if (a.votes.length > b.votes.length) { return 1; }
+      if (a.score < b.score) { return -1; }
+      if (a.score > b.score) { return 1; }
       return 0;
     } else {
-      if (a.votes.length < b.votes.length) { return 1; }
-      if (a.votes.length > b.votes.length) { return -1; }
+      if (a.score < b.score) { return 1; }
+      if (a.score > b.score) { return -1; }
       return 0;
     }
   }
@@ -173,8 +173,8 @@ class Dashboard extends Component {
       if (a.numComments > b.numComments) { return 1; }
       return 0;
     } else if(currentSortBy === "upvotedposts"){
-      if (a.votes.length < b.votes.length) { return -1; }
-      if (a.votes.length > b.votes.length) { return 1; }
+      if (a.score < b.score) { return -1; }
+      if (a.score > b.score) { return 1; }
       return 0;
     }
   }
@@ -194,8 +194,8 @@ class Dashboard extends Component {
       if (a.numComments > b.numComments) { return -1; }
       return 0;
     } else if(currentSortBy === "upvotedposts"){
-      if (a.votes.length < b.votes.length) { return 1; }
-      if (a.votes.length > b.votes.length) { return -1; }
+      if (a.score < b.score) { return 1; }
+      if (a.score > b.score) { return -1; }
       return 0;
     }
   }
@@ -217,20 +217,31 @@ class Dashboard extends Component {
 
   async votePost(postId, vote) {
     const { user } = this.props.auth;
+    const { allPosts } = this.state;
+    let foundPost = allPosts.find(p => p._id === postId);
+    if (foundPost !== undefined) {
+      let prevUserVote = foundPost.votes.find(v => v.user === user.user_id);
+      // check users previous vote
+      if (prevUserVote !== undefined) {
+        // unvote if user clicks on same arrow again
+        if (prevUserVote.vote === vote) {
+          vote = 0;
+        }
+      }
+    }
+
     const payload = {
       post_id: postId,
       user: user.user_id,
       vote, 
     };
-    console.log(payload);
     try {
-      const returnedPost = await axios.put(`${API_URL}/posts/vote`, payload);
-      const { allPosts } = this.state;
-      let postIndex = allPosts.findIndex(p => p._id === returnedPost._id);
+      await axios.put(`${API_URL}/posts/vote`, payload);
+      const updatedPost = await axios.get(`${API_URL}/post/${postId}`);
+      
+      let postIndex = allPosts.findIndex(p => p._id === updatedPost.data[0]._id);
       let allPostsCopy = [...allPosts];
-      let post = {...allPostsCopy[postIndex]};
-      post.votes.push({ user: user.user_id, vote });
-      post.score += vote;
+      allPostsCopy[postIndex] = updatedPost.data[0];
       this.setState({
         allPosts: allPostsCopy,
       });
@@ -240,7 +251,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props.auth;  
+    const { isAuthenticated, user } = this.props.auth;  
     const { dashboardLoading } = this.props.dashboard;
     const {
       sortBy,
@@ -283,11 +294,12 @@ class Dashboard extends Component {
           : null
         }
         
-        {allPosts.filter(
+        {allPosts?.filter(
           (p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.text.toLowerCase().includes(searchQuery.toLowerCase()),
         )
         .slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize)
         .map(post => {
+          // determines post size based on post type
           let postClass = "dashboard__textpost";
           if(post.postType === "image"){
             postClass = "dashboard__imagepost";
@@ -295,15 +307,30 @@ class Dashboard extends Component {
             postClass = "dashboard__urlpost";
           }
 
+          // checks if user has voted on post
+          let upArrowColor = 'gray';
+          let downArrowColor = 'gray';
+          let numberColor = 'gray';
+          const userVote = post.votes.find(v => v.user === user.user_id)
+          if (userVote !== undefined) {
+            if(userVote.vote === 1){
+              upArrowColor = '#ff4500';
+              numberColor = '#ff4500';
+            } else if(userVote.vote === -1) {
+              downArrowColor = 'blue';
+              numberColor = 'blue';
+            }
+          }
+
           return (
             <div key={post._id} className={postClass}>
               <div className="dashboard__votes">
                 <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, 1)} className="dashboard__arrow">
-                  <ArrowUpwardIcon color="action" style={{ fontSize: 17 }} />
+                  <ArrowUpwardIcon style={{ fontSize: 17, color: upArrowColor }} />        
                 </button>
-                <span>{post?.votes.length}</span>
+                <span style={{ color: numberColor }}>{post?.score}</span>
                 <button type="button" value={post._id} onClick={(e) => this.votePost(post._id, -1)} className="dashboard__arrow">
-                  <ArrowDownwardIcon color="action"  style={{ fontSize: 17 }} />
+                  <ArrowDownwardIcon style={{ fontSize: 17, color: downArrowColor }} />
                 </button>
               </div>
               <div className="post__body">
@@ -318,8 +345,8 @@ class Dashboard extends Component {
                 </div>
                 <div className="post__description">
                   <p className="card-text">{post.text} </p>
-                  {post.image !== "" && <img className="post__image" src={post.image} class="img-thumbnail" alt="..."/>}
-                  {post.url !== "" && <iframe title={post._id} src= {post.url} width="400" height="400"></iframe>}
+                  {post.image !== "" && <img className="post__image" src={post.image} alt="..."/>}
+                  {post.url !== "" && <iframe title={post._id} src= {post.url} width="400" height="300"></iframe>}
                 </div>
                 <div className="post__comments">
                   <Link to={`/comments/${post._id}`}>
