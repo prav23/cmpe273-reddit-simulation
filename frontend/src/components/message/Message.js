@@ -114,14 +114,18 @@ class Message extends Component {
     this.setState({message : event.target.value})
   }
   submitSearch = () => {
-    let messagelist = this.state.allmessagelist;
-    let message = [];
-    messagelist.map((listing) => {
-      if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
-            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
-        message.push(listing);
-    })
-    this.setState({messagelist : message})
+    if (this.state.emaillist.includes(localStorage.getItem("receivedBy"))){
+      let messagelist = this.state.allmessagelist;
+      let message = [];
+      messagelist.map((listing) => {
+        if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+              || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
+          message.push(listing);
+      })
+      this.setState({messagelist : message})
+    } else{
+      alert("The user does not exist!");
+    }
   }
   sendMessage = () => {
     const data = {

@@ -4,7 +4,7 @@ var kafka = require("../kafka/client");
 const getProfile = async (req, res) => {
   let msg = {};
   msg.route = "get_userprofile";
-  msg.user_id = req.params.user_id;
+  msg.user_name = req.params.user_name;
   
   kafka.make_request("userprofile", msg, function (err, results) {
     console.log("in make request call back");
@@ -22,7 +22,7 @@ const getProfile = async (req, res) => {
 const getCommunity = async (req, res) => {
   let msg = {};
   msg.route = "get_usercommunity";
-  msg.user_id = req.params.user_id;
+  msg.user_name = req.params.user_name;
   
   kafka.make_request("userprofile", msg, function (err, results) {
     console.log("in make request call back");

@@ -339,7 +339,10 @@ class Dashboard extends Component {
                     <Link to={`/communityhome/${post.communityName}`}>
                         <span className="post__community">{`r/${post.communityName}`}</span>
                     </Link>
-                    <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
+                    <Link to={`/userprofile`} >
+                        {localStorage.setItem("userprofile", post.author)}
+                        <span className="post__author">{`Posted by u/${post.author} ${ago(new Date(post.createdAt))}`}</span>
+                    </Link>
                   </div>
                   <div className="post__title">
                     <span>{post.title}</span>

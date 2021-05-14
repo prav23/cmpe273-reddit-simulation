@@ -1,11 +1,14 @@
 const Member = require("../../models/member");
+const User = require("../../models/User");
 
 const getUserCommunity = async (msg, callback) => {
   console.log("In handle request:"+ JSON.stringify(msg));
-  const user_id = msg.user_id;
+  const user_name = msg.user_name;
   let results = {};
   let err = {};
   try {
+    const user = await User.findOne({ name : user_name});
+    const user_id = user._id;
     const communities = await Member.find({ userId : user_id, status: "joined"});
     if (communities) {
       results.status = 200;

@@ -7,6 +7,7 @@ import axios from "axios";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import { getPosts } from '../../actions/postActions';
+import { Link } from 'react-router-dom';
 import './comments.css';
 const { API_URL } = require("../../utils/Constants").default;
 
@@ -80,57 +81,62 @@ class Comments extends Component {
   }
   returnNestedComments(parentId, selectedPost, reverseIndexedComments){
     const comments = reverseIndexedComments[parentId];
-    return comments.map((comment) => {
-      return (<div className="row mt-2">
-      <div className="col-3"></div>
-      <div className="col">
-        <div className="card">
-          <div className="card-body">
-            <p className="card-text">
-              {" "}
-              {comment.author} &nbsp;{" "}
-              <span className="fw-lighter fst-italic text-muted">
-                {ago(new Date(comment.createdAt))}
-              </span>
-            </p>
-            <h5 className="card-title">{comment.body}</h5>
+    if(comments !== null && comments !== undefined){
+      return comments.map((comment) => {
+        return (<div className="row mt-2">
+        <div className="col-3"></div>
+        <div className="col">
+          <div className="card">
+            <div className="card-body">
+              <p className="card-text">
+                {" "}
+                <Link to={`/userprofile`} >
+                  {localStorage.setItem("userprofile", comment.author)}
+                  {comment.author} &nbsp;{" "}
+                </Link>
+                <span className="fw-lighter fst-italic text-muted">
+                  {ago(new Date(comment.createdAt))}
+                </span>
+              </p>
+              <h5 className="card-title">{comment.body}</h5>
+            </div>
           </div>
+          <div>
+            <input
+              type="text"
+              class="form-control my-1"
+              onChange={(event) =>
+                this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })
+              }
+              placeholder="Reply comment"
+              value={this.state.newCommentParentId === comment._id ? this.state.newSubCommentText : ""}
+            ></input>
+            <button
+              type="button"
+              onClick={() =>
+                this.submitNewSubComment(
+                  comment._id,
+                  selectedPost.title,
+                  selectedPost._id
+                )
+              }
+              class="btn btn-primary"
+            >
+              Reply Comment
+            </button>
+            <button
+              type="button"
+              class="mx-4 btn btn-danger"
+              onClick={() => this.deleteNestedComments(comment._id, reverseIndexedComments[comment._id])}
+            >
+              Delete Comment
+            </button>
+          </div>
+          {reverseIndexedComments[comment._id] && this.returnNestedComments(comment._id, selectedPost, reverseIndexedComments)}
         </div>
-        <div>
-          <input
-            type="text"
-            class="form-control my-1"
-            onChange={(event) =>
-              this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })
-            }
-            placeholder="Reply comment"
-            value={this.state.newCommentParentId === comment._id ? this.state.newSubCommentText : ""}
-          ></input>
-          <button
-            type="button"
-            onClick={() =>
-              this.submitNewSubComment(
-                comment._id,
-                selectedPost.title,
-                selectedPost._id
-              )
-            }
-            class="btn btn-primary"
-          >
-            Reply Comment
-          </button>
-          <button
-            type="button"
-            class="mx-4 btn btn-danger"
-            onClick={() => this.deleteNestedComments(comment._id, reverseIndexedComments[comment._id])}
-          >
-            Delete Comment
-          </button>
-        </div>
-        {reverseIndexedComments[comment._id] && this.returnNestedComments(comment._id, selectedPost, reverseIndexedComments)}
-      </div>
-    </div>)
-    })
+      </div>)
+      })
+    }
   }
 
   async votePost(vote, selectedPost) {
@@ -217,7 +223,8 @@ class Comments extends Component {
     let upArrowColor = 'gray';
     let downArrowColor = 'gray';
     let numberColor = 'gray';
-    const userVote = selectedPost.votes.find(v => v.user === user.user_id)
+    //const userVote = selectedPost.votes.find(v => v.user === user.user_id)
+    const userVote = selectedPost?.votes.find(v => v.user === user.user_id)
     if (userVote !== undefined) {
       if(userVote.vote === 1){
         upArrowColor = '#ff4500';
@@ -245,8 +252,12 @@ class Comments extends Component {
               <div className="card-body">
                 <p className="card-text">
                   {" "}
-                  /r/{selectedPost.communityName} &nbsp; Posted by u/
-                  {selectedPost.author} &nbsp;{" "}
+                  /r/{selectedPost.communityName} &nbsp; 
+                  <Link to={`/userprofile`} >
+                    Posted by u/
+                    {localStorage.setItem("userprofile", selectedPost.author)}
+                    {selectedPost.author} &nbsp;{" "}
+                  </Link>
                   <span className="fw-lighter fst-italic text-muted">
                     {ago(new Date(selectedPost.createdAt))}
                   </span>
@@ -320,7 +331,10 @@ class Comments extends Component {
                     <div className="card-body">
                       <p className="card-text">
                         {" "}
-                        {comment.author} &nbsp;{" "}
+                        <Link to={`/userprofile`} >
+                          {localStorage.setItem("userprofile", comment.author)}
+                          {comment.author} &nbsp;{" "}
+                        </Link>
                         <span className="fw-lighter fst-italic text-muted">
                           {ago(new Date(comment.createdAt))}
                         </span>
