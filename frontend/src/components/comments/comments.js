@@ -253,7 +253,9 @@ class Comments extends Component {
               <div className="card-body">
                 <p className="card-text">
                   {" "}
-                  /r/{selectedPost.communityName} &nbsp; 
+                  <Link to={`/communityhome/${selectedPost.communityName}`}>
+                    <span className="post__community">{`r/${selectedPost.communityName}`} &nbsp; </span>
+                  </Link>
                   <Link to={`/userprofile`} >
                     Posted by u/
                     {localStorage.setItem("userprofile", selectedPost.author)}
