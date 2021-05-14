@@ -1,6 +1,7 @@
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
+import ReactPaginate from 'react-paginate';
 import PropTypes from 'prop-types';
 import ManageMembership from './ManageMembership';
 import axios from 'axios';
@@ -17,25 +18,36 @@ class CommunityUsers extends React.Component {
 
     this.state = {
       createdBy: auth.user.user_id,
-      users: [],
+      users: [[]],
+      allUsers: [],
       updateUsers: false,
+      activitiesPerPage: 2,
+      currentPage: 0,
     };
 
     this.updateUsers = this.updateUsers.bind(this);
+    this.updatePaginations = this.updatePaginations.bind(this);
+    this.handlePageClick = this.handlePageClick.bind(this);
   }
 
   async componentDidMount() {
+    const { activitiesPerPage } = this.state;
+    const response = await this.getMembers();
+
     this.setState({
-      users: await this.getMembers(),
+      allUsers: response,
+      users: CommunityUsers.paginate(response, activitiesPerPage),
     });
   }
 
   async componentDidUpdate() {
-    const { updateUsers } = this.state;
+    const { updateUsers, activitiesPerPage } = this.state;
 
     if (updateUsers) {
+      const response = await this.getMembers();
       this.setState({
-        users: await this.getMembers(),
+        allUsers: response,
+        users: CommunityUsers.paginate(response, activitiesPerPage),
         updateUsers: false,
       });
     }
@@ -51,10 +63,53 @@ class CommunityUsers extends React.Component {
     return response.data;
   }
 
-  render() {
-    const { users } = this.state;
+  handlePageClick(selectedPage) {
+    this.setState({ currentPage: selectedPage.selected });
+  }
 
-    const rows = users.map((user) => (
+  listPageOptions() {
+    const optionMenus = [];
+    [2, 5, 10].forEach((option) => {
+      optionMenus.push(
+        <button
+          className="dropdown-item"
+          key={uuidv4()}
+          type="button"
+          onClick={this.updatePaginations.bind(this, option)}
+        >
+          {option}
+        </button>,
+      );
+    });
+    return optionMenus;
+  }
+
+  static paginate(allUsers, activitiesPerPage) {
+    const paginatedUsers = [];
+
+    let page = 0;
+    while (page < allUsers.length) {
+      paginatedUsers.push(allUsers.slice(page, page + activitiesPerPage));
+      page += activitiesPerPage;
+    }
+
+    return paginatedUsers;
+  }
+
+  updatePaginations(activitiesPerPage) {
+    const { allUsers } = this.state;
+
+    this.setState({
+      activitiesPerPage,
+      users: CommunityUsers.paginate(allUsers, activitiesPerPage),
+      currentPage: 0
+    });
+  }
+
+  render() {
+    const { users, currentPage, allUsers } = this.state;
+
+    const rows = users[currentPage].map((user) => (
       <tr key={uuidv4()}>
         <td>
           <img
@@ -73,7 +128,24 @@ class CommunityUsers extends React.Component {
 
     return (
       <>
-      <h2 className="h2" style={{ margin: '25px' }}>{`${users.length} active users`}</h2>
+      <h2 className="h2" style={{ margin: '25px' }}>{`${allUsers.length} active users`}</h2>
+      <div className="input-group-prepend" key={uuidv4()} style={{ paddingTop: '25px' }}>
+        <button
+          className="btn btn-outline-secondary dropdown-toggle"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          key={uuidv4()}
+          style={{ width: '15rem' }}
+        >
+          Users per Page
+        </button>
+        <div className="dropdown-menu" key={uuidv4()}>
+          {this.listPageOptions()}
+        </div>
+      </div>
+
       <div className="table-responsive" style={{ paddingTop: '25px' }}>
         <table className="table">
           <thead className="thead-dark">
@@ -85,6 +157,25 @@ class CommunityUsers extends React.Component {
           </thead>
           {rows}
         </table>
+
+        <div style={{ paddingTop: '25px' }}>
+          <ReactPaginate
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            activeClassName="active"
+            pageCount={users.length}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={users.length}
+            onPageChange={this.handlePageClick}
+          />
+        </div>
       </div>
       </>
     );
