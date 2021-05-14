@@ -54,7 +54,6 @@ class Message extends Component {
   constructor(props){
     super(props);
     const { user } = this.props.auth;
-    setAuthToken(user.token);
     this.state = {
         sentBy : "",
         receivedBy : "",
@@ -68,7 +67,6 @@ class Message extends Component {
     }
   }
   componentDidMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     axios.get(`${API_URL}/users`)
     .then(response => { 
       let emaillist = response.data.data.allUsers;
@@ -82,7 +80,6 @@ class Message extends Component {
     .catch(error => { console.log(error) });  
   }
   componentWillMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     const data = {
       email : this.props.auth.user.email
     }
