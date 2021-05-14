@@ -78,18 +78,21 @@ class Profile extends Component {
   //submit image
   submitImage = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("image", this.state.file);
-    console.log(this.state.file);
-    const uploadConfig = {
-        headers: {
-            "content-type": "multipart/form-data"
-        }
-    };
-    const data = {
-      user_email : this.props.auth.user.email
+    if(this.state.file){
+      const formData = new FormData();
+      formData.append("image", this.state.file);
+      const uploadConfig = {
+          headers: {
+              "content-type": "multipart/form-data"
+          }
+      };
+      const data = {
+        user_email : this.props.auth.user.email
+      }
+      this.props.updateUserImage(data, formData, uploadConfig); 
+    } else{
+      alert("Failed to upload picture! please select a file");
     }
-    this.props.updateUserImage(data, formData, uploadConfig); 
   }
   submitProfile = (e) => {
     e.preventDefault();
