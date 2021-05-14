@@ -1,6 +1,7 @@
 const Community = require("../models/community");
 const Post = require("../models/post");
 const Member = require("../models/member");
+const kafka = require("../kafka/client");
 
 exports.getNumOfPosts = async (req, res) => {
   if (!req.params.communityName) {
@@ -9,7 +10,24 @@ exports.getNumOfPosts = async (req, res) => {
     });
   }
 
-  const postCount = await Post.aggregate([
+  let msg = {
+    params: req.params,
+    route: "numPosts",
+  };
+
+  kafka.make_request("analytic", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
+
+    return res.status(results.status).send({
+      count: results.data,
+    });
+  });
+
+  /* const postCount = await Post.aggregate([
     {
       $match: {
         communityName: req.params.communityName,
@@ -26,7 +44,7 @@ exports.getNumOfPosts = async (req, res) => {
   const count = postCount[0] ? postCount[0].count : 0;
   return res.status(200).send({
     count,
-  });
+  }); */
 };
 
 exports.getNumOfMembers = async (req, res) => {
@@ -36,7 +54,24 @@ exports.getNumOfMembers = async (req, res) => {
     });
   }
 
-  const memberCount = await Member.aggregate([
+  let msg = {
+    params: req.params,
+    route: "numUsers",
+  };
+
+  kafka.make_request("analytic", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
+
+    return res.status(results.status).send({
+      count: results.data,
+    });
+  });
+
+  /* const memberCount = await Member.aggregate([
     {
       $match: {
         $and: [
@@ -58,7 +93,7 @@ exports.getNumOfMembers = async (req, res) => {
   const count = memberCount[0] ? memberCount[0].count : 0;
   return res.status(200).send({
     count,
-  });
+  }); */
 };
 
 exports.mostUpvotedPost = async (req, res) => {
@@ -68,7 +103,22 @@ exports.mostUpvotedPost = async (req, res) => {
     });
   }
 
-  const post = await Post.aggregate([
+  let msg = {
+    params: req.params,
+    route: "upvotedPost",
+  };
+
+  kafka.make_request("analytic", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
+
+    return res.status(results.status).json(results.data);
+  });
+
+  /* const post = await Post.aggregate([
     {
       $match: { communityName: req.params.communityName },
     },
@@ -101,7 +151,7 @@ exports.mostUpvotedPost = async (req, res) => {
     },
   ]);
 
-  return res.status(200).json(post);
+  return res.status(200).json(post); */
 };
 
 exports.userWithMaximumNumPosts = async (req, res) => {
@@ -111,7 +161,25 @@ exports.userWithMaximumNumPosts = async (req, res) => {
     });
   }
 
-  const user = await Post.aggregate([
+  let msg = {
+    params: req.params,
+    route: "activeUser",
+  };
+
+  kafka.make_request("analytic", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
+
+    return res.status(results.status).send({
+      authorName: results.data.authorName,
+      numPosts: results.data.numPosts,
+    });
+  });
+
+  /* const user = await Post.aggregate([
     {
       $match: {
         communityName: req.params.communityName,
@@ -141,7 +209,7 @@ exports.userWithMaximumNumPosts = async (req, res) => {
   return res.status(200).send({
     authorName: user[0] ? user[0]._id : "",
     numPosts: user[0] ? user[0].postCount : 0,
-  });
+  }); */
 };
 
 exports.communityWithMaxPosts = async (req, res) => {
@@ -151,7 +219,22 @@ exports.communityWithMaxPosts = async (req, res) => {
     });
   }
 
-  const adminCommunities = await Community.find({
+  let msg = {
+    query: req.query,
+    route: "activeCommunity",
+  };
+
+  kafka.make_request("analytic", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
+
+    return res.status(results.status).json(results.data);
+  });
+
+  /* const adminCommunities = await Community.find({
     createdBy: req.query.createdBy,
   }).exec();
 
@@ -186,5 +269,5 @@ exports.communityWithMaxPosts = async (req, res) => {
     },
   ]);
 
-  return res.status(200).json(community);
+  return res.status(200).json(community); */
 };

@@ -10,6 +10,8 @@ const userprofileService = require("./services/userprofile");
 const communitiesService = require("./services/communities");
 const postsService = require("./services/posts");
 const commentsService = require("./services/comments");
+const inviteService = require("./services/member");
+const analyticService = require("./services/analytics");
 
 //MongoDB connection
 connectMongoDB();
@@ -36,10 +38,10 @@ const response = (data, res, err, producer) => {
       messages: JSON.stringify({
         correlationId: data.correlationId,
         data: res,
-        err: err
+        err: err,
       }),
-      partition: 0
-    }
+      partition: 0,
+    },
   ];
   producer.send(payloads, function (err, data) {
     if (err) {
@@ -49,7 +51,7 @@ const response = (data, res, err, producer) => {
     }
   });
   return;
-}
+};
 
 // Topics
 handleTopicRequest("account", accountService);
@@ -60,3 +62,5 @@ handleTopicRequest("communities", communitiesService);
 handleTopicRequest("createCommunity", communitiesService);
 handleTopicRequest("posts", postsService);
 handleTopicRequest("comments", commentsService);
+handleTopicRequest("invite", inviteService);
+handleTopicRequest("analytic", analyticService);

@@ -45,17 +45,6 @@ const SendInvite = ({ user, jwtToken, communityId, communityName }) => {
         alert("Error sending invitations");
       }
     );
-    /* inputList.forEach((item) => {
-      const input = document.getElementById(item.id);
-      if (input.value && input.value !== "") {
-        body.push({
-          userId: input.value,
-          communityId,
-          communityName,
-          status: Constant.INVITED,
-        });
-      }
-    }); */
   };
 
   const fetchUsers = () => {

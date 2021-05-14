@@ -2,6 +2,7 @@
 const { create } = require("./create");
 const { getNewInvites } = require("./getNewInvites");
 const { update } = require("./update");
+const { getCommunityInvites } = require("./getCommunityInvites");
 
 let handle_request = (msg, callback) => {
   switch (msg.route) {
@@ -13,6 +14,9 @@ let handle_request = (msg, callback) => {
       break;
     case "get_new_invites_for_user":
       getNewInvites(msg, callback);
+      break;
+    case "admin_invites":
+      getCommunityInvites(msg, callback);
       break;
   }
 };
