@@ -19,11 +19,14 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 app.use(methodOveride("_method"));
 //use cors to allow cross origin resource sharing
+
 app.use(cors({ origin: frontendURI, credentials: true }));
+
 app.use("/api", apiRoutes);
 app.use(passport.initialize());
 //Passport config
 require("./utils/passport")(passport);
+
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", frontendURI);
   res.setHeader("Access-Control-Allow-Credentials", "true");
