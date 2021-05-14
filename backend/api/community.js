@@ -191,14 +191,15 @@ const getCommunityMembers = async (req, res) => {
   }
 
   if (req.query.communityId) {
-    const communities = await Community.find({ _id: req.query.communityId });
+    const communities = await Community.findById(req.query.communityId);
     if (!communities || communities.length === 0) {
       return res
         .status(400)
         .send(`Community ${req.query.communityId} does not exist`);
     }
 
-    const community = communities[0];
+    console.log(communities);
+    const community = communities;
     if (community.createdBy !== req.query.createdBy) {
       return res
         .status(403)
