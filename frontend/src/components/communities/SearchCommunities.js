@@ -9,6 +9,7 @@ import { resetSearchRedirect } from "../../actions/searchCommunitiesActions";
 import setAuthToken from '../../utils/setAuthToken';
 import './SearchCommunities.css';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const { API_URL } = require('../../utils/Constants').default;
 
@@ -385,8 +386,13 @@ class SearchCommunities extends Component {
                       <ArrowDownwardIcon style={{ fontSize: 17, color: downArrowColor }} />
                     </button>
                   </div>
+                  <div className="search__comPhoto">
+                    <img src={community?.photo} alt={''} />
+                  </div>
                   <div className="search__communityinfo">
-                    <span className="search__communityname">{`r/${community.name}`}</span>
+                    <Link to={`/community/${community._id}`}>
+                      <span className="search__communityname">{`r/${community.name}`}</span>
+                    </Link>
                     <span className="search__communitymembers">{`${community?.numUsers} Members`}</span>
                   </div>
                   

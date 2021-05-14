@@ -42,6 +42,7 @@
     border-bottom: 1px solid lightgray;
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .search__vote{
@@ -60,6 +61,15 @@
     outline:none;
     border: none;
     background-color: transparent;
+}
+
+.search__comPhoto {
+    margin-left: 10px;
+}
+
+.search__comPhoto > img{
+    max-width: 35px;
+    max-height: auto;
 }
 
 .search__communityinfo{
