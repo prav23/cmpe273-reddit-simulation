@@ -117,6 +117,7 @@ router.get(
 );
 
 router.get("/communities/all", community.getAllCommunities);
+router.get("/community/:name", community.getCommunityByName);
 
 router.get(
   "/community",
