@@ -109,7 +109,6 @@ router.get(
 );
 
 router.get("/communities/all", community.getAllCommunities);
-router.get("/community/:name", community.getCommunityByName);
 
 router.get(
   "/community",
@@ -146,6 +145,7 @@ router.put(
   passport.authenticate("jwt", { session: false }),
   community.voteCommunity
 );
+router.get("/community/:name", community.getCommunityByName);
 router.get(
   "/user/communities",
   passport.authenticate("jwt", { session: false }),
