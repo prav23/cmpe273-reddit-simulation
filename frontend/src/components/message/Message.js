@@ -11,9 +11,9 @@ import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
 import setAuthToken from '../../utils/setAuthToken';
 import { getMessage, sendMessage } from '../../actions/messageActions';
-
+import axios from 'axios';
 const { API_URL } = require('../../utils/Constants').default;
-const axios = require('axios').default;
+
 const useStyles = (theme) => ({
   root: {
       flexGrow: 1,
