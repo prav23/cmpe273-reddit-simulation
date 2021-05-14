@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 import { getComments } from "../../actions/commentActions";
 import ago from "s-ago";
 import axios from "axios";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import { getPosts } from '../../actions/postActions';
+import './comments.css';
 const { API_URL } = require("../../utils/Constants").default;
 
 class Comments extends Component {
@@ -12,7 +16,7 @@ class Comments extends Component {
     this.state = {
       pageSize: 2,
       pageNumber: 0,
-      activatedExpense: null,
+      postsDetails: this.props.posts.postsDetails,
       newRootCommentText: "",
       newCommentParentId: "",
       newSubCommentText: "",
@@ -26,6 +30,7 @@ class Comments extends Component {
     }
     const postId = this.props.match.params.postId;
     this.props.getComments(postId);
+    this.props.getPosts();
   }
 
   // componentWillUpdate(nextProps, nextState){
@@ -46,10 +51,6 @@ class Comments extends Component {
       })
       .then((response) => {
         this.setState({ newRootCommentText: "" });
-        // const oldExpenseId = this.state.activatedExpense;
-        // this.setState({activatedExpense: null}, () =>{
-        //   this.setState({activatedExpense: oldExpenseId});
-        // })
       });
   }
 
@@ -64,10 +65,6 @@ class Comments extends Component {
       })
       .then((response) => {
         this.setState({ newSubCommentText: "" });
-        // const oldExpenseId = this.state.activatedExpense;
-        // this.setState({activatedExpense: null}, () =>{
-        //   this.setState({activatedExpense: oldExpenseId});
-        // })
       });
   }
 
@@ -136,8 +133,62 @@ class Comments extends Component {
     })
   }
 
+  async votePost(vote, selectedPost) {
+    const { user } = this.props.auth;
+
+    //let foundPost = allPosts.find(p => p._id === postId);
+    if (selectedPost !== undefined) {
+      let prevUserVote = selectedPost.votes.find(v => v.user === user.user_id);
+      // check users previous vote
+      if (prevUserVote !== undefined) {
+        // unvote if user clicks on same arrow again
+        if (prevUserVote.vote === vote) {
+          vote = 0;
+        }
+      }
+    }
+
+    const payload = {
+      post_id: selectedPost._id,
+      user: user.user_id,
+      vote, 
+    };
+    try {
+      await axios.put(`${API_URL}/posts/vote`, payload);
+      this.props.getPosts();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async voteComment(vote, comment, post_id) {
+    const { user } = this.props.auth;
+    //let foundPost = allPosts.find(p => p._id === postId);
+    if (comment !== undefined) {
+      let prevUserVote = comment.votes.find(v => v.user === user.user_id);
+      // check users previous vote
+      if (prevUserVote !== undefined) {
+        // unvote if user clicks on same arrow again
+        if (prevUserVote.vote === vote) {
+          vote = 0;
+        }
+      }
+    }
+    const payload = {
+      comment_id: comment._id,
+      user: user.user_id,
+      vote, 
+    };
+    try {
+      await axios.put(`${API_URL}/comment/vote`, payload);
+      this.props.getComments(post_id);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
-    const { isAuthenticated } = this.props.auth;
+    const { isAuthenticated, user } = this.props.auth;
     const { commentsDetails, commentsloading } = this.props.comments;
     const { postsDetails } = this.props.posts;
 
@@ -162,15 +213,32 @@ class Comments extends Component {
       }
     });
 
+    // checks if user has voted on post
+    let upArrowColor = 'gray';
+    let downArrowColor = 'gray';
+    let numberColor = 'gray';
+    const userVote = selectedPost.votes.find(v => v.user === user.user_id)
+    if (userVote !== undefined) {
+      if(userVote.vote === 1){
+        upArrowColor = '#ff4500';
+        numberColor = '#ff4500';
+      } else if(userVote.vote === -1) {
+        downArrowColor = 'blue';
+        numberColor = 'blue';
+      }
+    }
+
     return (
       <div className="posts">
         <div className="row mt-4">
-          <div className="col-1">
-            <div className="d-flex flex-column ps-5 mt-2">
-              <i data-test="fa" class="fa fa-lg fa-angle-up"></i>
-              <p className="fs-3 mt-2 pe-1">{selectedPost.score}</p>
-              <i data-test="fa" class="fa fa-lg fa-angle-down mt-n1"></i>
-            </div>
+          <div className="col-1 comments__votes">
+            <button type="button" value={selectedPost._id} onClick={(e) => this.votePost(1, selectedPost)} className="dashboard__arrow">
+              <ArrowUpwardIcon style={{ fontSize: 30, color: upArrowColor }} />        
+            </button>
+            <span style={{ color: numberColor }}>{selectedPost?.score}</span>
+            <button type="button" value={selectedPost._id} onClick={(e) => this.votePost(-1, selectedPost)} className="dashboard__arrow">
+              <ArrowDownwardIcon style={{ fontSize: 30, color: downArrowColor }} />
+            </button>
           </div>
           <div className="col">
             <div className="card">
@@ -189,8 +257,8 @@ class Comments extends Component {
             </div>
           </div>
         </div>
-        <div className="row mt-4">
-          <div className="col-1"> </div>
+        <div className="row mt-1">
+          <div className="col-1 comments__votes"> </div>
           <div className="col">
             <div>
               <input
@@ -218,17 +286,33 @@ class Comments extends Component {
           </div>
         </div>
         {commentsDetails.map((comment) => {
+          // checks if user has voted on comment
+          let upArrowColorComment = 'gray';
+          let downArrowColorComment = 'gray';
+          let numberColorComment = 'gray';
+          const userVoteComment = comment.votes.find(v => v.user === user.user_id)
+          if (userVoteComment !== undefined) {
+            if(userVoteComment.vote === 1){
+              upArrowColorComment = '#ff4500';
+              numberColorComment = '#ff4500';
+            } else if(userVoteComment.vote === -1) {
+              downArrowColorComment = 'blue';
+              numberColorComment = 'blue';
+            }
+          }
           return (
             <div className="row mt-2">
               <div className="col-1"></div>
               {comment.parentCommentId === "" && (
-                <div className="col-1">
-                  <div className="d-flex flex-column ps-5 mt-2">
-                    <i data-test="fa" class="fa fa-lg fa-angle-up"></i>
-                    <p className="fs-3 mt-2 pe-1">{comment.score}</p>
-                    <i data-test="fa" class="fa fa-lg fa-angle-down mt-n1"></i>
-                  </div>
-                </div>
+                <div className="col-1 comments__votes">
+                  <button type="button" value={comment._id} onClick={(e) => this.voteComment(1, comment, selectedPost._id)} className="dashboard__arrow">
+                    <ArrowUpwardIcon style={{ fontSize: 30, color: upArrowColorComment }} />        
+                  </button>
+                  <span style={{ color: numberColorComment }}>{comment?.score}</span>
+                  <button type="button" value={comment._id} onClick={(e) => this.voteComment(-1, comment, selectedPost._id)} className="dashboard__arrow">
+                    <ArrowDownwardIcon style={{ fontSize: 30, color: downArrowColorComment }} />
+                  </button>
+              </div>
               )}
               {comment.parentCommentId === "" && (
                 <div className="col">
@@ -279,25 +363,6 @@ class Comments extends Component {
                 </div>
 
               )}
-              {/* {comment.parentCommentId !== "" && (
-                <div className="row mt-2">
-                  <div className="col-3"></div>
-                  <div className="col">
-                    <div className="card">
-                      <div className="card-body">
-                        <p className="card-text">
-                          {" "}
-                          {comment.author} &nbsp;{" "}
-                          <span className="fw-lighter fst-italic text-muted">
-                            {ago(new Date(comment.createdAt))}
-                          </span>
-                        </p>
-                        <h5 className="card-title">{comment.body}</h5>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )} */}
             </div>
           );
         })}
@@ -319,4 +384,4 @@ const mapStateToProps = (state) => ({
   posts: state.posts,
 });
 
-export default connect(mapStateToProps, { getComments })(Comments);
+export default connect(mapStateToProps, { getComments, getPosts })(Comments);
