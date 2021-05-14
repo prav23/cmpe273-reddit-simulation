@@ -11,8 +11,7 @@ const getNewInvites = (msg, callback) => {
     [
       {
         $match: {
-          userId: ObjectId(msg.params.userId),
-          status: "new",
+          $and: [{ userId: ObjectId(msg.params.id) }, { status: "invited" }],
         },
       },
       {
@@ -36,9 +35,10 @@ const getNewInvites = (msg, callback) => {
       {
         $project: {
           userId: 1,
+          userName: 1,
           communityId: 1,
-          "community.name": 1,
-          "community.photo": 1,
+          communityName: 1,
+          "community_info.photo": 1,
           status: 1,
           createdAt: 1,
         },
