@@ -27,7 +27,7 @@ const AdminInvites = ({ user, jwtToken, communityId, communityName }) => {
 
   useEffect(() => {
     axios
-      .get(`${Constants.API_URL}/communities/${communityId}/invites`, headers)
+      .get(`${Constants.API_URL}/communities/${communityId}/invites?createdBy=${user.user_id}`, headers)
       .then(
         (result) => {
           if (result.status === 200) {
