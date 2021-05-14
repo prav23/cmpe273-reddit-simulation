@@ -390,7 +390,7 @@ class SearchCommunities extends Component {
                     <img src={community?.photo} alt={''} />
                   </div>
                   <div className="search__communityinfo">
-                    <Link to={`/community/${community._id}`}>
+                    <Link to={`/communityhome/${community._id}`}>
                       <span className="search__communityname">{`r/${community.name}`}</span>
                     </Link>
                     <span className="search__communitymembers">{`${community?.numUsers} Members`}</span>
