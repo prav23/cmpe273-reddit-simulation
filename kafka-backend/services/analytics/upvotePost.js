@@ -1,6 +1,8 @@
 const Post = require("../../models/posts");
 
 const mostUpvoted = async (msg, callback) => {
+  let response = {};
+  let error = {};
   try {
     const post = await Post.aggregate([
       {
