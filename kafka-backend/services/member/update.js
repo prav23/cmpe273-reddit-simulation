@@ -21,10 +21,10 @@ const update = (msg, callback) => {
         .then((communities) => {
           if (communities.length > 0) {
             const community = communities[0];
-            if (req.body.status === "joined") {
+            if (msg.body.status === "joined") {
               community.numUsers += 1;
             } else if (
-              req.body.status === "rejected" &&
+              msg.body.status === "rejected" &&
               community.numUsers > 0
             ) {
               community.numUsers -= 1;
@@ -44,7 +44,7 @@ const update = (msg, callback) => {
               });
           } else {
             error.status = 400;
-            error.data = `Community ${req.body.communityName} does not exist`;
+            error.data = `Community ${msg.body.communityName} does not exist`;
             return callback(error, null);
           }
         })
