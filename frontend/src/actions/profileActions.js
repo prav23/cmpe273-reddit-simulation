@@ -54,8 +54,9 @@ export const getUserImage = (data) => dispatch => {
   });  
 }
 
-export const updateUserImage = (formData, uploadConfig) => dispatch => {
-  axios.post(`${API_URL}/image/${localStorage.getItem("email")}`, formData, uploadConfig)
+export const updateUserImage = (data, formData, uploadConfig) => dispatch => {
+  const user_email = data.user_email;
+  axios.post(`${API_URL}/image/${user_email}`, formData, uploadConfig)
       .then(response => {
           dispatch({
               type: USER_IMAGE_UPDATE,

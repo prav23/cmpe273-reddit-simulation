@@ -86,7 +86,10 @@ class Profile extends Component {
             "content-type": "multipart/form-data"
         }
     };
-    this.props.updateUserImage(formData, uploadConfig); 
+    const data = {
+      user_email : this.props.auth.user.email
+    }
+    this.props.updateUserImage(data, formData, uploadConfig); 
   }
   submitProfile = (e) => {
     e.preventDefault();
@@ -121,6 +124,7 @@ class Profile extends Component {
           <Form>
             <Grid container spacing={3}>
               <Grid item xs={6}>
+                <Form.Row>
                 <Card style={{ width: '20rem' }}>
                     <Card.Img variant="top" src={imageSrc} />
                 </Card>
@@ -129,6 +133,7 @@ class Profile extends Component {
                 </div><br/>
                 <Button type="submit" variant="primary" onClick={this.submitImage}>Upload</Button>
                 <br/><br/>
+                </Form.Row>
               </Grid>
               <Grid item xs={6}>
                 <Grid container spacing={3}>
