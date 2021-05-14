@@ -1,4 +1,7 @@
 const Member = require("../../models/member");
+const Community = require("../models/community");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const update = (msg, callback) => {
   let response = {};
