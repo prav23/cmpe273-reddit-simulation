@@ -64,7 +64,6 @@ class UserProfile extends Component {
     }
   }
   componentWillMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     const data = {
       user_name : localStorage.getItem("userprofile")
     }
