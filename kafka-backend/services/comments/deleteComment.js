@@ -5,7 +5,10 @@ const deleteComment = async(msg, callback) => {
     let results = {};
     let err = {};
     try{
-        const comment_id = req.params.comment_id;
+        console.log(msg);
+        const comment_id = msg.comment_id;
+        console.log("i am here");
+        console.log(comment_id);
         const comment = await Comment.findOne({ _id : comment_id });
         if(comment !== null){
             // decrease comment count in post (if root comment)
@@ -17,7 +20,7 @@ const deleteComment = async(msg, callback) => {
             
             await Comment.deleteOne({ _id : comment_id});
             results.status = 200;
-            results.data = comment;
+            results.data = "deleted comment";
             return callback(null, results);
         }
         else{
