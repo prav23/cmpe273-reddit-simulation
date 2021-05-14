@@ -44,6 +44,40 @@ class SearchCommunities extends Component {
     };
   }
 
+  addMostVotedPost(communities) {
+    const retCommunities = [];
+    communities.map(async(c) => {
+      let postScore = 0;
+      try {
+        const post = await axios.get(`${API_URL}/communities/${c.name}/mostUpvotedPost`);
+        
+        if(post.data.length > 0){
+          postScore = post.data[0].score;
+        }
+      } catch (e) {
+        postScore = 0;
+      }
+      
+      retCommunities.push({
+        upvotedPosts: postScore,
+        _id: c._id,
+        name: c.name,
+        description: c.description,
+        photo: c.photo,
+        createdBy: c.createdBy,
+        numUsers: c.numUsers,
+        numPosts: c.numPosts,
+        rules: c.rules,
+        createdAt: c.createdAt,
+        updatedAt: c.updatedAt,
+        score: c.score,
+        votes: c.votes,
+      });
+    });
+    console.log(retCommunities);
+    return retCommunities;
+  }
+
   async componentDidMount() {
     // makes navigating back to dashboard possible
     // sets redux value SearchRedirect = false
@@ -54,15 +88,17 @@ class SearchCommunities extends Component {
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
       const { currentPageSize } = this.state;
+
+      //const reformatedCommunities = this.addMostVotedPost(communities.data);
+
       this.setState({
         foundCommunities: communities.data,
         newSearch: true,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
         communityPageRedirect: "",
-      });
+      });  
     } catch (e) {
       this.setState({
-        foundCommunities: [],
         newSearch: true,
         pageCount: 0,
         communityPageRedirect: "",
@@ -79,6 +115,7 @@ class SearchCommunities extends Component {
     try {
       const communities = await axios.get(`${API_URL}/findcommunities?${search_query[1]}`);
       const { currentPageSize } = this.state;
+      //const reformatedCommunities = this.addMostVotedPost(communities.data);
       this.setState({
         foundCommunities: communities.data,
         pageCount: Math.ceil(communities.data.length/currentPageSize),
@@ -86,7 +123,6 @@ class SearchCommunities extends Component {
       });
     } catch (e) {
       this.setState({
-        foundCommunities: [],
         pageCount: 0,
         communityPageRedirect: "",
       });
@@ -238,6 +274,41 @@ class SearchCommunities extends Component {
     });
   }
 
+  async voteCommunity(communityId, vote, e) {
+    e.stopPropagation();
+    const { user } = this.props.auth;
+    const { foundCommunities } = this.state;
+    let foundCommunity = foundCommunities.find(c => c._id === communityId);
+    if (foundCommunity !== undefined) {
+      let prevUserVote = foundCommunity.votes.find(v => v.user === user.user_id);
+      // check users previous vote
+      if (prevUserVote !== undefined) {
+        // unvote if user clicks on same arrow again
+        if (prevUserVote.vote === vote) {
+          vote = 0;
+        }
+      }
+    }
+
+    const payload = {
+      community_id: communityId,
+      user: user.user_id,
+      vote, 
+    };
+    try {
+      const updatedCommunity = await axios.put(`${API_URL}/community/vote`, payload);
+      
+      let communityIndex = foundCommunities.findIndex(c => c._id === updatedCommunity.data._id);
+      let foundCommunitiesCopy = [...foundCommunities];
+      foundCommunitiesCopy[communityIndex] = updatedCommunity.data;
+      this.setState({
+        foundCommunities: foundCommunitiesCopy,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   clickCommunity = (e) => {
     console.log(e.currentTarget.dataset.community_id);
     this.setState({
@@ -258,10 +329,14 @@ class SearchCommunities extends Component {
       communityPageRedirect,
     } = this.state;
     const { redirectToSearchPage } = this.props.searchCommunities;
+    const { user } = this.props.auth;
 
     if (redirectToSearchPage && newSearch) {
       this.newSearch();
     }
+
+    console.log(foundCommunities);
+    console.log(foundCommunities.length > 0);
 
     return (
       <div className="search">
@@ -282,25 +357,47 @@ class SearchCommunities extends Component {
           {
             foundCommunities.length===0
             ? <span className="search__noresults">No results found, try another search!</span>
-            : foundCommunities.slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize).map((community) => (
-            <div key={community._id} data-community_id={community._id} className="search__community" onClick={this.clickCommunity}>
-              <div className="search__vote">
-                <ArrowUpwardIcon fontSize="small" />
-                <span>{community?.upVotes - community?.downVotes}</span>
-                <ArrowDownwardIcon fontSize="small" />
-              </div>
-              <div className="search__communityinfo">
-                <span className="search__communityname">{`r/${community.name}`}</span>
-                <span className="search__communitymembers">{`${community?.numUsers} Members`}</span>
-              </div>
-              
-              <div className="search__communitydescription">
-                <p className="search__communitytext">
-                  {community.description}
-                </p>
-              </div>
-            </div>
-            ))
+            : foundCommunities.slice(currentPage*currentPageSize, currentPage*currentPageSize+currentPageSize).map((community) => {
+              console.log(community);
+              // checks if user has voted on community
+              let upArrowColor = 'gray';
+              let downArrowColor = 'gray';
+              let numberColor = 'gray';
+              const userVote = community.votes.find(v => v.user === user.user_id)
+              if (userVote !== undefined) {
+                if(userVote.vote === 1){
+                  upArrowColor = '#ff4500';
+                  numberColor = '#ff4500';
+                } else if(userVote.vote === -1) {
+                  downArrowColor = 'blue';
+                  numberColor = 'blue';
+                }
+              }
+
+              return (
+                <div key={community._id} data-community_id={community._id} className="search__community" onClick={this.clickCommunity}>
+                  <div className="search__vote">
+                    <button type="button" value={community._id} onClick={(e) => this.voteCommunity(community._id, 1, e)} className="search__arrow">
+                      <ArrowUpwardIcon style={{ fontSize: 17, color: upArrowColor }} />
+                    </button>
+                    <span style={{ fontSize: 17, color: numberColor }}>{community?.score}</span>
+                    <button type="button" value={community._id} onClick={(e) => this.voteCommunity(community._id, -1, e)} className="search__arrow">
+                      <ArrowDownwardIcon style={{ fontSize: 17, color: downArrowColor }} />
+                    </button>
+                  </div>
+                  <div className="search__communityinfo">
+                    <span className="search__communityname">{`r/${community.name}`}</span>
+                    <span className="search__communitymembers">{`${community?.numUsers} Members`}</span>
+                  </div>
+                  
+                  <div className="search__communitydescription">
+                    <p className="search__communitytext">
+                      {community.description}
+                    </p>
+                  </div>
+                </div>
+              )
+            })
           }
           <div className="search__paginate">
             {

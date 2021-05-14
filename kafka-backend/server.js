@@ -7,6 +7,9 @@ const accountService = require("./services/account");
 const performanceService = require("./services/performance");
 const messageService = require("./services/message");
 const userprofileService = require("./services/userprofile");
+const communitiesService = require("./services/communities");
+const postsService = require("./services/posts");
+const commentsService = require("./services/comments");
 
 //MongoDB connection
 connectMongoDB();
@@ -53,3 +56,6 @@ handleTopicRequest("account", accountService);
 handleTopicRequest("performance", performanceService);
 handleTopicRequest("message", messageService);
 handleTopicRequest("userprofile", userprofileService);
+handleTopicRequest("communities", communitiesService);
+handleTopicRequest("posts", postsService);
+handleTopicRequest("comments", commentsService);
