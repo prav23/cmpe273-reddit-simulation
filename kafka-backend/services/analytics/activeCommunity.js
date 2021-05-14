@@ -1,4 +1,4 @@
-const Post = require("../models/post");
+const Post = require("../../models/posts");
 
 const activeCommunity = async (msg, callback) => {
   let response = {};

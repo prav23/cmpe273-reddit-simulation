@@ -6,6 +6,7 @@ const { mostUpvoted } = require("./upvotePost");
 const { activeCommunity } = require("./activeCommunity");
 
 let handle_request = (msg, callback) => {
+  console.log(msg.route);
   switch (msg.route) {
     case "numUsers":
       numUser(msg, callback);

@@ -1,4 +1,4 @@
-const Post = require("../models/post");
+const Post = require("../../models/posts");
 
 const numPost = async (msg, callback) => {
   let response = {};
@@ -20,6 +20,7 @@ const numPost = async (msg, callback) => {
     ]);
 
     const count = postCount[0] ? postCount[0].count : 0;
+    console.log(count);
     response.status = 200;
     response.data = count;
     return callback(null, response);
