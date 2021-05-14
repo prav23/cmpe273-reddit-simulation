@@ -125,13 +125,19 @@ class Message extends Component {
     }
   }
   sendMessage = () => {
-    const data = {
-      receivedBy : localStorage.getItem("receivedBy"),
-      sentBy : this.props.auth.user.email,
-      message : this.state.message
+    if (this.state.message.length <= 100 && this.state.emaillist.includes(localStorage.getItem("receivedBy"))) {
+      const data = {
+        receivedBy : localStorage.getItem("receivedBy"),
+        sentBy : this.props.auth.user.email,
+        message : this.state.message
+      }
+      console.log(data);
+      this.props.sendMessage(data); 
+    } else if(this.state.message.length > 100){
+      alert("Failed to send! Your message should be limited to 100 characters");
+    } else{
+      alert("Failed to send! The user does not exist!");
     }
-    console.log(data);
-    this.props.sendMessage(data); 
   }
   emailTextChange = (event) => {
     this.setState({receivedBy: event.target.value});
