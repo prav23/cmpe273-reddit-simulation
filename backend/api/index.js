@@ -115,6 +115,9 @@ router.get(
   //passport.authenticate("jwt", { session: false }),
   community.getCommunities
 );
+
+router.get("/communities/all", community.getAllCommunities);
+
 router.get(
   "/community",
   passport.authenticate("jwt", { session: false }),
@@ -180,7 +183,7 @@ router.get(
 
 // Get Dashboard posts
 router.get(
-  "/dashboard", 
+  "/dashboard",
   //passport.authenticate("jwt", { session: false }),
   community.getDashboard
 );
