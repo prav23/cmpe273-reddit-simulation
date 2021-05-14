@@ -8,6 +8,7 @@ import inviteReducer from "./inviteReducer";
 import searchCommunitiesReducer from './searchCommunitiesReducer';
 import messageReducer from './messageReducer';
 import userprofileReducer from './userprofileReducer';
+import profileReducer from './profileReducer';
 import { USER_LOGOUT } from '../actions/types';
 
 const appReducer = combineReducers({
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
     invite: inviteReducer,
     message: messageReducer,
     userprofile: userprofileReducer,
+    profile: profileReducer,
 })
   
 const rootReducer = (state, action) => {

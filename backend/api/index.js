@@ -8,6 +8,7 @@ const posts = require("./post");
 const comment = require("./comment");
 const message = require("./message");
 const userprofile = require("./userprofile");
+const profile = require("./profile");
 const performance = require("./performance");
 
 const router = express.Router();
@@ -33,6 +34,13 @@ router.get(
   "/performance/messages/redis/kafka",
   performance.getAllMessagesRedisKafka
 );
+
+// profile
+router.get("/profile/:user_email", profile.getProfile);
+router.post("/profile", profile.updateProfile);
+router.get("/image/:user_email", profile.getImage);
+router.get("/image/path/:profilePicture", profile.getImagePath);
+router.post("/image/:user_email", profile.uploadImage);
 
 // post route requests
 router.post("/posts", posts.create);
