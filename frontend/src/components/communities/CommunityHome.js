@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { getCommunityPosts } from '../../actions/postActions';
 import ago from 's-ago';
 import { Link } from 'react-router-dom';
+import { Button } from "react-bootstrap";
 
 class CommunityHome extends Component {
   componentDidMount() {
@@ -23,6 +24,15 @@ class CommunityHome extends Component {
     });
     return (
       <div className="posts">
+        <Link to={`/createpost/${this.props.match.params.communityName}`}>
+            <Button
+              variant="dark"
+              //onClick={handleInviteClick}
+              className="invite"
+            >
+              Create Post
+            </Button>
+          </Link>
         {sortedpostsDetails.map(post => {
           return (
           <div className="row mt-4">
