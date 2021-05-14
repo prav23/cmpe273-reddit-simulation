@@ -36,7 +36,16 @@ class CommunityHome extends Component {
             <div className="col">
               <div className="card">
                 <div className="card-body">
-                  <p className="card-text"> /r/{post.communityName} &nbsp; Posted by u/{post.author} &nbsp; <span className="fw-lighter fst-italic text-muted">{ago(new Date(post.createdAt))}</span></p>
+                  <p className="card-text"> 
+                    /r/{post.communityName} &nbsp; 
+                    <Link to={`/userprofile`} >
+                      {localStorage.setItem("userprofile", post.author)}
+                      Posted by u/{post.author} &nbsp; 
+                    </Link>
+                    <span className="fw-lighter fst-italic text-muted">
+                      {ago(new Date(post.createdAt))}
+                    </span>
+                  </p>
                   <h5 className="card-title">{post.title}</h5>
                   <p className="card-text">{post.text} </p>
                   {post.image !== "" && <img style = {{width:"400px",height:"400px"}} src={post.image} class="img-thumbnail" alt="..."/>}

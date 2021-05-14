@@ -119,7 +119,7 @@ router.put(
 );
 router.put(
   "/community/rule",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   community.addCommunityRule
 );
 router.get(
@@ -177,8 +177,8 @@ router.get("/message/:email", message.getMessage);
 router.post("/message", message.sendMessage);
 
 //user profile
-router.get("/userprofile/:email", userprofile.getProfile);
-router.get("/userprofile/community/:email", userprofile.getCommunity);
+router.get("/userprofile/:user_name", userprofile.getProfile);
+router.get("/userprofile/community/:user_name", userprofile.getCommunity);
 
 // Get number of posts for a community
 router.get("/communities/:communityName/numPosts", analytics.getNumOfPosts);
