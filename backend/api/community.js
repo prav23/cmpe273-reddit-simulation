@@ -1,6 +1,8 @@
 const express = require("express");
 const kafka = require("../kafka/client");
 const router = express.Router();
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const Community = require("../models/community");
 const {
@@ -207,9 +209,14 @@ const getCommunityMembers = async (req, res) => {
 
     const status = req.query.status ? req.query.status : "invited";
     const members = await Member.find({
-      communityId: community._id,
-      status: status,
-      sentBy: { $ne: req.query.createdBy },
+      $and: [
+        { communityId: ObjectId(community._id) },
+        { status: status },
+        { sentBy: { $ne: req.query.createdBy } },
+      ],
+
+      /* status: status,
+      sentBy: { $ne: req.query.createdBy }, */
     });
     return res.status(200).send(members);
   } else {
@@ -331,6 +338,7 @@ const joinCommunity = async (req, res) => {
       communityId,
       communityName,
       status: "invited",
+      sentBy: userId,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       photo:
@@ -496,6 +504,20 @@ const getAllCommunities = async (req, res) => {
   }
 };
 
+const getCommunityByName = async (req, res) => {
+  if (!req.params.name) {
+    return res.status(400).send("community name is required in params");
+  }
+  try {
+    const community = await Community.find({ name: req.params.name });
+    return res.status(200).json(community);
+  } catch (error) {
+    return res.status(500).send({
+      message: error.toString(),
+    });
+  }
+};
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -513,4 +535,5 @@ module.exports = {
   voteCommunity,
   deleteCommunity,
   getAllCommunities,
+  getCommunityByName,
 };
