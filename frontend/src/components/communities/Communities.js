@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import { MDBIcon} from 'mdbreact';
 import { Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
 import { v4 as uuidv4 } from 'uuid';
 import CreateCommunity from './CreateCommunity';
@@ -181,7 +182,12 @@ class Communities extends React.Component {
   }
 
   render() {
-    const { communities, defaultAvatar, currentPage, sortOrder } = this.state;
+    const { communities, defaultAvatar, currentPage, sortOrder, isAuthenticated } = this.state;
+
+    if (!isAuthenticated) {
+      return <Redirect to="/" />;
+    }
+
     if (communities.length === 0) {
       return (
         <header>

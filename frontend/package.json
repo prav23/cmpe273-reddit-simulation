@@ -21,6 +21,7 @@
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.2",
     "react-chartjs-2": "^3.0.3",
+    "react-confirm-alert": "^2.7.0",
     "react-cookies": "^0.1.1",
     "react-dom": "^17.0.1",
     "react-dropdown-select": "^4.7.4",

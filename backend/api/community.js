@@ -33,31 +33,34 @@ const createCommunity = async (req, res) => {
     return res.status(400).send(`Community admin does not exist ${req.body.createdBy}`);
   }
 
-  const newComm = new Community({
-    name: req.body.name,
-    description: req.body.description,
-    createdBy: req.body.createdBy,
-    numUsers: 1,
-    numPosts: 0,
-  });
-  await newComm.save();
-
   const user = users[0];
-  const member = new Member(
-    {
+
+  await kafka.make_request("createCommunity", {
+    route: "create_community",
+    community: {
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: req.body.createdBy,
+      numUsers: 1,
+      numPosts: 0,
+    },
+    member: {
       userId: user._id,
       userName: user.name,
-      communityId: newComm._id,
-      communityName: newComm.name,
+      communityName: req.body.name,
       status: "joined",
       createdAt: Date.now(),
       updatedAt: Date.now(),
       photo: defaultAvatars.userAvatar,
     }
-  );
-  await member.save();
-
-  return res.status(200).send({ name: newComm.name, description: newComm.description });
+  }, function (err, results) {
+    if (err) {
+      return res.status(err.status).send(err.data);
+    }
+    else {
+      return res.status(200).send({ name: req.body.name, description: req.body.description });
+    }
+  });
 };
 
 // get communities created by a user
@@ -321,6 +324,10 @@ const leaveCommunity = async(req, res) => {
 
   const user = users[0];
   const communityNames = communities.map((community) => community.name);
+  communities.forEach(async (community) => {
+    community.numUsers -= 1;
+    await community.save();
+  });
 
   // find posts
   const posts = await Post.find({
@@ -398,6 +405,39 @@ const voteCommunity = async(req, res) => {
   });
 }
 
+const deleteCommunity = async(req, res) => {
+  if (!req.query.communityId) {
+    return res.status(400).send('communityId is required');
+  }
+
+  const communities = await Community.find({ _id: req.query.communityId }).exec();
+  if (communities.length === 0) {
+    return res.status(400).send(`Community ${req.query.communityId} not found`);
+  }
+
+  const community = communities[0];
+
+  // delete all members
+  await Member.deleteMany({
+    communityId: community._id,
+  });
+
+  const posts = await Post.find({
+    communityName: community.name,
+  });
+  const postIds = posts.map((post) => post._id);
+
+  // delete comments and posts
+  await Comment.deleteMany({ postId: { $in: postIds } });
+  await Post.deleteMany({
+    communityName: community.name,
+  });
+
+  await Community.deleteMany({
+    _id: req.query.communityId,
+  });
+}
+
 module.exports = {
   createCommunity,
   getCommunities,
@@ -413,4 +453,5 @@ module.exports = {
   searchForCommunities,
   getDashboard,
   voteCommunity,
+  deleteCommunity,
 };

@@ -157,6 +157,11 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   community.leaveCommunity
 );
+router.delete(
+  "/community/community",
+  passport.authenticate("jwt", { session: false }),
+  community.deleteCommunity
+);
 
 // Search for communities based off navbar query
 router.get(

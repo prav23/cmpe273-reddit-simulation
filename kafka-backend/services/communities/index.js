@@ -2,6 +2,7 @@
 const { getDashboard } = require("./getDashboard");
 const { searchForCommunities } = require("./searchForCommunities");
 const { voteCommunity } = require("./voteCommunity");
+const { createCommunity } = require("./communityAdmin");
 
 let handle_request = (msg, callback) => {
   switch (msg.route) {
@@ -13,6 +14,9 @@ let handle_request = (msg, callback) => {
       break;
     case "vote_community":
       voteCommunity(msg, callback);
+      break;
+    case "create_community":
+      createCommunity(msg, callback);
       break;
   }
 };
