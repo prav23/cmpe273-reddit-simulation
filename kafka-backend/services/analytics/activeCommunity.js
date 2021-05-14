@@ -1,4 +1,5 @@
 const Post = require("../../models/posts");
+const Community = require("../../models/community");
 
 const activeCommunity = async (msg, callback) => {
   let response = {};
