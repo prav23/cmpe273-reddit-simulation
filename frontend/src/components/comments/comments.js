@@ -104,6 +104,7 @@ class Comments extends Component {
           <div>
             <input
               type="text"
+              maxlength="100"
               class="form-control my-1"
               onChange={(event) =>
                 this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })
@@ -274,6 +275,7 @@ class Comments extends Component {
             <div>
               <input
                 type="text"
+                maxlength="100"
                 class="form-control my-2"
                 onChange={(event) =>
                   this.setState({ newRootCommentText: event.target.value })
@@ -345,6 +347,7 @@ class Comments extends Component {
                   <div>
                     <input
                       type="text"
+                      maxlength="100"
                       class="form-control my-2"
                       onChange={(event) =>
                         this.setState({ newSubCommentText: event.target.value, newCommentParentId: comment._id })

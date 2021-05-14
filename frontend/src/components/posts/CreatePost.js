@@ -121,15 +121,15 @@ class CreatePost extends Component {
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="text" role="tabpanel" aria-labelledby="text-tab">
               <div class="form-group">
-                <input type="text" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
+                <input type="text" maxlength="50" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" id="exampleTextContent" placeholder="Text (required)" value = {this.state.text} onChange = {(event) => this.setState({text: event.target.value, postType: "text"})}/>
+                <input type="text" maxlength="250" class="form-control" id="exampleTextContent" placeholder="Text (required)" value = {this.state.text} onChange = {(event) => this.setState({text: event.target.value, postType: "text"})}/>
               </div>
             </div>
             <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="image-tab">
               <div class="form-group">
-                <input type="text" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
+                <input type="text" maxlength="50" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
               </div>
               <div class="form-group">
                 {/* <input type="text" class="form-control" id="exampleTextContent" placeholder="Image (upload)" /> */}
@@ -138,10 +138,10 @@ class CreatePost extends Component {
             </div>
             <div class="tab-pane fade" id="link" role="tabpanel" aria-labelledby="link-tab">
               <div class="form-group">
-                <input type="text" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
+                <input type="text" maxlength="50" class="form-control" id="exampleTitle" aria-describedby="titleHelp" placeholder="Post Title" value = {this.state.title} onChange = {(event) => this.setState({title: event.target.value})}/>
               </div>
               <div class="form-group">
-                <input type="url" class="form-control" id="exampleTextContent" placeholder="Url (required)" value = {this.state.url} onChange={(event) => this.setState({url: event.target.value, postType : "url"})}/>
+                <input type="url" maxlength="250" class="form-control" id="exampleTextContent" placeholder="Url (required)" value = {this.state.url} onChange={(event) => this.setState({url: event.target.value, postType : "url"})}/>
               </div>
             </div>
           </div>
