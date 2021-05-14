@@ -1,5 +1,5 @@
 const Member = require("../../models/member");
-const Community = require("../models/community");
+const Community = require("../../models/community");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
