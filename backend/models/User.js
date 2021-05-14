@@ -30,6 +30,10 @@ const UserSchema = new Schema({
   description: {
     type: String,
     default: ""
+  },
+  topics: {
+    type: String,
+    default: ""
   }
 });
 

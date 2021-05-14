@@ -16,6 +16,7 @@ import Posts from "./posts/posts";
 import Comments from "./comments/comments";
 import Message from "./message/Message";
 import UserProfile from "./profile/UserProfile";
+import Profile from "./profile/Profile";
 import Invite from "./invites/Invite";
 import SearchCommunities from "./communities/SearchCommunities";
 import Analytics from "./analytics/Analytics";
@@ -48,6 +49,7 @@ class Main extends Component {
               <Route path="/sentInvites" component={AdminInvites} />
               <Route path="/message" component={Message} />
               <Route path="/userprofile" component={UserProfile} />
+              <Route path="/profile" component={Profile} />
               <Route path="/invites" component={Invite} />
               <Route path="/findcommunities" component={SearchCommunities} />
               <Route path="/analytics" component={Analytics} />

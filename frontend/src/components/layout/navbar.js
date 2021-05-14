@@ -114,6 +114,11 @@ class Navbar extends Component {
                           aria-labelledby="dropdownMenuButton1"
                         >
                           <li>
+                            <Link className="nav-link" to="/profile">
+                              Profile
+                            </Link>
+                          </li>
+                          <li>
                             <Link className="nav-link" to="/invites">
                               View Invites
                             </Link>

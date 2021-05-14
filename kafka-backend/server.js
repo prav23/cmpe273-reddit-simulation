@@ -12,6 +12,7 @@ const postsService = require("./services/posts");
 const commentsService = require("./services/comments");
 const inviteService = require("./services/member");
 const analyticService = require("./services/analytics");
+const profileService = require("./services/profile");
 
 //MongoDB connection
 connectMongoDB();
@@ -64,3 +65,4 @@ handleTopicRequest("posts", postsService);
 handleTopicRequest("comments", commentsService);
 handleTopicRequest("invite", inviteService);
 handleTopicRequest("analytic", analyticService);
+handleTopicRequest("profile", profileService);
