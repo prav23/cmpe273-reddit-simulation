@@ -8,7 +8,7 @@ const getCommunityInvites = (msg, callback) => {
   let error = {};
 
   Member.find(
-    { communityId: req.params.id, sentBy: req.query.createdBy },
+    { communityId: msg.params.id, sentBy: msg.query.createdBy },
     (err, data) => {
       if (err) {
         error.status = 400;
