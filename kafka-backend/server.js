@@ -57,5 +57,6 @@ handleTopicRequest("performance", performanceService);
 handleTopicRequest("message", messageService);
 handleTopicRequest("userprofile", userprofileService);
 handleTopicRequest("communities", communitiesService);
+handleTopicRequest("createCommunity", communitiesService);
 handleTopicRequest("posts", postsService);
 handleTopicRequest("comments", commentsService);

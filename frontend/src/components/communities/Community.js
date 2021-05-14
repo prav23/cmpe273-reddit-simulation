@@ -1,4 +1,5 @@
 import React from "react";
+import { confirmAlert } from 'react-confirm-alert';
 import { v4 as uuidv4 } from "uuid";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -7,6 +8,7 @@ import AddCommunityRule from "./AddCommunityRule";
 import AddCommunityMember from "./AddCommunityMember";
 import UpdateCommunity from "./UpdateCommunity";
 import CommunityUsers from "./CommunityUsers";
+import { Redirect } from 'react-router-dom';
 import axios from "axios";
 import setAuthToken from "../../utils/setAuthToken";
 import { Link } from "react-router-dom";
@@ -29,9 +31,12 @@ class Community extends React.Component {
       updateCommunity: false,
       defaultAvatar: defaultAvatars.communityAvatar,
       createdBy: auth.user.user_id,
+      redirect: false,
+      isAuthenticated: auth.isAuthenticated,
     };
 
     this.updateCommunity = this.updateCommunity.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   async componentDidMount() {
@@ -71,6 +76,35 @@ class Community extends React.Component {
     }
   }
 
+  async onClick() {
+    const { community } = this.state;
+
+    const response = await axios.delete(`${API_URL}/community/community`, {
+      params: { communityId: community._id },
+    });
+
+    this.setState({ redirect: true });
+    this.forceUpdate();
+  }
+
+  async deleteCommunity() {
+    const { community } = this.state;
+
+    confirmAlert({
+      title: 'Confirm to delete community',
+      message: `Are you sure you want to delete ${community.name}`,
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: this.onClick,
+        },
+        {
+          label: 'No',
+        },
+      ],
+    });
+  }
+
   getRulesTable(community) {
     if (community.rules && community.rules.length > 0) {
       const ruleRows = community.rules.map((rule) => (
@@ -106,7 +140,16 @@ class Community extends React.Component {
   }
 
   render() {
-    const { community, defaultAvatar, communityId, communityName } = this.state;
+    const { community, defaultAvatar, communityId, communityName, redirect, isAuthenticated } = this.state;
+
+    if (!isAuthenticated) {
+      return <Redirect to="/" />;
+    }
+
+    console.log(redirect);
+    if (redirect) {
+      return <Redirect to="/communities" />;
+    }
 
     const handleInviteClick = () => {
       const { dispatch } = this.props;
@@ -139,10 +182,18 @@ class Community extends React.Component {
             </div>
           </div>
 
+          
           <UpdateCommunity
             updateCommunity={this.updateCommunity}
             community={this.state}
           />
+
+          <div style={{ paddingTop: '5px' }}>
+            <Button variant="secondary" onClick={() => this.deleteCommunity()}>
+              Delete Community
+            </Button>
+          </div>
+
           {this.getRulesTable(community)}
           <AddCommunityRule
             updateCommunity={this.updateCommunity}
