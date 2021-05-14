@@ -58,7 +58,7 @@ router.get(
 );
 router.get(
   "/users",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   user.findAllUsers
 );
 
@@ -99,12 +99,12 @@ router.put(
 
 router.post(
   "/community",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   community.createCommunity
 );
 router.get(
   "/communities",
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   community.getCommunities
 );
 router.get(
@@ -119,7 +119,7 @@ router.put(
 );
 router.put(
   "/community/rule",
-  //passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   community.addCommunityRule
 );
 router.get(
@@ -168,7 +168,7 @@ router.get(
 // Get Dashboard posts
 router.get(
   "/dashboard", 
-  passport.authenticate("jwt", { session: false }),
+  //passport.authenticate("jwt", { session: false }),
   community.getDashboard
 );
 
