@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
 import {Redirect} from 'react-router';
+import { Card } from 'react-bootstrap';
 import { Accordion, AccordionDetails, Divider, List } from "@material-ui/core";
 import { Grid, Toolbar, Typography, Paper } from "@material-ui/core";
-import { Form, Button } from 'react-bootstrap';
-import { SendIcon } from '@livechat/ui-kit';
-import IconButton from '@material-ui/core/IconButton';
 import setAuthToken from '../../utils/setAuthToken';
 import { v4 as uuidv4 } from 'uuid';
 import { getUserProfile, getUserCommunity } from '../../actions/userprofileActions';
@@ -94,6 +91,7 @@ class UserProfile extends Component {
     let redirectVar = null;
     console.log(this.state);
     console.log(this.props.user);
+    var imageSrc = `${API_URL}/image/path/${this.props.user.profilePicture}`;
     if(!localStorage.getItem("jwtToken")){
         redirectVar = <Redirect to= "/"/>
     }
@@ -113,13 +111,23 @@ class UserProfile extends Component {
                   </Grid>
                   <Grid item xs={8}>
                     <Paper className={classes.paper}>
-                      <List>
-                        <Typography className={classes.text}>picture: {this.props.user.profilePicture}</Typography>
-                        <Typography className={classes.text}>username: {this.props.user.name}</Typography>
-                        <Typography className={classes.text}>email: {this.props.user.email}</Typography>
-                        <Typography className={classes.text}>gender: {this.props.user.gender}</Typography>
-                        <Typography className={classes.text}>location: {this.props.user.location}</Typography>                            
-                      </List>
+                      <Grid container spacing={5}>
+                        <Grid item xs={0.5}></Grid>
+                        <Grid item xs={3}>
+                          <Card style={{ width: '8rem' }}>
+                              <Card.Img variant="top" src={imageSrc} />
+                          </Card>
+                        </Grid>
+                        <Grid item xs={8}>
+                          <List>
+                            <Typography className={classes.text}>username: {this.props.user.name}</Typography>
+                            <Typography className={classes.text}>email: {this.props.user.email}</Typography>
+                            <Typography className={classes.text}>gender: {this.props.user.gender}</Typography>
+                            <Typography className={classes.text}>location: {this.props.user.location}</Typography> 
+                            <Typography className={classes.text}>description: {this.props.user.description}</Typography>                               
+                          </List>
+                        </Grid>
+                      </Grid>
                     </Paper>
                   </Grid>
                   <Grid item xs={4}>
