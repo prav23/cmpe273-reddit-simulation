@@ -1,0 +1,14 @@
+.comments__votes{
+    margin-top: 10px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 5% !important;
+}
+
+.comments__votes > span{
+    font-size: 20px;
+    font-weight: bold;
+}
+

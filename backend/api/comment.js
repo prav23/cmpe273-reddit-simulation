@@ -46,31 +46,36 @@ const createSubComment = async (req, res) => {
 
 const voteComment = async(req, res) => { 
     try{
-        const { parentCommentId, user, vote } = req.body;
-        const parentComment = await Comment.findOne({ parentCommentId});
-        if( parentComment !== null ){
-            const existingVote = parentComment.votes.find(item => item.user.equals(user));
+        const { comment_id, user, vote } = req.body;
+        const voteValue = Number(vote);
+        const comment = await Comment.findOne({ _id: comment_id});
+        let updateScore;
+        if(comment !== null){
+            const existingVote = comment.votes.find(item => item.user === user);
             if(existingVote){
                 // reset score
-                parentComment.score = parentComment.score - existingVote.vote;
-                if(vote === 0){
+                updateScore = comment.score - existingVote.vote;
+                if(voteValue === 0){
                     // remove vote
-                    parentComment.votes.pull(existingVote);
+                    comment.votes.pull(existingVote);
                 }else{
                     // change vote
-                    parentComment.score = parentComment.score + vote;
-                    existingVote.vote = vote;
+                    updateScore = updateScore + voteValue;
+                    comment.votes.pull(existingVote);
+                    existingVote.vote = voteValue;
+                    comment.votes.push(existingVote);
                 }
+                await Comment.findOneAndUpdate({ "_id": comment_id }, { "$set": { "score": updateScore, "votes": comment.votes }});
             } else if(vote !== 0){
                 // new vote
-                parentComment.score += vote;
-                parentComment.votes.push({ user, vote});
+                updateScore = comment.score + voteValue;
+                comment.votes.push({ user, vote: voteValue});
+                await Comment.findOneAndUpdate({ "_id": comment_id }, { "$set": { "score": updateScore, "votes": comment.votes }});
             }
-            await parentComment.update({ score, votes });
-            return res.status(201).json(parentComment);
+            return res.status(201).json("Successfully voted");
         }
         else{
-            throw new Error("Post doesnt exist");
+            throw new Error("Comment doesnt exist");
         }
     }catch(error){
         return res.status(400).json(error.message);
@@ -92,7 +97,7 @@ const load = async(req, res) => {
 
 const deleteComment = async(req, res) => {
     try{
-        const comment_id = req.params.comment_id;
+        const comment_id = msg.comment_id;
         const comment = await Comment.findOne({ _id : comment_id });
         if(comment !== null){
             // decrease comment count in post (if root comment)
