@@ -11,9 +11,9 @@ import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
 import setAuthToken from '../../utils/setAuthToken';
 import { getMessage, sendMessage } from '../../actions/messageActions';
-
+import axios from 'axios';
 const { API_URL } = require('../../utils/Constants').default;
-const axios = require('axios').default;
+
 const useStyles = (theme) => ({
   root: {
       flexGrow: 1,
@@ -54,7 +54,6 @@ class Message extends Component {
   constructor(props){
     super(props);
     const { user } = this.props.auth;
-    setAuthToken(user.token);
     this.state = {
         sentBy : "",
         receivedBy : "",
@@ -68,7 +67,6 @@ class Message extends Component {
     }
   }
   componentDidMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     axios.get(`${API_URL}/users`)
     .then(response => { 
       let emaillist = response.data.data.allUsers;
@@ -82,7 +80,6 @@ class Message extends Component {
     .catch(error => { console.log(error) });  
   }
   componentWillMount() {
-    axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     const data = {
       email : this.props.auth.user.email
     }
@@ -114,14 +111,18 @@ class Message extends Component {
     this.setState({message : event.target.value})
   }
   submitSearch = () => {
-    let messagelist = this.state.allmessagelist;
-    let message = [];
-    messagelist.map((listing) => {
-      if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
-            || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
-        message.push(listing);
-    })
-    this.setState({messagelist : message})
+    if (this.state.emaillist.includes(localStorage.getItem("receivedBy"))){
+      let messagelist = this.state.allmessagelist;
+      let message = [];
+      messagelist.map((listing) => {
+        if ((listing.sentBy === this.props.auth.user.email && listing.receivedBy === localStorage.getItem("receivedBy"))
+              || (listing.receivedBy === this.props.auth.user.email && listing.sentBy === localStorage.getItem("receivedBy")))
+          message.push(listing);
+      })
+      this.setState({messagelist : message})
+    } else{
+      alert("The user does not exist!");
+    }
   }
   sendMessage = () => {
     const data = {

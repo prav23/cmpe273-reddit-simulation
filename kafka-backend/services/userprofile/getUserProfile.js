@@ -2,11 +2,11 @@ const User = require("../../models/User");
 
 const getUserProfile = async (msg, callback) => {
   console.log("In handle request:"+ JSON.stringify(msg));
-  const user_id = msg.user_id;
+  const user_name = msg.user_name;
   let results = {};
   let err = {};
   try {
-    const user = await User.findOne({ user_id : user_id});
+    const user = await User.findOne({ name : user_name});
     if (user) {
       results.status = 200;
       results.data = user;

@@ -10,8 +10,10 @@ import { Form, Button } from 'react-bootstrap';
 import { SendIcon } from '@livechat/ui-kit';
 import IconButton from '@material-ui/core/IconButton';
 import setAuthToken from '../../utils/setAuthToken';
+import { v4 as uuidv4 } from 'uuid';
 import { getUserProfile, getUserCommunity } from '../../actions/userprofileActions';
 
+const defaultAvatars = require('../communities/testImages');
 const { API_URL } = require('../../utils/Constants').default;
 const axios = require('axios').default;
 const useStyles = (theme) => ({
@@ -58,12 +60,13 @@ class UserProfile extends Component {
     this.state = {
       userprofile: "",
       communitylist: [],
+      defaultAvatar: defaultAvatars.communityAvatar,
     }
   }
   componentWillMount() {
     axios.defaults.headers.common['authorization'] = localStorage.getItem('jwtToken');
     const data = {
-      user_id : localStorage.getItem("user_id")
+      user_name : localStorage.getItem("userprofile")
     }
     this.props.getUserProfile(data);
     this.props.getUserCommunity(data);
@@ -108,19 +111,54 @@ class UserProfile extends Component {
                             User Profile
                         </Typography>
                     </Toolbar>
-                    
                   </Grid>
                   <Grid item xs={8}>
                     <Paper className={classes.paper}>
                       <List>
-                      <Typography className={classes.text}>username: {this.props.user.name}</Typography>
-                      <Typography className={classes.text}>email: {this.props.user.email}</Typography>
-                      <Typography className={classes.text}>gender: {this.props.user.gender}</Typography>
-                      <Typography className={classes.text}>location: {this.props.user.location}</Typography>                            
+                        <Typography className={classes.text}>picture: {this.props.user.profilePicture}</Typography>
+                        <Typography className={classes.text}>username: {this.props.user.name}</Typography>
+                        <Typography className={classes.text}>email: {this.props.user.email}</Typography>
+                        <Typography className={classes.text}>gender: {this.props.user.gender}</Typography>
+                        <Typography className={classes.text}>location: {this.props.user.location}</Typography>                            
                       </List>
-
                     </Paper>
-                    
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Toolbar>
+                        <Typography variant="h6" className={classes.title}>
+                            Community List
+                        </Typography>
+                    </Toolbar>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Paper className={classes.paper}>
+                      <List>
+                      {!this.state.communitylist.length && <Typography className={classes.message}>No community joined...</Typography>}
+                      { this.state.communitylist.map((listing) => {
+                          return (
+                              <div>
+                                  <Accordion>
+                                      <AccordionDetails>
+                                          <Grid container spacing={3}>
+                                              <img
+                                                src={listing.photo ? listing.photo : this.state.defaultAvatar}
+                                                id={uuidv4()}
+                                                alt={listing.name}
+                                                style={{ width: '50px', height: '50px' }}
+                                              />
+                                              <Grid item xs={6}>
+                                                  <Typography className={classes.text}>Community Name: {listing.communityName}</Typography>
+                                              </Grid>
+                                          </Grid>
+                                      </AccordionDetails>
+                                  </Accordion>
+                                  <Divider />
+                              </div>
+                          );        
+                      })
+                      }                                        
+                      </List>
+                    </Paper>
                   </Grid>
               </Grid>
             </Grid>

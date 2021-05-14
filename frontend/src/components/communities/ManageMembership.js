@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
@@ -18,6 +19,7 @@ class ManageMembership extends React.Component {
       user,
       communities: [],
       communitiesToRemove: [],
+      isAuthenticated: auth.isAuthenticated,
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -92,7 +94,11 @@ class ManageMembership extends React.Component {
   }
 
   render() {
-    const { show, error, user } = this.state;
+    const { show, error, user, isAuthenticated } = this.state;
+    if (!isAuthenticated) {
+      return <Redirect to="/" />;
+    }
+
     return (
       <>
         <div style={{ paddingTop: '25px' }}>

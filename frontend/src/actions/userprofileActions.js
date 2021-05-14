@@ -4,8 +4,8 @@ const { API_URL } = require('../utils/Constants').default;
 
 //get user profile
 export const getUserProfile = (data) => dispatch => {
-  const user_id = data.user_id;
-  axios.get(`${API_URL}/userprofile/${user_id}`)
+  const user_name = data.user_name;
+  axios.get(`${API_URL}/userprofile/${user_name}`)
     .then(response => { 
       console.log(response.data);
       dispatch({
@@ -27,8 +27,8 @@ export const getUserProfile = (data) => dispatch => {
   
 //get user community
 export const getUserCommunity = (data) => dispatch => {
-  const user_id = data.user_id;
-  axios.get(`${API_URL}/userprofile/community/${user_id}`)
+  const user_name = data.user_name;
+  axios.get(`${API_URL}/userprofile/community/${user_name}`)
   .then(response => { 
     console.log(response.data);
     dispatch({
