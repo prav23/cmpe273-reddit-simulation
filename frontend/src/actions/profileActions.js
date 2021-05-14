@@ -17,17 +17,11 @@ export const getUserProfile = (data) => dispatch => {
   });   
 }
 
-export const updateUserProfile = (userProfileData) => dispatch => {
-  axios.post(`${API_URL}/profile`, userProfileData)
+export const updateUserProfile = (data) => dispatch => {
+  axios.post(`${API_URL}/profile`, data)
       .then(response => response.data)
       .then(data => {
-          if (data === 'Success_Update') {
-              localStorage.setItem("email", userProfileData.email);
-              alert("Profile Successfully Updated!");
-          }
-          else { // (data === 'User_Exist') 
-              alert("Failed to update! The email is already exist, please enter another one.");
-          }
+          alert("Profile Successfully Updated!");
           return dispatch({
               type: USER_PROFILE_UPDATE,
               payload: data
@@ -35,7 +29,7 @@ export const updateUserProfile = (userProfileData) => dispatch => {
       })
       .catch(error => {
           console.log(error);
-          alert("Failed to update! The email is already exist, please enter another one.");
+          alert("Failed to update!");
       });
 }
 

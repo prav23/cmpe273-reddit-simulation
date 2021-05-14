@@ -26,7 +26,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   let msg = {};
   msg.route = "update_profile";
-  msg.user_email = req.params.user_email;
+  msg.input = req.body;
   
   kafka.make_request("profile", msg, function (err, results) {
     console.log("in make request call back");

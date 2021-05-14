@@ -94,6 +94,7 @@ class Profile extends Component {
   submitProfile = (e) => {
     e.preventDefault();
     const data = {
+        user_email : this.props.auth.user.email,
         name : this.state.name,
         gender : this.state.gender,
         location : this.state.location,
