@@ -3,7 +3,7 @@ const User = require("../models/User");
 const Community = require("../models/community");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-// const kafka = require("../kafka/client");
+const kafka = require("../kafka/client");
 const {
   createValidation,
   createManyValidation,
@@ -60,7 +60,7 @@ exports.createMany = (req, res) => {
     });
   }
 
-  /* let msg = {
+  let msg = {
     route: "create",
     body: req.body,
   };
@@ -75,9 +75,9 @@ exports.createMany = (req, res) => {
       data: results.data,
       message: "Invites created successfully",
     });
-  }); */
+  });
 
-  Member.insertMany(req.body, (err, data) => {
+  /* Member.insertMany(req.body, (err, data) => {
     if (err) {
       return res.status(400).send({
         message: err.toString(),
@@ -88,7 +88,7 @@ exports.createMany = (req, res) => {
       data,
       message: "Invites created successfully",
     });
-  });
+  }); */
 };
 
 exports.getAllNewInvitesForUser = (req, res) => {
@@ -98,21 +98,21 @@ exports.getAllNewInvitesForUser = (req, res) => {
     });
   }
 
-  /* let msg = {
-      route: "get_new_invites_for_user",
-      params: req.params,
-    };
-    kafka.make_request("invite", msg, (err, results) => {
-      if (err) {
-        return res.status(err.status).send({
-          message: err.data,
-        });
-      }
-  
-      return res.status(results.status).json(results.data);
-    }); */
+  let msg = {
+    route: "get_new_invites_for_user",
+    params: req.params,
+  };
+  kafka.make_request("invite", msg, (err, results) => {
+    if (err) {
+      return res.status(err.status).send({
+        message: err.data,
+      });
+    }
 
-  Member.aggregate(
+    return res.status(results.status).json(results.data);
+  });
+
+  /* Member.aggregate(
     [
       {
         $match: {
@@ -158,7 +158,7 @@ exports.getAllNewInvitesForUser = (req, res) => {
 
       return res.status(200).json(data);
     }
-  );
+  ); */
 };
 
 exports.getAllInvitesForUser = (req, res) => {
@@ -186,15 +186,40 @@ exports.getAllInvitesForCommunity = (req, res) => {
     });
   }
 
-  Member.find({ communityId: req.params.id, sentBy: "admin" }, (err, data) => {
+  if (!req.query.createdBy) {
+    return res.status(400).send({
+      message: "Created by query paramter missing",
+    });
+  }
+
+  let msg = {
+    params: req.params,
+    query: req.query,
+    route: "admin_invites",
+  };
+
+  kafka.make_request("invite", msg, (err, results) => {
     if (err) {
-      return res.status(400).send({
-        message: saveError.toString(),
+      return res.status(err.status).send({
+        message: err.data,
       });
     }
 
-    return res.status(200).json(data);
+    return res.status(results.status).json(results.data);
   });
+
+  /* Member.find(
+    { communityId: req.params.id, sentBy: req.query.createdBy },
+    (err, data) => {
+      if (err) {
+        return res.status(400).send({
+          message: saveError.toString(),
+        });
+      }
+
+      return res.status(200).json(data);
+    }
+  ); */
 };
 
 exports.updateInvite = (req, res) => {
@@ -211,7 +236,7 @@ exports.updateInvite = (req, res) => {
     });
   }
 
-  /* let msg = {
+  let msg = {
     route: "update",
     params: req.params,
     body: req.body,
@@ -226,9 +251,9 @@ exports.updateInvite = (req, res) => {
     return res.status(results.status).send({
       message: "Invite updated successfully",
     });
-  }); */
+  });
 
-  Member.findByIdAndUpdate(
+  /* Member.findByIdAndUpdate(
     req.params.id,
     { status: req.body.status },
     (err, data) => {
@@ -271,5 +296,5 @@ exports.updateInvite = (req, res) => {
           return res.status(500).send(error);
         });
     }
-  );
+  ); */
 };
