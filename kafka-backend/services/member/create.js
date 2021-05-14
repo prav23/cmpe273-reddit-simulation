@@ -7,7 +7,7 @@ const create = (msg, callback) => {
   Member.insertMany(msg.body, (err, data) => {
     if (err) {
       error.status = 400;
-      error.data = saveError.toString();
+      error.data = err.toString();
       return callback(error, null);
     }
 

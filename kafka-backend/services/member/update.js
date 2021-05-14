@@ -34,9 +34,9 @@ const update = (msg, callback) => {
                 response.data = data;
                 return callback(null, response);
               })
-              .catch((error) => {
+              .catch((err) => {
                 error.status = 400;
-                error.data = error.toString();
+                error.data = err.toString();
                 return callback(error, null);
               });
           } else {
@@ -45,7 +45,7 @@ const update = (msg, callback) => {
             return callback(error, null);
           }
         })
-        .catch((error) => {
+        .catch((err) => {
           error.status = 500;
           error.data = err.toString();
           return callback(error, null);
